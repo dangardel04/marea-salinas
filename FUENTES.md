@@ -53,7 +53,9 @@ Otras comprobaciones:
 
 **Referencia que usa la aplicación:** todas las alturas se expresan sobre el **cero hidrográfico de Avilés que usa el IHM** en sus predicciones, porque es la referencia de la tabla oficial con la que se valida y la que entiende cualquier usuario de tablas de marea. Cómo se enlaza con las observaciones se documenta en la fase 3 (`VALIDACION.md`).
 
-## 4. Escena 3D
+## 4. Escena 3D de la primera versión (un solo tramo de playa)
+
+> **Sustituida por la sección 5** (bahía completa). Se conserva por trazabilidad: el desnivel NMMA → CH aproximado sigue en uso, `tools/mdt.ts` y `public/terreno.bin` se han retirado del código.
 
 | Dato | Valor | Fuente |
 |---|---|---|
