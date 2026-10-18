@@ -26,3 +26,4 @@ dist-ssr
 # Datos brutos descargados (se regeneran con tools/)
 data/raw/
 __pycache__/
+data/obs_gijon_10min.csv

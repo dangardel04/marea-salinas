@@ -1,0 +1,8838 @@
+{
+ "fuente": "IHM, https://ideihm.covam.es/api-ihm/getmarea?request=gettide&id=7",
+ "consultado": "2026-10-18",
+ "horas": "UTC",
+ "alturas": "metros sobre el cero hidrográfico del IHM",
+ "extremos": [
+  {
+   "utc": "2025-10-01T03:48:00Z",
+   "altura": 2.061,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-01T10:22:00Z",
+   "altura": 3.195,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-01T16:54:00Z",
+   "altura": 1.889,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-01T23:25:00Z",
+   "altura": 3.075,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-02T05:25:00Z",
+   "altura": 1.924,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-02T11:45:00Z",
+   "altura": 3.391,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-02T18:09:00Z",
+   "altura": 1.629,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-03T00:30:00Z",
+   "altura": 3.342,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-03T06:28:00Z",
+   "altura": 1.638,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-03T12:41:00Z",
+   "altura": 3.687,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-03T18:59:00Z",
+   "altura": 1.289,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-04T01:15:00Z",
+   "altura": 3.648,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-04T07:14:00Z",
+   "altura": 1.292,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-04T13:25:00Z",
+   "altura": 4.007,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-04T19:40:00Z",
+   "altura": 0.932,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-05T01:54:00Z",
+   "altura": 3.952,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-05T07:54:00Z",
+   "altura": 0.939,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-05T14:06:00Z",
+   "altura": 4.314,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-05T20:17:00Z",
+   "altura": 0.61,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-06T02:30:00Z",
+   "altura": 4.23,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-06T08:32:00Z",
+   "altura": 0.629,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-06T14:45:00Z",
+   "altura": 4.58,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-06T20:54:00Z",
+   "altura": 0.373,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-07T03:07:00Z",
+   "altura": 4.459,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-07T09:10:00Z",
+   "altura": 0.4,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-07T15:24:00Z",
+   "altura": 4.756,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-07T21:32:00Z",
+   "altura": 0.254,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-08T03:45:00Z",
+   "altura": 4.598,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-08T09:50:00Z",
+   "altura": 0.286,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-08T16:05:00Z",
+   "altura": 4.797,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-08T22:12:00Z",
+   "altura": 0.271,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-09T04:25:00Z",
+   "altura": 4.616,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-09T10:33:00Z",
+   "altura": 0.307,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-09T16:48:00Z",
+   "altura": 4.678,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-09T22:53:00Z",
+   "altura": 0.431,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-10T05:07:00Z",
+   "altura": 4.505,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-10T11:18:00Z",
+   "altura": 0.471,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-10T17:34:00Z",
+   "altura": 4.415,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-10T23:37:00Z",
+   "altura": 0.715,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-11T05:53:00Z",
+   "altura": 4.287,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-11T12:07:00Z",
+   "altura": 0.761,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-11T18:25:00Z",
+   "altura": 4.05,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-12T00:26:00Z",
+   "altura": 1.083,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-12T06:45:00Z",
+   "altura": 4,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-12T13:05:00Z",
+   "altura": 1.118,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-12T19:27:00Z",
+   "altura": 3.658,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-13T01:24:00Z",
+   "altura": 1.464,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-13T07:52:00Z",
+   "altura": 3.713,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-13T14:18:00Z",
+   "altura": 1.449,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-13T20:50:00Z",
+   "altura": 3.357,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-14T02:40:00Z",
+   "altura": 1.764,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-14T09:22:00Z",
+   "altura": 3.541,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-14T15:52:00Z",
+   "altura": 1.625,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-14T22:29:00Z",
+   "altura": 3.288,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-15T04:15:00Z",
+   "altura": 1.867,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-15T10:57:00Z",
+   "altura": 3.584,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-15T17:25:00Z",
+   "altura": 1.575,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-15T23:51:00Z",
+   "altura": 3.437,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-16T05:40:00Z",
+   "altura": 1.753,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-16T12:10:00Z",
+   "altura": 3.762,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-16T18:30:00Z",
+   "altura": 1.408,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-17T00:47:00Z",
+   "altura": 3.647,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-17T06:39:00Z",
+   "altura": 1.531,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-17T13:03:00Z",
+   "altura": 3.944,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-17T19:17:00Z",
+   "altura": 1.21,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-18T01:30:00Z",
+   "altura": 3.834,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-18T07:25:00Z",
+   "altura": 1.29,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-18T13:44:00Z",
+   "altura": 4.072,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-18T19:55:00Z",
+   "altura": 1.03,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-19T02:06:00Z",
+   "altura": 3.975,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-19T08:03:00Z",
+   "altura": 1.08,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-19T14:20:00Z",
+   "altura": 4.153,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-19T20:28:00Z",
+   "altura": 0.906,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-20T02:37:00Z",
+   "altura": 4.087,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-20T08:37:00Z",
+   "altura": 0.945,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-20T14:51:00Z",
+   "altura": 4.204,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-20T20:58:00Z",
+   "altura": 0.851,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-21T03:07:00Z",
+   "altura": 4.169,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-21T09:09:00Z",
+   "altura": 0.886,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-21T15:21:00Z",
+   "altura": 4.216,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-21T21:28:00Z",
+   "altura": 0.859,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-22T03:36:00Z",
+   "altura": 4.201,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-22T09:41:00Z",
+   "altura": 0.88,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-22T15:51:00Z",
+   "altura": 4.17,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-22T21:57:00Z",
+   "altura": 0.905,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-23T04:05:00Z",
+   "altura": 4.166,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-23T10:12:00Z",
+   "altura": 0.912,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-23T16:20:00Z",
+   "altura": 4.057,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-23T22:25:00Z",
+   "altura": 0.987,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-24T04:34:00Z",
+   "altura": 4.074,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-24T10:43:00Z",
+   "altura": 0.99,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-24T16:50:00Z",
+   "altura": 3.899,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-24T22:55:00Z",
+   "altura": 1.113,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-25T05:05:00Z",
+   "altura": 3.951,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-25T11:16:00Z",
+   "altura": 1.126,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-25T17:21:00Z",
+   "altura": 3.723,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-25T23:26:00Z",
+   "altura": 1.293,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-26T05:38:00Z",
+   "altura": 3.816,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-26T11:51:00Z",
+   "altura": 1.315,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-26T17:55:00Z",
+   "altura": 3.541,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-27T00:00:00Z",
+   "altura": 1.507,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-27T06:16:00Z",
+   "altura": 3.666,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-27T12:32:00Z",
+   "altura": 1.527,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-27T18:37:00Z",
+   "altura": 3.347,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-28T00:43:00Z",
+   "altura": 1.728,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-28T07:04:00Z",
+   "altura": 3.503,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-28T13:25:00Z",
+   "altura": 1.721,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-28T19:37:00Z",
+   "altura": 3.164,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-29T01:43:00Z",
+   "altura": 1.917,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-29T08:12:00Z",
+   "altura": 3.367,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-29T14:38:00Z",
+   "altura": 1.84,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-29T21:07:00Z",
+   "altura": 3.079,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-30T03:09:00Z",
+   "altura": 2.001,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-30T09:39:00Z",
+   "altura": 3.355,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-30T16:07:00Z",
+   "altura": 1.806,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-30T22:40:00Z",
+   "altura": 3.19,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-31T04:37:00Z",
+   "altura": 1.908,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-31T10:58:00Z",
+   "altura": 3.514,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-10-31T17:22:00Z",
+   "altura": 1.609,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-10-31T23:47:00Z",
+   "altura": 3.446,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-01T05:44:00Z",
+   "altura": 1.671,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-01T11:58:00Z",
+   "altura": 3.779,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-01T18:17:00Z",
+   "altura": 1.325,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-02T00:36:00Z",
+   "altura": 3.75,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-02T06:35:00Z",
+   "altura": 1.363,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-02T12:48:00Z",
+   "altura": 4.078,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-02T19:02:00Z",
+   "altura": 1.015,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-03T01:18:00Z",
+   "altura": 4.055,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-03T07:20:00Z",
+   "altura": 1.035,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-03T13:33:00Z",
+   "altura": 4.363,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-03T19:44:00Z",
+   "altura": 0.736,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-04T01:59:00Z",
+   "altura": 4.331,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-04T08:03:00Z",
+   "altura": 0.74,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-04T14:17:00Z",
+   "altura": 4.595,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-04T20:25:00Z",
+   "altura": 0.535,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-05T02:40:00Z",
+   "altura": 4.549,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-05T08:46:00Z",
+   "altura": 0.522,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-05T15:01:00Z",
+   "altura": 4.73,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-05T21:07:00Z",
+   "altura": 0.446,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-06T03:22:00Z",
+   "altura": 4.678,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-06T09:31:00Z",
+   "altura": 0.416,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-06T15:47:00Z",
+   "altura": 4.735,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-06T21:51:00Z",
+   "altura": 0.482,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-07T04:06:00Z",
+   "altura": 4.69,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-07T10:18:00Z",
+   "altura": 0.437,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-07T16:34:00Z",
+   "altura": 4.594,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-07T22:36:00Z",
+   "altura": 0.637,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-08T04:53:00Z",
+   "altura": 4.583,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-08T11:08:00Z",
+   "altura": 0.583,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-08T17:25:00Z",
+   "altura": 4.332,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-08T23:24:00Z",
+   "altura": 0.888,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-09T05:44:00Z",
+   "altura": 4.381,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-09T12:02:00Z",
+   "altura": 0.833,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-09T18:20:00Z",
+   "altura": 4.008,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-10T00:16:00Z",
+   "altura": 1.199,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-10T06:41:00Z",
+   "altura": 4.136,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-10T13:02:00Z",
+   "altura": 1.14,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-10T19:24:00Z",
+   "altura": 3.702,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-11T01:15:00Z",
+   "altura": 1.517,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-11T07:47:00Z",
+   "altura": 3.91,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-11T14:11:00Z",
+   "altura": 1.428,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-11T20:39:00Z",
+   "altura": 3.492,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-12T02:26:00Z",
+   "altura": 1.765,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-12T09:03:00Z",
+   "altura": 3.757,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-12T15:31:00Z",
+   "altura": 1.605,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-12T22:01:00Z",
+   "altura": 3.422,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-13T03:47:00Z",
+   "altura": 1.856,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-13T10:22:00Z",
+   "altura": 3.696,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-13T16:49:00Z",
+   "altura": 1.612,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-13T23:13:00Z",
+   "altura": 3.463,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-14T05:03:00Z",
+   "altura": 1.77,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-14T11:31:00Z",
+   "altura": 3.7,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-14T17:53:00Z",
+   "altura": 1.492,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-15T00:10:00Z",
+   "altura": 3.549,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-15T06:04:00Z",
+   "altura": 1.583,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-15T12:27:00Z",
+   "altura": 3.729,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-15T18:42:00Z",
+   "altura": 1.333,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-16T00:56:00Z",
+   "altura": 3.655,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-16T06:53:00Z",
+   "altura": 1.383,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-16T13:12:00Z",
+   "altura": 3.778,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-16T19:23:00Z",
+   "altura": 1.192,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-17T01:34:00Z",
+   "altura": 3.775,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-17T07:35:00Z",
+   "altura": 1.227,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-17T13:51:00Z",
+   "altura": 3.841,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-17T19:58:00Z",
+   "altura": 1.1,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-18T02:09:00Z",
+   "altura": 3.897,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-18T08:12:00Z",
+   "altura": 1.12,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-18T14:26:00Z",
+   "altura": 3.901,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-18T20:31:00Z",
+   "altura": 1.046,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-19T02:41:00Z",
+   "altura": 3.989,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-19T08:47:00Z",
+   "altura": 1.047,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-19T14:58:00Z",
+   "altura": 3.926,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-19T21:02:00Z",
+   "altura": 1.019,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-20T03:12:00Z",
+   "altura": 4.035,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-20T09:21:00Z",
+   "altura": 1,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-20T15:30:00Z",
+   "altura": 3.907,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-20T21:33:00Z",
+   "altura": 1.017,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-21T03:43:00Z",
+   "altura": 4.036,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-21T09:54:00Z",
+   "altura": 0.987,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-21T16:02:00Z",
+   "altura": 3.852,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-21T22:04:00Z",
+   "altura": 1.058,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-22T04:15:00Z",
+   "altura": 4.012,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-22T10:27:00Z",
+   "altura": 1.025,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-22T16:34:00Z",
+   "altura": 3.777,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-22T22:35:00Z",
+   "altura": 1.146,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-23T04:49:00Z",
+   "altura": 3.966,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-23T11:02:00Z",
+   "altura": 1.112,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-23T17:08:00Z",
+   "altura": 3.683,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-23T23:09:00Z",
+   "altura": 1.267,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-24T05:24:00Z",
+   "altura": 3.892,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-24T11:39:00Z",
+   "altura": 1.225,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-24T17:45:00Z",
+   "altura": 3.563,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-24T23:46:00Z",
+   "altura": 1.403,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-25T06:04:00Z",
+   "altura": 3.786,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-25T12:21:00Z",
+   "altura": 1.34,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-25T18:27:00Z",
+   "altura": 3.423,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-26T00:30:00Z",
+   "altura": 1.531,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-26T06:51:00Z",
+   "altura": 3.659,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-26T13:09:00Z",
+   "altura": 1.445,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-26T19:21:00Z",
+   "altura": 3.29,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-27T01:23:00Z",
+   "altura": 1.649,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-27T07:47:00Z",
+   "altura": 3.551,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-27T14:07:00Z",
+   "altura": 1.525,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-27T20:28:00Z",
+   "altura": 3.222,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-28T02:29:00Z",
+   "altura": 1.723,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-28T08:54:00Z",
+   "altura": 3.514,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-28T15:15:00Z",
+   "altura": 1.546,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-28T21:44:00Z",
+   "altura": 3.271,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-29T03:42:00Z",
+   "altura": 1.712,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-29T10:04:00Z",
+   "altura": 3.579,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-29T16:25:00Z",
+   "altura": 1.474,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-29T22:53:00Z",
+   "altura": 3.437,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-30T04:51:00Z",
+   "altura": 1.59,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-30T11:09:00Z",
+   "altura": 3.734,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-11-30T17:28:00Z",
+   "altura": 1.314,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-11-30T23:51:00Z",
+   "altura": 3.669,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-01T05:52:00Z",
+   "altura": 1.378,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-01T12:08:00Z",
+   "altura": 3.932,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-01T18:23:00Z",
+   "altura": 1.109,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-02T00:42:00Z",
+   "altura": 3.919,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-02T06:46:00Z",
+   "altura": 1.12,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-02T13:03:00Z",
+   "altura": 4.137,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-02T19:13:00Z",
+   "altura": 0.899,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-03T01:31:00Z",
+   "altura": 4.163,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-03T07:38:00Z",
+   "altura": 0.864,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-03T13:55:00Z",
+   "altura": 4.314,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-03T20:01:00Z",
+   "altura": 0.735,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-04T02:19:00Z",
+   "altura": 4.373,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-04T08:29:00Z",
+   "altura": 0.657,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-04T14:46:00Z",
+   "altura": 4.429,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-04T20:49:00Z",
+   "altura": 0.645,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-05T03:07:00Z",
+   "altura": 4.521,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-05T09:20:00Z",
+   "altura": 0.527,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-05T15:37:00Z",
+   "altura": 4.452,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-05T21:37:00Z",
+   "altura": 0.635,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-06T03:56:00Z",
+   "altura": 4.579,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-06T10:11:00Z",
+   "altura": 0.49,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-06T16:28:00Z",
+   "altura": 4.37,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-06T22:25:00Z",
+   "altura": 0.704,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-07T04:46:00Z",
+   "altura": 4.539,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-07T11:03:00Z",
+   "altura": 0.552,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-07T17:20:00Z",
+   "altura": 4.202,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-07T23:15:00Z",
+   "altura": 0.848,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-08T05:38:00Z",
+   "altura": 4.42,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-08T11:56:00Z",
+   "altura": 0.715,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-08T18:13:00Z",
+   "altura": 3.992,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-09T00:05:00Z",
+   "altura": 1.057,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-09T06:31:00Z",
+   "altura": 4.251,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-09T12:50:00Z",
+   "altura": 0.955,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-09T19:07:00Z",
+   "altura": 3.777,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-10T00:59:00Z",
+   "altura": 1.294,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-10T07:26:00Z",
+   "altura": 4.052,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-10T13:46:00Z",
+   "altura": 1.211,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-10T20:05:00Z",
+   "altura": 3.58,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-11T01:56:00Z",
+   "altura": 1.501,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-11T08:24:00Z",
+   "altura": 3.833,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-11T14:46:00Z",
+   "altura": 1.413,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-11T21:07:00Z",
+   "altura": 3.413,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-12T02:59:00Z",
+   "altura": 1.623,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-12T09:26:00Z",
+   "altura": 3.613,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-12T15:51:00Z",
+   "altura": 1.514,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-12T22:12:00Z",
+   "altura": 3.299,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-13T04:06:00Z",
+   "altura": 1.645,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-13T10:31:00Z",
+   "altura": 3.443,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-13T16:55:00Z",
+   "altura": 1.518,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-13T23:14:00Z",
+   "altura": 3.279,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-14T05:12:00Z",
+   "altura": 1.597,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-14T11:35:00Z",
+   "altura": 3.37,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-14T17:54:00Z",
+   "altura": 1.472,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-15T00:11:00Z",
+   "altura": 3.349,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-15T06:12:00Z",
+   "altura": 1.517,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-15T12:32:00Z",
+   "altura": 3.393,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-15T18:45:00Z",
+   "altura": 1.405,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-16T00:59:00Z",
+   "altura": 3.479,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-16T07:04:00Z",
+   "altura": 1.422,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-16T13:21:00Z",
+   "altura": 3.469,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-16T19:28:00Z",
+   "altura": 1.326,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-17T01:41:00Z",
+   "altura": 3.618,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-17T07:48:00Z",
+   "altura": 1.309,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-17T14:03:00Z",
+   "altura": 3.548,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-17T20:06:00Z",
+   "altura": 1.235,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-18T02:18:00Z",
+   "altura": 3.736,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-18T08:28:00Z",
+   "altura": 1.19,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-18T14:41:00Z",
+   "altura": 3.617,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-18T20:42:00Z",
+   "altura": 1.149,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-19T02:54:00Z",
+   "altura": 3.838,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-19T09:05:00Z",
+   "altura": 1.088,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-19T15:16:00Z",
+   "altura": 3.678,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-19T21:16:00Z",
+   "altura": 1.095,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-20T03:29:00Z",
+   "altura": 3.931,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-20T09:41:00Z",
+   "altura": 1.023,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-20T15:51:00Z",
+   "altura": 3.731,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-20T21:49:00Z",
+   "altura": 1.078,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-21T04:03:00Z",
+   "altura": 4.009,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-21T10:16:00Z",
+   "altura": 0.996,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-21T16:25:00Z",
+   "altura": 3.761,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-21T22:23:00Z",
+   "altura": 1.088,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-22T04:38:00Z",
+   "altura": 4.052,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-22T10:52:00Z",
+   "altura": 0.995,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-22T16:59:00Z",
+   "altura": 3.753,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-22T22:58:00Z",
+   "altura": 1.115,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-23T05:14:00Z",
+   "altura": 4.047,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-23T11:29:00Z",
+   "altura": 1.01,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-23T17:35:00Z",
+   "altura": 3.705,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-23T23:35:00Z",
+   "altura": 1.155,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-24T05:53:00Z",
+   "altura": 3.994,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-24T12:07:00Z",
+   "altura": 1.045,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-24T18:15:00Z",
+   "altura": 3.63,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-25T00:15:00Z",
+   "altura": 1.214,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-25T06:34:00Z",
+   "altura": 3.915,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-25T12:49:00Z",
+   "altura": 1.102,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-25T18:59:00Z",
+   "altura": 3.542,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-26T01:00:00Z",
+   "altura": 1.296,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-26T07:20:00Z",
+   "altura": 3.82,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-26T13:35:00Z",
+   "altura": 1.185,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-26T19:49:00Z",
+   "altura": 3.466,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-27T01:52:00Z",
+   "altura": 1.391,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-27T08:13:00Z",
+   "altura": 3.732,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-27T14:28:00Z",
+   "altura": 1.278,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-27T20:48:00Z",
+   "altura": 3.423,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-28T02:51:00Z",
+   "altura": 1.474,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-28T09:13:00Z",
+   "altura": 3.67,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-28T15:29:00Z",
+   "altura": 1.351,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-28T21:56:00Z",
+   "altura": 3.44,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-29T03:59:00Z",
+   "altura": 1.499,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-29T10:21:00Z",
+   "altura": 3.65,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-29T16:37:00Z",
+   "altura": 1.361,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-29T23:05:00Z",
+   "altura": 3.529,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-30T05:10:00Z",
+   "altura": 1.423,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-30T11:32:00Z",
+   "altura": 3.69,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-30T17:46:00Z",
+   "altura": 1.278,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-31T00:11:00Z",
+   "altura": 3.684,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-31T06:19:00Z",
+   "altura": 1.247,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2025-12-31T12:41:00Z",
+   "altura": 3.79,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2025-12-31T18:49:00Z",
+   "altura": 1.126,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-01T01:12:00Z",
+   "altura": 3.889,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-01T07:23:00Z",
+   "altura": 1.015,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-01T13:44:00Z",
+   "altura": 3.936,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-01T19:46:00Z",
+   "altura": 0.958,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-02T02:08:00Z",
+   "altura": 4.124,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-02T08:22:00Z",
+   "altura": 0.781,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-02T14:41:00Z",
+   "altura": 4.092,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-02T20:39:00Z",
+   "altura": 0.809,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-03T03:01:00Z",
+   "altura": 4.342,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-03T09:16:00Z",
+   "altura": 0.592,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-03T15:34:00Z",
+   "altura": 4.207,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-03T21:29:00Z",
+   "altura": 0.702,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-04T03:51:00Z",
+   "altura": 4.495,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-04T10:07:00Z",
+   "altura": 0.475,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-04T16:23:00Z",
+   "altura": 4.243,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-04T22:17:00Z",
+   "altura": 0.657,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-05T04:39:00Z",
+   "altura": 4.553,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-05T10:55:00Z",
+   "altura": 0.458,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-05T17:09:00Z",
+   "altura": 4.197,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-05T23:02:00Z",
+   "altura": 0.692,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-06T05:25:00Z",
+   "altura": 4.513,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-06T11:41:00Z",
+   "altura": 0.555,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-06T17:53:00Z",
+   "altura": 4.084,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-06T23:47:00Z",
+   "altura": 0.812,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-07T06:10:00Z",
+   "altura": 4.384,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-07T12:25:00Z",
+   "altura": 0.747,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-07T18:36:00Z",
+   "altura": 3.923,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-08T00:31:00Z",
+   "altura": 0.994,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-08T06:53:00Z",
+   "altura": 4.175,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-08T13:09:00Z",
+   "altura": 0.986,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-08T19:19:00Z",
+   "altura": 3.719,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-09T01:16:00Z",
+   "altura": 1.194,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-09T07:36:00Z",
+   "altura": 3.901,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-09T13:54:00Z",
+   "altura": 1.222,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-09T20:04:00Z",
+   "altura": 3.493,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-10T02:04:00Z",
+   "altura": 1.389,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-10T08:23:00Z",
+   "altura": 3.604,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-10T14:43:00Z",
+   "altura": 1.435,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-10T20:57:00Z",
+   "altura": 3.296,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-11T02:59:00Z",
+   "altura": 1.569,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-11T09:18:00Z",
+   "altura": 3.35,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-11T15:40:00Z",
+   "altura": 1.615,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-11T22:00:00Z",
+   "altura": 3.183,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-12T04:05:00Z",
+   "altura": 1.715,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-12T10:25:00Z",
+   "altura": 3.191,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-12T16:48:00Z",
+   "altura": 1.728,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-12T23:11:00Z",
+   "altura": 3.182,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-13T05:19:00Z",
+   "altura": 1.77,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-13T11:40:00Z",
+   "altura": 3.152,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-13T17:58:00Z",
+   "altura": 1.727,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-14T00:18:00Z",
+   "altura": 3.273,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-14T06:29:00Z",
+   "altura": 1.701,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-14T12:48:00Z",
+   "altura": 3.208,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-14T18:57:00Z",
+   "altura": 1.621,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-15T01:13:00Z",
+   "altura": 3.412,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-15T07:26:00Z",
+   "altura": 1.542,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-15T13:42:00Z",
+   "altura": 3.32,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-15T19:45:00Z",
+   "altura": 1.466,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-16T01:59:00Z",
+   "altura": 3.58,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-16T08:12:00Z",
+   "altura": 1.359,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-16T14:26:00Z",
+   "altura": 3.467,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-16T20:24:00Z",
+   "altura": 1.314,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-17T02:38:00Z",
+   "altura": 3.774,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-17T08:51:00Z",
+   "altura": 1.192,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-17T15:04:00Z",
+   "altura": 3.635,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-17T21:01:00Z",
+   "altura": 1.183,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-18T03:15:00Z",
+   "altura": 3.974,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-18T09:27:00Z",
+   "altura": 1.05,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-18T15:38:00Z",
+   "altura": 3.795,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-18T21:35:00Z",
+   "altura": 1.071,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-19T03:50:00Z",
+   "altura": 4.145,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-19T10:02:00Z",
+   "altura": 0.928,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-19T16:12:00Z",
+   "altura": 3.918,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-19T22:09:00Z",
+   "altura": 0.976,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-20T04:24:00Z",
+   "altura": 4.267,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-20T10:36:00Z",
+   "altura": 0.833,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-20T16:45:00Z",
+   "altura": 3.992,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-20T22:44:00Z",
+   "altura": 0.911,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-21T04:59:00Z",
+   "altura": 4.332,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-21T11:11:00Z",
+   "altura": 0.782,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-21T17:19:00Z",
+   "altura": 4.021,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-21T23:19:00Z",
+   "altura": 0.89,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-22T05:35:00Z",
+   "altura": 4.338,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-22T11:46:00Z",
+   "altura": 0.783,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-22T17:54:00Z",
+   "altura": 3.996,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-22T23:56:00Z",
+   "altura": 0.92,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-23T06:12:00Z",
+   "altura": 4.276,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-23T12:24:00Z",
+   "altura": 0.842,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-23T18:32:00Z",
+   "altura": 3.917,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-24T00:35:00Z",
+   "altura": 1.001,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-24T06:53:00Z",
+   "altura": 4.146,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-24T13:04:00Z",
+   "altura": 0.96,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-24T19:15:00Z",
+   "altura": 3.793,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-25T01:20:00Z",
+   "altura": 1.14,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-25T07:39:00Z",
+   "altura": 3.97,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-25T13:50:00Z",
+   "altura": 1.138,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-25T20:05:00Z",
+   "altura": 3.65,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-26T02:13:00Z",
+   "altura": 1.317,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-26T08:34:00Z",
+   "altura": 3.761,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-26T14:46:00Z",
+   "altura": 1.34,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-26T21:07:00Z",
+   "altura": 3.508,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-27T03:19:00Z",
+   "altura": 1.477,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-27T09:43:00Z",
+   "altura": 3.556,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-27T15:56:00Z",
+   "altura": 1.492,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-27T22:26:00Z",
+   "altura": 3.427,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-28T04:41:00Z",
+   "altura": 1.52,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-28T11:09:00Z",
+   "altura": 3.438,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-28T17:19:00Z",
+   "altura": 1.497,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-28T23:52:00Z",
+   "altura": 3.484,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-29T06:08:00Z",
+   "altura": 1.38,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-29T12:35:00Z",
+   "altura": 3.487,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-29T18:37:00Z",
+   "altura": 1.344,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-30T01:07:00Z",
+   "altura": 3.695,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-30T07:22:00Z",
+   "altura": 1.116,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-30T13:45:00Z",
+   "altura": 3.68,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-30T19:41:00Z",
+   "altura": 1.115,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-31T02:07:00Z",
+   "altura": 3.993,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-31T08:21:00Z",
+   "altura": 0.838,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-01-31T14:41:00Z",
+   "altura": 3.925,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-01-31T20:34:00Z",
+   "altura": 0.891,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-01T02:58:00Z",
+   "altura": 4.289,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-01T09:12:00Z",
+   "altura": 0.604,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-01T15:28:00Z",
+   "altura": 4.135,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-01T21:21:00Z",
+   "altura": 0.702,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-02T03:43:00Z",
+   "altura": 4.507,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-02T09:56:00Z",
+   "altura": 0.451,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-02T16:10:00Z",
+   "altura": 4.254,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-02T22:03:00Z",
+   "altura": 0.576,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-03T04:24:00Z",
+   "altura": 4.603,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-03T10:37:00Z",
+   "altura": 0.4,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-03T16:48:00Z",
+   "altura": 4.275,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-03T22:43:00Z",
+   "altura": 0.544,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-04T05:03:00Z",
+   "altura": 4.586,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-04T11:16:00Z",
+   "altura": 0.465,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-04T17:25:00Z",
+   "altura": 4.218,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-04T23:22:00Z",
+   "altura": 0.618,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-05T05:40:00Z",
+   "altura": 4.466,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-05T11:53:00Z",
+   "altura": 0.633,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-05T18:00:00Z",
+   "altura": 4.093,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-05T23:59:00Z",
+   "altura": 0.778,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-06T06:16:00Z",
+   "altura": 4.26,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-06T12:28:00Z",
+   "altura": 0.863,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-06T18:34:00Z",
+   "altura": 3.91,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-07T00:36:00Z",
+   "altura": 0.995,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-07T06:51:00Z",
+   "altura": 3.987,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-07T13:04:00Z",
+   "altura": 1.125,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-07T19:10:00Z",
+   "altura": 3.688,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-08T01:15:00Z",
+   "altura": 1.25,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-08T07:29:00Z",
+   "altura": 3.688,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-08T13:42:00Z",
+   "altura": 1.402,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-08T19:52:00Z",
+   "altura": 3.462,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-09T02:00:00Z",
+   "altura": 1.526,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-09T08:13:00Z",
+   "altura": 3.398,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-09T14:28:00Z",
+   "altura": 1.674,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-09T20:44:00Z",
+   "altura": 3.26,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-10T02:57:00Z",
+   "altura": 1.781,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-10T09:12:00Z",
+   "altura": 3.149,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-10T15:32:00Z",
+   "altura": 1.89,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-10T21:59:00Z",
+   "altura": 3.121,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-11T04:17:00Z",
+   "altura": 1.929,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-11T10:40:00Z",
+   "altura": 2.993,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-11T17:01:00Z",
+   "altura": 1.955,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-11T23:29:00Z",
+   "altura": 3.112,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-12T05:51:00Z",
+   "altura": 1.879,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-12T12:15:00Z",
+   "altura": 3.013,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-12T18:24:00Z",
+   "altura": 1.836,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-13T00:43:00Z",
+   "altura": 3.254,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-13T07:03:00Z",
+   "altura": 1.682,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-13T13:22:00Z",
+   "altura": 3.18,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-13T19:22:00Z",
+   "altura": 1.629,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-14T01:37:00Z",
+   "altura": 3.49,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-14T07:52:00Z",
+   "altura": 1.444,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-14T14:08:00Z",
+   "altura": 3.416,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-14T20:05:00Z",
+   "altura": 1.406,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-15T02:18:00Z",
+   "altura": 3.767,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-15T08:32:00Z",
+   "altura": 1.207,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-15T14:45:00Z",
+   "altura": 3.667,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-15T20:42:00Z",
+   "altura": 1.184,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-16T02:54:00Z",
+   "altura": 4.037,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-16T09:07:00Z",
+   "altura": 0.975,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-16T15:18:00Z",
+   "altura": 3.898,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-16T21:16:00Z",
+   "altura": 0.968,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-17T03:28:00Z",
+   "altura": 4.27,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-17T09:40:00Z",
+   "altura": 0.767,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-17T15:50:00Z",
+   "altura": 4.088,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-17T21:49:00Z",
+   "altura": 0.782,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-18T04:02:00Z",
+   "altura": 4.452,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-18T10:13:00Z",
+   "altura": 0.611,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-18T16:22:00Z",
+   "altura": 4.229,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-18T22:23:00Z",
+   "altura": 0.654,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-19T04:37:00Z",
+   "altura": 4.566,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-19T10:46:00Z",
+   "altura": 0.527,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-19T16:56:00Z",
+   "altura": 4.303,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-19T22:57:00Z",
+   "altura": 0.594,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-20T05:12:00Z",
+   "altura": 4.586,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-20T11:21:00Z",
+   "altura": 0.524,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-20T17:30:00Z",
+   "altura": 4.289,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-20T23:33:00Z",
+   "altura": 0.614,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-21T05:49:00Z",
+   "altura": 4.494,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-21T11:58:00Z",
+   "altura": 0.609,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-21T18:07:00Z",
+   "altura": 4.184,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-22T00:13:00Z",
+   "altura": 0.726,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-22T06:29:00Z",
+   "altura": 4.297,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-22T12:37:00Z",
+   "altura": 0.798,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-22T18:47:00Z",
+   "altura": 4.005,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-23T00:56:00Z",
+   "altura": 0.936,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-23T07:14:00Z",
+   "altura": 4.024,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-23T13:22:00Z",
+   "altura": 1.072,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-23T19:35:00Z",
+   "altura": 3.775,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-24T01:49:00Z",
+   "altura": 1.21,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-24T08:09:00Z",
+   "altura": 3.696,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-24T14:17:00Z",
+   "altura": 1.375,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-24T20:37:00Z",
+   "altura": 3.52,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-25T02:58:00Z",
+   "altura": 1.459,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-25T09:25:00Z",
+   "altura": 3.372,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-25T15:32:00Z",
+   "altura": 1.598,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-25T22:08:00Z",
+   "altura": 3.333,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-26T04:34:00Z",
+   "altura": 1.541,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-26T11:08:00Z",
+   "altura": 3.214,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-26T17:09:00Z",
+   "altura": 1.613,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-26T23:50:00Z",
+   "altura": 3.379,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-27T06:12:00Z",
+   "altura": 1.37,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-27T12:40:00Z",
+   "altura": 3.329,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-27T18:35:00Z",
+   "altura": 1.416,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-28T01:07:00Z",
+   "altura": 3.644,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-28T07:23:00Z",
+   "altura": 1.083,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-02-28T13:44:00Z",
+   "altura": 3.604,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-02-28T19:37:00Z",
+   "altura": 1.147,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-01T02:02:00Z",
+   "altura": 3.983,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-01T08:15:00Z",
+   "altura": 0.813,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-01T14:32:00Z",
+   "altura": 3.898,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-01T20:25:00Z",
+   "altura": 0.891,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-02T02:47:00Z",
+   "altura": 4.28,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-02T08:58:00Z",
+   "altura": 0.599,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-02T15:12:00Z",
+   "altura": 4.122,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-02T21:06:00Z",
+   "altura": 0.673,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-03T03:26:00Z",
+   "altura": 4.467,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-03T09:37:00Z",
+   "altura": 0.457,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-03T15:48:00Z",
+   "altura": 4.25,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-03T21:44:00Z",
+   "altura": 0.524,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-04T04:02:00Z",
+   "altura": 4.538,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-04T10:12:00Z",
+   "altura": 0.409,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-04T16:22:00Z",
+   "altura": 4.294,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-04T22:19:00Z",
+   "altura": 0.479,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-05T04:36:00Z",
+   "altura": 4.513,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-05T10:46:00Z",
+   "altura": 0.472,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-05T16:53:00Z",
+   "altura": 4.271,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-05T22:54:00Z",
+   "altura": 0.547,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-06T05:08:00Z",
+   "altura": 4.405,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-06T11:18:00Z",
+   "altura": 0.626,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-06T17:25:00Z",
+   "altura": 4.179,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-06T23:28:00Z",
+   "altura": 0.699,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-07T05:40:00Z",
+   "altura": 4.216,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-07T11:50:00Z",
+   "altura": 0.837,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-07T17:56:00Z",
+   "altura": 4.015,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-08T00:02:00Z",
+   "altura": 0.908,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-08T06:12:00Z",
+   "altura": 3.959,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-08T12:22:00Z",
+   "altura": 1.08,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-08T18:28:00Z",
+   "altura": 3.799,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-09T00:37:00Z",
+   "altura": 1.156,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-09T06:46:00Z",
+   "altura": 3.667,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-09T12:56:00Z",
+   "altura": 1.347,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-09T19:05:00Z",
+   "altura": 3.556,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-10T01:16:00Z",
+   "altura": 1.429,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-10T07:25:00Z",
+   "altura": 3.362,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-10T13:35:00Z",
+   "altura": 1.619,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-10T19:49:00Z",
+   "altura": 3.308,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-11T02:06:00Z",
+   "altura": 1.693,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-11T08:17:00Z",
+   "altura": 3.071,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-11T14:30:00Z",
+   "altura": 1.855,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-11T20:56:00Z",
+   "altura": 3.088,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-12T03:21:00Z",
+   "altura": 1.881,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-12T09:46:00Z",
+   "altura": 2.861,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-12T16:01:00Z",
+   "altura": 1.984,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-12T22:36:00Z",
+   "altura": 3.008,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-13T05:07:00Z",
+   "altura": 1.882,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-13T11:39:00Z",
+   "altura": 2.88,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-13T17:43:00Z",
+   "altura": 1.903,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-14T00:05:00Z",
+   "altura": 3.152,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-14T06:30:00Z",
+   "altura": 1.692,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-14T12:52:00Z",
+   "altura": 3.102,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-14T18:50:00Z",
+   "altura": 1.685,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-15T01:05:00Z",
+   "altura": 3.43,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-15T07:22:00Z",
+   "altura": 1.429,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-15T13:38:00Z",
+   "altura": 3.395,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-15T19:36:00Z",
+   "altura": 1.415,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-16T01:48:00Z",
+   "altura": 3.745,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-16T08:02:00Z",
+   "altura": 1.141,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-16T14:15:00Z",
+   "altura": 3.688,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-16T20:13:00Z",
+   "altura": 1.123,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-17T02:25:00Z",
+   "altura": 4.043,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-17T08:36:00Z",
+   "altura": 0.849,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-17T14:48:00Z",
+   "altura": 3.953,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-17T20:48:00Z",
+   "altura": 0.834,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-18T03:00:00Z",
+   "altura": 4.306,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-18T09:10:00Z",
+   "altura": 0.591,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-18T15:21:00Z",
+   "altura": 4.181,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-18T21:22:00Z",
+   "altura": 0.588,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-19T03:35:00Z",
+   "altura": 4.512,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-19T09:43:00Z",
+   "altura": 0.402,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-19T15:54:00Z",
+   "altura": 4.351,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-19T21:57:00Z",
+   "altura": 0.415,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-20T04:10:00Z",
+   "altura": 4.63,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-20T10:18:00Z",
+   "altura": 0.31,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-20T16:29:00Z",
+   "altura": 4.434,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-20T22:34:00Z",
+   "altura": 0.335,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-21T04:48:00Z",
+   "altura": 4.626,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-21T10:55:00Z",
+   "altura": 0.328,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-21T17:06:00Z",
+   "altura": 4.411,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-21T23:12:00Z",
+   "altura": 0.373,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-22T05:27:00Z",
+   "altura": 4.494,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-22T11:33:00Z",
+   "altura": 0.476,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-22T17:45:00Z",
+   "altura": 4.291,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-22T23:54:00Z",
+   "altura": 0.545,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-23T06:11:00Z",
+   "altura": 4.251,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-23T12:15:00Z",
+   "altura": 0.751,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-23T18:28:00Z",
+   "altura": 4.09,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-24T00:42:00Z",
+   "altura": 0.836,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-24T07:00:00Z",
+   "altura": 3.926,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-24T13:03:00Z",
+   "altura": 1.103,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-24T19:20:00Z",
+   "altura": 3.824,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-25T01:40:00Z",
+   "altura": 1.17,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-25T08:02:00Z",
+   "altura": 3.553,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-25T14:03:00Z",
+   "altura": 1.441,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-25T20:30:00Z",
+   "altura": 3.537,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-26T02:57:00Z",
+   "altura": 1.431,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-26T09:30:00Z",
+   "altura": 3.249,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-26T15:26:00Z",
+   "altura": 1.653,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-26T22:08:00Z",
+   "altura": 3.372,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-27T04:38:00Z",
+   "altura": 1.481,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-27T11:14:00Z",
+   "altura": 3.193,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-27T17:05:00Z",
+   "altura": 1.634,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-27T23:45:00Z",
+   "altura": 3.469,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-28T06:09:00Z",
+   "altura": 1.311,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-28T12:34:00Z",
+   "altura": 3.386,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-28T18:25:00Z",
+   "altura": 1.433,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-29T00:54:00Z",
+   "altura": 3.736,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-29T07:11:00Z",
+   "altura": 1.079,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-29T13:29:00Z",
+   "altura": 3.667,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-29T19:22:00Z",
+   "altura": 1.184,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-30T01:45:00Z",
+   "altura": 4.014,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-30T07:57:00Z",
+   "altura": 0.868,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-30T14:12:00Z",
+   "altura": 3.917,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-30T20:06:00Z",
+   "altura": 0.946,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-31T02:27:00Z",
+   "altura": 4.218,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-31T08:36:00Z",
+   "altura": 0.698,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-03-31T14:48:00Z",
+   "altura": 4.091,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-03-31T20:45:00Z",
+   "altura": 0.746,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-01T03:03:00Z",
+   "altura": 4.327,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-01T09:11:00Z",
+   "altura": 0.59,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-01T15:21:00Z",
+   "altura": 4.201,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-01T21:20:00Z",
+   "altura": 0.624,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-02T03:36:00Z",
+   "altura": 4.364,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-02T09:43:00Z",
+   "altura": 0.571,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-02T15:53:00Z",
+   "altura": 4.254,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-02T21:54:00Z",
+   "altura": 0.603,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-03T04:08:00Z",
+   "altura": 4.338,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-03T10:15:00Z",
+   "altura": 0.637,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-03T16:23:00Z",
+   "altura": 4.249,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-03T22:28:00Z",
+   "altura": 0.664,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-04T04:39:00Z",
+   "altura": 4.24,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-04T10:46:00Z",
+   "altura": 0.759,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-04T16:54:00Z",
+   "altura": 4.166,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-04T23:00:00Z",
+   "altura": 0.776,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-05T05:10:00Z",
+   "altura": 4.063,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-05T11:17:00Z",
+   "altura": 0.915,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-05T17:24:00Z",
+   "altura": 4.009,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-05T23:34:00Z",
+   "altura": 0.931,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-06T05:41:00Z",
+   "altura": 3.825,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-06T11:48:00Z",
+   "altura": 1.103,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-06T17:57:00Z",
+   "altura": 3.806,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-07T00:08:00Z",
+   "altura": 1.126,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-07T06:15:00Z",
+   "altura": 3.562,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-07T12:21:00Z",
+   "altura": 1.322,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-07T18:33:00Z",
+   "altura": 3.585,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-08T00:47:00Z",
+   "altura": 1.355,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-08T06:53:00Z",
+   "altura": 3.297,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-08T13:00:00Z",
+   "altura": 1.562,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-08T19:16:00Z",
+   "altura": 3.364,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-09T01:35:00Z",
+   "altura": 1.588,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-09T07:45:00Z",
+   "altura": 3.047,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-09T13:52:00Z",
+   "altura": 1.783,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-09T20:17:00Z",
+   "altura": 3.167,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-10T02:43:00Z",
+   "altura": 1.77,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-10T09:07:00Z",
+   "altura": 2.879,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-10T15:13:00Z",
+   "altura": 1.931,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-10T21:45:00Z",
+   "altura": 3.087,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-11T04:17:00Z",
+   "altura": 1.812,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-11T10:52:00Z",
+   "altura": 2.913,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-11T16:51:00Z",
+   "altura": 1.904,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-11T23:14:00Z",
+   "altura": 3.201,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-12T05:42:00Z",
+   "altura": 1.67,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-12T12:06:00Z",
+   "altura": 3.135,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-12T18:04:00Z",
+   "altura": 1.714,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-13T00:18:00Z",
+   "altura": 3.453,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-13T06:38:00Z",
+   "altura": 1.418,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-13T12:56:00Z",
+   "altura": 3.423,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-13T18:55:00Z",
+   "altura": 1.436,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-14T01:06:00Z",
+   "altura": 3.746,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-14T07:21:00Z",
+   "altura": 1.118,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-14T13:35:00Z",
+   "altura": 3.714,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-14T19:36:00Z",
+   "altura": 1.118,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-15T01:47:00Z",
+   "altura": 4.027,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-15T07:59:00Z",
+   "altura": 0.812,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-15T14:12:00Z",
+   "altura": 3.981,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-15T20:14:00Z",
+   "altura": 0.801,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-16T02:26:00Z",
+   "altura": 4.278,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-16T08:35:00Z",
+   "altura": 0.543,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-16T14:47:00Z",
+   "altura": 4.211,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-16T20:52:00Z",
+   "altura": 0.528,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-17T03:04:00Z",
+   "altura": 4.469,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-17T09:12:00Z",
+   "altura": 0.356,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-17T15:24:00Z",
+   "altura": 4.382,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-17T21:31:00Z",
+   "altura": 0.337,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-18T03:44:00Z",
+   "altura": 4.564,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-18T09:50:00Z",
+   "altura": 0.28,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-18T16:03:00Z",
+   "altura": 4.468,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-18T22:12:00Z",
+   "altura": 0.262,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-19T04:26:00Z",
+   "altura": 4.54,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-19T10:31:00Z",
+   "altura": 0.339,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-19T16:45:00Z",
+   "altura": 4.454,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-19T22:56:00Z",
+   "altura": 0.33,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-20T05:11:00Z",
+   "altura": 4.397,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-20T11:14:00Z",
+   "altura": 0.536,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-20T17:29:00Z",
+   "altura": 4.348,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-20T23:43:00Z",
+   "altura": 0.538,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-21T06:00:00Z",
+   "altura": 4.151,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-21T12:01:00Z",
+   "altura": 0.839,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-21T18:19:00Z",
+   "altura": 4.158,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-22T00:37:00Z",
+   "altura": 0.836,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-22T06:56:00Z",
+   "altura": 3.838,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-22T12:54:00Z",
+   "altura": 1.177,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-22T19:18:00Z",
+   "altura": 3.913,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-23T01:41:00Z",
+   "altura": 1.142,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-23T08:06:00Z",
+   "altura": 3.523,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-23T14:00:00Z",
+   "altura": 1.47,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-23T20:32:00Z",
+   "altura": 3.68,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-24T02:59:00Z",
+   "altura": 1.36,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-24T09:32:00Z",
+   "altura": 3.327,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-24T15:21:00Z",
+   "altura": 1.632,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-24T22:00:00Z",
+   "altura": 3.573,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-25T04:28:00Z",
+   "altura": 1.411,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-25T10:59:00Z",
+   "altura": 3.336,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-25T16:47:00Z",
+   "altura": 1.615,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-25T23:21:00Z",
+   "altura": 3.636,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-26T05:45:00Z",
+   "altura": 1.319,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-26T12:08:00Z",
+   "altura": 3.49,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-26T17:59:00Z",
+   "altura": 1.467,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-27T00:26:00Z",
+   "altura": 3.781,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-27T06:43:00Z",
+   "altura": 1.17,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-27T13:00:00Z",
+   "altura": 3.68,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-27T18:54:00Z",
+   "altura": 1.267,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-28T01:17:00Z",
+   "altura": 3.922,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-28T07:29:00Z",
+   "altura": 1.017,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-28T13:43:00Z",
+   "altura": 3.845,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-28T19:40:00Z",
+   "altura": 1.072,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-29T01:59:00Z",
+   "altura": 4.017,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-29T08:07:00Z",
+   "altura": 0.897,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-29T14:19:00Z",
+   "altura": 3.976,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-29T20:19:00Z",
+   "altura": 0.927,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-30T02:36:00Z",
+   "altura": 4.078,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-30T08:42:00Z",
+   "altura": 0.836,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-04-30T14:53:00Z",
+   "altura": 4.076,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-04-30T20:56:00Z",
+   "altura": 0.855,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-01T03:10:00Z",
+   "altura": 4.108,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-01T09:15:00Z",
+   "altura": 0.835,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-01T15:25:00Z",
+   "altura": 4.136,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-01T21:31:00Z",
+   "altura": 0.838,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-02T03:42:00Z",
+   "altura": 4.085,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-02T09:47:00Z",
+   "altura": 0.87,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-02T15:56:00Z",
+   "altura": 4.13,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-02T22:05:00Z",
+   "altura": 0.855,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-03T04:14:00Z",
+   "altura": 3.995,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-03T10:18:00Z",
+   "altura": 0.929,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-03T16:28:00Z",
+   "altura": 4.054,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-03T22:39:00Z",
+   "altura": 0.901,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-04T04:46:00Z",
+   "altura": 3.848,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-04T10:50:00Z",
+   "altura": 1.019,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-04T17:01:00Z",
+   "altura": 3.935,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-04T23:13:00Z",
+   "altura": 0.992,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-05T05:19:00Z",
+   "altura": 3.676,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-05T11:22:00Z",
+   "altura": 1.156,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-05T17:35:00Z",
+   "altura": 3.797,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-05T23:49:00Z",
+   "altura": 1.133,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-06T05:54:00Z",
+   "altura": 3.498,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-06T11:57:00Z",
+   "altura": 1.327,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-06T18:13:00Z",
+   "altura": 3.654,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-07T00:28:00Z",
+   "altura": 1.305,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-07T06:35:00Z",
+   "altura": 3.322,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-07T12:38:00Z",
+   "altura": 1.511,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-07T18:57:00Z",
+   "altura": 3.503,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-08T01:15:00Z",
+   "altura": 1.472,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-08T07:25:00Z",
+   "altura": 3.153,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-08T13:29:00Z",
+   "altura": 1.674,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-08T19:52:00Z",
+   "altura": 3.364,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-09T02:13:00Z",
+   "altura": 1.6,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-09T08:33:00Z",
+   "altura": 3.038,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-09T14:36:00Z",
+   "altura": 1.78,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-09T21:01:00Z",
+   "altura": 3.29,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-10T03:26:00Z",
+   "altura": 1.643,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-10T09:55:00Z",
+   "altura": 3.052,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-10T15:54:00Z",
+   "altura": 1.782,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-10T22:16:00Z",
+   "altura": 3.339,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-11T04:40:00Z",
+   "altura": 1.565,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-11T11:07:00Z",
+   "altura": 3.206,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-11T17:06:00Z",
+   "altura": 1.655,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-11T23:22:00Z",
+   "altura": 3.497,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-12T05:43:00Z",
+   "altura": 1.378,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-12T12:03:00Z",
+   "altura": 3.435,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-12T18:03:00Z",
+   "altura": 1.426,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-13T00:17:00Z",
+   "altura": 3.712,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-13T06:33:00Z",
+   "altura": 1.127,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-13T12:50:00Z",
+   "altura": 3.682,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-13T18:52:00Z",
+   "altura": 1.143,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-14T01:06:00Z",
+   "altura": 3.938,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-14T07:18:00Z",
+   "altura": 0.861,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-14T13:32:00Z",
+   "altura": 3.926,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-14T19:37:00Z",
+   "altura": 0.847,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-15T01:51:00Z",
+   "altura": 4.149,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-15T08:00:00Z",
+   "altura": 0.631,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-15T14:15:00Z",
+   "altura": 4.147,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-15T20:22:00Z",
+   "altura": 0.59,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-16T02:37:00Z",
+   "altura": 4.312,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-16T08:43:00Z",
+   "altura": 0.475,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-16T14:58:00Z",
+   "altura": 4.323,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-16T21:08:00Z",
+   "altura": 0.41,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-17T03:24:00Z",
+   "altura": 4.395,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-17T09:27:00Z",
+   "altura": 0.42,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-17T15:43:00Z",
+   "altura": 4.427,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-17T21:55:00Z",
+   "altura": 0.336,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-18T04:12:00Z",
+   "altura": 4.378,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-18T10:13:00Z",
+   "altura": 0.477,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-18T16:30:00Z",
+   "altura": 4.444,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-18T22:45:00Z",
+   "altura": 0.38,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-19T05:02:00Z",
+   "altura": 4.258,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-19T11:01:00Z",
+   "altura": 0.633,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-19T17:21:00Z",
+   "altura": 4.37,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-19T23:38:00Z",
+   "altura": 0.53,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-20T05:56:00Z",
+   "altura": 4.055,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-20T11:52:00Z",
+   "altura": 0.858,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-20T18:16:00Z",
+   "altura": 4.223,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-21T00:35:00Z",
+   "altura": 0.75,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-21T06:55:00Z",
+   "altura": 3.812,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-21T12:48:00Z",
+   "altura": 1.106,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-21T19:16:00Z",
+   "altura": 4.034,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-22T01:37:00Z",
+   "altura": 0.992,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-22T08:00:00Z",
+   "altura": 3.588,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-22T13:51:00Z",
+   "altura": 1.325,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-22T20:22:00Z",
+   "altura": 3.847,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-23T02:44:00Z",
+   "altura": 1.195,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-23T09:10:00Z",
+   "altura": 3.438,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-23T15:00:00Z",
+   "altura": 1.467,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-23T21:32:00Z",
+   "altura": 3.706,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-24T03:56:00Z",
+   "altura": 1.309,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-24T10:21:00Z",
+   "altura": 3.387,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-24T16:12:00Z",
+   "altura": 1.502,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-24T22:42:00Z",
+   "altura": 3.625,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-25T05:04:00Z",
+   "altura": 1.32,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-25T11:25:00Z",
+   "altura": 3.419,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-25T17:19:00Z",
+   "altura": 1.436,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-25T23:45:00Z",
+   "altura": 3.603,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-26T06:03:00Z",
+   "altura": 1.26,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-26T12:20:00Z",
+   "altura": 3.501,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-26T18:18:00Z",
+   "altura": 1.322,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-27T00:41:00Z",
+   "altura": 3.623,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-27T06:53:00Z",
+   "altura": 1.181,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-27T13:07:00Z",
+   "altura": 3.616,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-27T19:08:00Z",
+   "altura": 1.213,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-28T01:28:00Z",
+   "altura": 3.674,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-28T07:35:00Z",
+   "altura": 1.12,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-28T13:48:00Z",
+   "altura": 3.743,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-28T19:53:00Z",
+   "altura": 1.132,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-29T02:09:00Z",
+   "altura": 3.738,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-29T08:14:00Z",
+   "altura": 1.083,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-29T14:26:00Z",
+   "altura": 3.854,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-29T20:33:00Z",
+   "altura": 1.071,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-30T02:47:00Z",
+   "altura": 3.776,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-30T08:49:00Z",
+   "altura": 1.054,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-30T15:01:00Z",
+   "altura": 3.916,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-30T21:10:00Z",
+   "altura": 1.016,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-31T03:22:00Z",
+   "altura": 3.773,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-31T09:23:00Z",
+   "altura": 1.03,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-05-31T15:35:00Z",
+   "altura": 3.931,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-05-31T21:46:00Z",
+   "altura": 0.973,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-01T03:56:00Z",
+   "altura": 3.733,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-01T09:56:00Z",
+   "altura": 1.03,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-01T16:09:00Z",
+   "altura": 3.918,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-01T22:21:00Z",
+   "altura": 0.967,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-02T04:30:00Z",
+   "altura": 3.682,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-02T10:30:00Z",
+   "altura": 1.076,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-02T16:43:00Z",
+   "altura": 3.897,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-02T22:57:00Z",
+   "altura": 1.013,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-03T05:04:00Z",
+   "altura": 3.625,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-03T11:04:00Z",
+   "altura": 1.161,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-03T17:19:00Z",
+   "altura": 3.862,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-03T23:33:00Z",
+   "altura": 1.095,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-04T05:40:00Z",
+   "altura": 3.552,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-04T11:40:00Z",
+   "altura": 1.263,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-04T17:57:00Z",
+   "altura": 3.797,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-05T00:12:00Z",
+   "altura": 1.183,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-05T06:19:00Z",
+   "altura": 3.454,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-05T12:21:00Z",
+   "altura": 1.356,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-05T18:39:00Z",
+   "altura": 3.698,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-06T00:55:00Z",
+   "altura": 1.258,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-06T07:04:00Z",
+   "altura": 3.342,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-06T13:07:00Z",
+   "altura": 1.435,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-06T19:26:00Z",
+   "altura": 3.589,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-07T01:43:00Z",
+   "altura": 1.322,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-07T07:57:00Z",
+   "altura": 3.249,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-07T14:00:00Z",
+   "altura": 1.5,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-07T20:21:00Z",
+   "altura": 3.505,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-08T02:38:00Z",
+   "altura": 1.365,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-08T08:59:00Z",
+   "altura": 3.221,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-08T15:01:00Z",
+   "altura": 1.532,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-08T21:21:00Z",
+   "altura": 3.48,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-09T03:40:00Z",
+   "altura": 1.37,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-09T10:05:00Z",
+   "altura": 3.279,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-09T16:07:00Z",
+   "altura": 1.5,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-09T22:25:00Z",
+   "altura": 3.527,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-10T04:43:00Z",
+   "altura": 1.308,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-10T11:07:00Z",
+   "altura": 3.414,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-10T17:10:00Z",
+   "altura": 1.383,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-10T23:28:00Z",
+   "altura": 3.634,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-11T05:43:00Z",
+   "altura": 1.177,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-11T12:04:00Z",
+   "altura": 3.6,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-11T18:10:00Z",
+   "altura": 1.195,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-12T00:27:00Z",
+   "altura": 3.784,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-12T06:39:00Z",
+   "altura": 1.008,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-12T12:57:00Z",
+   "altura": 3.813,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-12T19:06:00Z",
+   "altura": 0.967,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-13T01:24:00Z",
+   "altura": 3.949,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-13T07:31:00Z",
+   "altura": 0.839,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-13T13:49:00Z",
+   "altura": 4.034,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-13T20:00:00Z",
+   "altura": 0.741,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-14T02:18:00Z",
+   "altura": 4.101,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-14T08:21:00Z",
+   "altura": 0.698,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-14T14:40:00Z",
+   "altura": 4.232,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-14T20:54:00Z",
+   "altura": 0.55,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-15T03:12:00Z",
+   "altura": 4.204,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-15T09:11:00Z",
+   "altura": 0.608,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-15T15:31:00Z",
+   "altura": 4.377,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-15T21:47:00Z",
+   "altura": 0.42,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-16T04:04:00Z",
+   "altura": 4.23,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-16T10:02:00Z",
+   "altura": 0.578,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-16T16:23:00Z",
+   "altura": 4.442,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-16T22:40:00Z",
+   "altura": 0.374,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-17T04:57:00Z",
+   "altura": 4.173,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-17T10:52:00Z",
+   "altura": 0.618,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-17T17:15:00Z",
+   "altura": 4.421,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-17T23:32:00Z",
+   "altura": 0.429,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-18T05:49:00Z",
+   "altura": 4.048,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-18T11:43:00Z",
+   "altura": 0.73,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-18T18:08:00Z",
+   "altura": 4.325,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-19T00:25:00Z",
+   "altura": 0.583,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-19T06:41:00Z",
+   "altura": 3.883,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-19T12:34:00Z",
+   "altura": 0.899,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-19T19:00:00Z",
+   "altura": 4.165,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-20T01:18:00Z",
+   "altura": 0.803,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-20T07:35:00Z",
+   "altura": 3.699,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-20T13:28:00Z",
+   "altura": 1.09,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-20T19:54:00Z",
+   "altura": 3.955,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-21T02:12:00Z",
+   "altura": 1.033,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-21T08:30:00Z",
+   "altura": 3.515,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-21T14:24:00Z",
+   "altura": 1.259,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-21T20:50:00Z",
+   "altura": 3.716,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-22T03:09:00Z",
+   "altura": 1.224,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-22T09:28:00Z",
+   "altura": 3.361,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-22T15:25:00Z",
+   "altura": 1.376,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-22T21:50:00Z",
+   "altura": 3.495,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-23T04:10:00Z",
+   "altura": 1.35,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-23T10:30:00Z",
+   "altura": 3.277,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-23T16:30:00Z",
+   "altura": 1.44,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-23T22:54:00Z",
+   "altura": 3.352,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-24T05:12:00Z",
+   "altura": 1.414,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-24T11:32:00Z",
+   "altura": 3.296,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-24T17:34:00Z",
+   "altura": 1.46,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-24T23:57:00Z",
+   "altura": 3.32,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-25T06:11:00Z",
+   "altura": 1.43,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-25T12:28:00Z",
+   "altura": 3.399,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-25T18:35:00Z",
+   "altura": 1.437,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-26T00:55:00Z",
+   "altura": 3.371,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-26T07:03:00Z",
+   "altura": 1.402,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-26T13:18:00Z",
+   "altura": 3.532,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-26T19:27:00Z",
+   "altura": 1.37,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-27T01:45:00Z",
+   "altura": 3.449,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-27T07:48:00Z",
+   "altura": 1.33,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-27T14:01:00Z",
+   "altura": 3.653,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-27T20:13:00Z",
+   "altura": 1.261,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-28T02:27:00Z",
+   "altura": 3.517,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-28T08:28:00Z",
+   "altura": 1.234,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-28T14:41:00Z",
+   "altura": 3.747,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-28T20:53:00Z",
+   "altura": 1.141,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-29T03:06:00Z",
+   "altura": 3.576,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-29T09:04:00Z",
+   "altura": 1.148,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-29T15:17:00Z",
+   "altura": 3.836,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-29T21:30:00Z",
+   "altura": 1.048,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-30T03:41:00Z",
+   "altura": 3.64,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-30T09:39:00Z",
+   "altura": 1.1,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-06-30T15:53:00Z",
+   "altura": 3.928,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-06-30T22:06:00Z",
+   "altura": 1,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-01T04:16:00Z",
+   "altura": 3.704,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-01T10:13:00Z",
+   "altura": 1.09,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-01T16:27:00Z",
+   "altura": 4.008,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-01T22:40:00Z",
+   "altura": 0.985,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-02T04:49:00Z",
+   "altura": 3.746,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-02T10:47:00Z",
+   "altura": 1.097,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-02T17:02:00Z",
+   "altura": 4.045,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-02T23:15:00Z",
+   "altura": 0.983,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-03T05:23:00Z",
+   "altura": 3.742,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-03T11:22:00Z",
+   "altura": 1.108,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-03T17:38:00Z",
+   "altura": 4.023,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-03T23:51:00Z",
+   "altura": 0.988,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-04T05:58:00Z",
+   "altura": 3.691,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-04T12:00:00Z",
+   "altura": 1.122,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-04T18:16:00Z",
+   "altura": 3.95,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-05T00:29:00Z",
+   "altura": 1.005,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-05T06:37:00Z",
+   "altura": 3.609,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-05T12:40:00Z",
+   "altura": 1.157,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-05T18:57:00Z",
+   "altura": 3.846,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-06T01:10:00Z",
+   "altura": 1.052,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-06T07:20:00Z",
+   "altura": 3.521,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-06T13:25:00Z",
+   "altura": 1.224,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-06T19:43:00Z",
+   "altura": 3.736,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-07T01:55:00Z",
+   "altura": 1.138,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-07T08:10:00Z",
+   "altura": 3.449,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-07T14:16:00Z",
+   "altura": 1.317,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-07T20:35:00Z",
+   "altura": 3.639,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-08T02:49:00Z",
+   "altura": 1.245,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-08T09:09:00Z",
+   "altura": 3.413,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-08T15:16:00Z",
+   "altura": 1.402,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-08T21:37:00Z",
+   "altura": 3.573,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-09T03:51:00Z",
+   "altura": 1.332,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-09T10:16:00Z",
+   "altura": 3.437,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-09T16:25:00Z",
+   "altura": 1.424,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-09T22:47:00Z",
+   "altura": 3.559,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-10T05:00:00Z",
+   "altura": 1.346,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-10T11:27:00Z",
+   "altura": 3.54,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-10T17:38:00Z",
+   "altura": 1.337,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-11T00:00:00Z",
+   "altura": 3.621,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-11T06:09:00Z",
+   "altura": 1.259,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-11T12:34:00Z",
+   "altura": 3.72,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-11T18:47:00Z",
+   "altura": 1.147,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-12T01:09:00Z",
+   "altura": 3.762,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-12T07:13:00Z",
+   "altura": 1.097,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-12T13:36:00Z",
+   "altura": 3.956,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-12T19:51:00Z",
+   "altura": 0.895,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-13T02:11:00Z",
+   "altura": 3.941,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-13T08:10:00Z",
+   "altura": 0.902,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-13T14:32:00Z",
+   "altura": 4.201,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-13T20:48:00Z",
+   "altura": 0.638,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-14T03:07:00Z",
+   "altura": 4.104,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-14T09:03:00Z",
+   "altura": 0.716,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-14T15:25:00Z",
+   "altura": 4.406,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-14T21:41:00Z",
+   "altura": 0.431,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-15T03:58:00Z",
+   "altura": 4.206,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-15T09:52:00Z",
+   "altura": 0.579,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-15T16:14:00Z",
+   "altura": 4.527,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-15T22:30:00Z",
+   "altura": 0.321,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-16T04:46:00Z",
+   "altura": 4.224,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-16T10:39:00Z",
+   "altura": 0.527,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-16T17:02:00Z",
+   "altura": 4.548,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-16T23:17:00Z",
+   "altura": 0.341,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-17T05:31:00Z",
+   "altura": 4.166,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-17T11:25:00Z",
+   "altura": 0.581,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-17T17:48:00Z",
+   "altura": 4.468,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-18T00:02:00Z",
+   "altura": 0.489,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-18T06:14:00Z",
+   "altura": 4.041,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-18T12:10:00Z",
+   "altura": 0.728,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-18T18:32:00Z",
+   "altura": 4.29,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-19T00:46:00Z",
+   "altura": 0.721,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-19T06:57:00Z",
+   "altura": 3.857,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-19T12:55:00Z",
+   "altura": 0.93,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-19T19:15:00Z",
+   "altura": 4.024,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-20T01:30:00Z",
+   "altura": 0.983,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-20T07:41:00Z",
+   "altura": 3.632,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-20T13:42:00Z",
+   "altura": 1.148,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-20T20:01:00Z",
+   "altura": 3.714,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-21T02:16:00Z",
+   "altura": 1.239,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-21T08:29:00Z",
+   "altura": 3.413,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-21T14:33:00Z",
+   "altura": 1.368,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-21T20:52:00Z",
+   "altura": 3.425,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-22T03:08:00Z",
+   "altura": 1.478,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-22T09:27:00Z",
+   "altura": 3.259,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-22T15:34:00Z",
+   "altura": 1.577,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-22T21:54:00Z",
+   "altura": 3.222,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-23T04:12:00Z",
+   "altura": 1.67,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-23T10:36:00Z",
+   "altura": 3.215,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-23T16:47:00Z",
+   "altura": 1.715,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-23T23:10:00Z",
+   "altura": 3.144,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-24T05:25:00Z",
+   "altura": 1.755,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-24T11:48:00Z",
+   "altura": 3.277,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-24T18:02:00Z",
+   "altura": 1.718,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-25T00:24:00Z",
+   "altura": 3.181,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-25T06:32:00Z",
+   "altura": 1.7,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-25T12:50:00Z",
+   "altura": 3.397,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-25T19:06:00Z",
+   "altura": 1.591,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-26T01:24:00Z",
+   "altura": 3.276,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-26T07:26:00Z",
+   "altura": 1.55,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-26T13:40:00Z",
+   "altura": 3.539,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-26T19:56:00Z",
+   "altura": 1.401,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-27T02:11:00Z",
+   "altura": 3.398,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-27T08:09:00Z",
+   "altura": 1.372,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-27T14:22:00Z",
+   "altura": 3.699,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-27T20:37:00Z",
+   "altura": 1.212,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-28T02:50:00Z",
+   "altura": 3.543,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-28T08:46:00Z",
+   "altura": 1.216,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-28T14:59:00Z",
+   "altura": 3.873,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-28T21:13:00Z",
+   "altura": 1.059,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-29T03:24:00Z",
+   "altura": 3.698,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-29T09:21:00Z",
+   "altura": 1.092,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-29T15:34:00Z",
+   "altura": 4.04,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-29T21:46:00Z",
+   "altura": 0.936,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-30T03:56:00Z",
+   "altura": 3.831,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-30T09:54:00Z",
+   "altura": 0.989,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-30T16:07:00Z",
+   "altura": 4.168,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-30T22:19:00Z",
+   "altura": 0.839,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-31T04:28:00Z",
+   "altura": 3.921,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-31T10:27:00Z",
+   "altura": 0.908,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-07-31T16:40:00Z",
+   "altura": 4.235,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-07-31T22:52:00Z",
+   "altura": 0.77,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-01T05:00:00Z",
+   "altura": 3.957,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-01T11:00:00Z",
+   "altura": 0.856,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-01T17:14:00Z",
+   "altura": 4.239,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-01T23:25:00Z",
+   "altura": 0.742,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-02T05:32:00Z",
+   "altura": 3.944,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-02T11:35:00Z",
+   "altura": 0.849,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-02T17:49:00Z",
+   "altura": 4.179,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-03T00:00:00Z",
+   "altura": 0.767,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-03T06:07:00Z",
+   "altura": 3.881,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-03T12:11:00Z",
+   "altura": 0.9,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-03T18:27:00Z",
+   "altura": 4.063,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-04T00:37:00Z",
+   "altura": 0.855,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-04T06:46:00Z",
+   "altura": 3.778,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-04T12:52:00Z",
+   "altura": 1.013,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-04T19:09:00Z",
+   "altura": 3.905,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-05T01:19:00Z",
+   "altura": 1.016,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-05T07:31:00Z",
+   "altura": 3.649,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-05T13:40:00Z",
+   "altura": 1.191,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-05T19:58:00Z",
+   "altura": 3.716,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-06T02:09:00Z",
+   "altura": 1.229,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-06T08:26:00Z",
+   "altura": 3.521,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-06T14:40:00Z",
+   "altura": 1.385,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-06T21:01:00Z",
+   "altura": 3.527,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-07T03:12:00Z",
+   "altura": 1.436,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-07T09:39:00Z",
+   "altura": 3.422,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-07T15:57:00Z",
+   "altura": 1.502,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-07T22:23:00Z",
+   "altura": 3.394,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-08T04:32:00Z",
+   "altura": 1.53,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-08T11:06:00Z",
+   "altura": 3.44,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-08T17:26:00Z",
+   "altura": 1.439,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-08T23:53:00Z",
+   "altura": 3.416,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-09T05:57:00Z",
+   "altura": 1.435,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-09T12:28:00Z",
+   "altura": 3.62,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-09T18:46:00Z",
+   "altura": 1.196,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-10T01:10:00Z",
+   "altura": 3.598,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-10T07:07:00Z",
+   "altura": 1.202,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-10T13:33:00Z",
+   "altura": 3.908,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-10T19:50:00Z",
+   "altura": 0.879,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-11T02:10:00Z",
+   "altura": 3.852,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-11T08:04:00Z",
+   "altura": 0.929,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-11T14:27:00Z",
+   "altura": 4.218,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-11T20:42:00Z",
+   "altura": 0.588,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-12T03:00:00Z",
+   "altura": 4.09,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-12T08:53:00Z",
+   "altura": 0.682,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-12T15:15:00Z",
+   "altura": 4.468,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-12T21:29:00Z",
+   "altura": 0.377,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-13T03:44:00Z",
+   "altura": 4.251,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-13T09:38:00Z",
+   "altura": 0.504,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-13T15:59:00Z",
+   "altura": 4.608,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-13T22:12:00Z",
+   "altura": 0.281,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-14T04:25:00Z",
+   "altura": 4.314,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-14T10:20:00Z",
+   "altura": 0.433,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-14T16:40:00Z",
+   "altura": 4.625,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-14T22:52:00Z",
+   "altura": 0.323,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-15T05:03:00Z",
+   "altura": 4.285,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-15T11:00:00Z",
+   "altura": 0.483,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-15T17:19:00Z",
+   "altura": 4.524,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-15T23:31:00Z",
+   "altura": 0.487,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-16T05:40:00Z",
+   "altura": 4.173,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-16T11:39:00Z",
+   "altura": 0.637,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-16T17:56:00Z",
+   "altura": 4.314,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-17T00:08:00Z",
+   "altura": 0.727,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-17T06:16:00Z",
+   "altura": 3.985,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-17T12:18:00Z",
+   "altura": 0.859,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-17T18:33:00Z",
+   "altura": 4.023,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-18T00:45:00Z",
+   "altura": 1.005,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-18T06:52:00Z",
+   "altura": 3.753,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-18T12:58:00Z",
+   "altura": 1.125,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-18T19:12:00Z",
+   "altura": 3.698,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-19T01:24:00Z",
+   "altura": 1.301,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-19T07:33:00Z",
+   "altura": 3.516,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-19T13:43:00Z",
+   "altura": 1.423,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-19T19:56:00Z",
+   "altura": 3.395,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-20T02:09:00Z",
+   "altura": 1.603,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-20T08:25:00Z",
+   "altura": 3.313,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-20T14:39:00Z",
+   "altura": 1.713,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-20T20:55:00Z",
+   "altura": 3.15,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-21T03:10:00Z",
+   "altura": 1.866,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-21T09:37:00Z",
+   "altura": 3.181,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-21T15:58:00Z",
+   "altura": 1.907,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-21T22:22:00Z",
+   "altura": 3.008,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-22T04:37:00Z",
+   "altura": 1.98,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-22T11:07:00Z",
+   "altura": 3.166,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-22T17:33:00Z",
+   "altura": 1.89,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-22T23:58:00Z",
+   "altura": 3.025,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-23T06:03:00Z",
+   "altura": 1.881,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-23T12:23:00Z",
+   "altura": 3.279,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-23T18:46:00Z",
+   "altura": 1.69,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-24T01:05:00Z",
+   "altura": 3.162,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-24T07:04:00Z",
+   "altura": 1.658,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-24T13:18:00Z",
+   "altura": 3.465,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-24T19:36:00Z",
+   "altura": 1.432,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-25T01:51:00Z",
+   "altura": 3.352,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-25T07:48:00Z",
+   "altura": 1.411,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-25T14:00:00Z",
+   "altura": 3.686,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-25T20:15:00Z",
+   "altura": 1.181,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-26T02:27:00Z",
+   "altura": 3.562,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-26T08:24:00Z",
+   "altura": 1.175,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-26T14:36:00Z",
+   "altura": 3.909,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-26T20:49:00Z",
+   "altura": 0.951,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-27T03:00:00Z",
+   "altura": 3.757,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-27T08:57:00Z",
+   "altura": 0.956,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-27T15:09:00Z",
+   "altura": 4.104,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-27T21:20:00Z",
+   "altura": 0.749,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-28T03:30:00Z",
+   "altura": 3.925,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-28T09:30:00Z",
+   "altura": 0.771,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-28T15:41:00Z",
+   "altura": 4.256,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-28T21:52:00Z",
+   "altura": 0.598,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-29T04:01:00Z",
+   "altura": 4.054,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-29T10:02:00Z",
+   "altura": 0.642,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-29T16:14:00Z",
+   "altura": 4.354,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-29T22:23:00Z",
+   "altura": 0.517,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-30T04:32:00Z",
+   "altura": 4.134,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-30T10:34:00Z",
+   "altura": 0.583,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-30T16:47:00Z",
+   "altura": 4.381,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-30T22:56:00Z",
+   "altura": 0.512,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-31T05:05:00Z",
+   "altura": 4.148,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-31T11:09:00Z",
+   "altura": 0.6,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-08-31T17:22:00Z",
+   "altura": 4.317,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-08-31T23:30:00Z",
+   "altura": 0.585,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-01T05:39:00Z",
+   "altura": 4.081,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-01T11:46:00Z",
+   "altura": 0.695,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-01T18:00:00Z",
+   "altura": 4.16,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-02T00:07:00Z",
+   "altura": 0.747,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-02T06:17:00Z",
+   "altura": 3.944,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-02T12:27:00Z",
+   "altura": 0.878,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-02T18:42:00Z",
+   "altura": 3.929,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-03T00:49:00Z",
+   "altura": 0.996,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-03T07:02:00Z",
+   "altura": 3.756,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-03T13:16:00Z",
+   "altura": 1.137,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-03T19:34:00Z",
+   "altura": 3.648,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-04T01:41:00Z",
+   "altura": 1.29,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-04T07:59:00Z",
+   "altura": 3.538,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-04T14:20:00Z",
+   "altura": 1.397,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-04T20:45:00Z",
+   "altura": 3.36,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-05T02:50:00Z",
+   "altura": 1.546,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-05T09:22:00Z",
+   "altura": 3.357,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-05T15:50:00Z",
+   "altura": 1.528,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-05T22:24:00Z",
+   "altura": 3.198,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-06T04:24:00Z",
+   "altura": 1.624,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-06T11:05:00Z",
+   "altura": 3.367,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-06T17:31:00Z",
+   "altura": 1.4,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-07T00:01:00Z",
+   "altura": 3.294,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-07T05:56:00Z",
+   "altura": 1.46,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-07T12:28:00Z",
+   "altura": 3.608,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-07T18:48:00Z",
+   "altura": 1.108,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-08T01:10:00Z",
+   "altura": 3.565,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-08T07:03:00Z",
+   "altura": 1.182,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-08T13:28:00Z",
+   "altura": 3.952,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-08T19:43:00Z",
+   "altura": 0.81,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-09T02:01:00Z",
+   "altura": 3.881,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-09T07:54:00Z",
+   "altura": 0.904,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-09T14:16:00Z",
+   "altura": 4.278,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-09T20:29:00Z",
+   "altura": 0.574,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-10T02:44:00Z",
+   "altura": 4.143,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-10T08:38:00Z",
+   "altura": 0.669,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-10T14:58:00Z",
+   "altura": 4.503,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-10T21:09:00Z",
+   "altura": 0.417,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-11T03:22:00Z",
+   "altura": 4.306,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-11T09:18:00Z",
+   "altura": 0.508,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-11T15:37:00Z",
+   "altura": 4.6,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-11T21:47:00Z",
+   "altura": 0.364,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-12T03:58:00Z",
+   "altura": 4.368,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-12T09:56:00Z",
+   "altura": 0.452,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-12T16:13:00Z",
+   "altura": 4.579,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-12T22:22:00Z",
+   "altura": 0.427,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-13T04:32:00Z",
+   "altura": 4.345,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-13T10:32:00Z",
+   "altura": 0.513,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-13T16:47:00Z",
+   "altura": 4.457,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-13T22:57:00Z",
+   "altura": 0.592,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-14T05:05:00Z",
+   "altura": 4.244,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-14T11:08:00Z",
+   "altura": 0.674,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-14T17:21:00Z",
+   "altura": 4.246,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-14T23:30:00Z",
+   "altura": 0.821,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-15T05:37:00Z",
+   "altura": 4.07,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-15T11:44:00Z",
+   "altura": 0.898,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-15T17:54:00Z",
+   "altura": 3.969,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-16T00:04:00Z",
+   "altura": 1.088,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-16T06:11:00Z",
+   "altura": 3.849,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-16T12:21:00Z",
+   "altura": 1.171,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-16T18:29:00Z",
+   "altura": 3.666,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-17T00:39:00Z",
+   "altura": 1.381,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-17T06:49:00Z",
+   "altura": 3.614,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-17T13:02:00Z",
+   "altura": 1.476,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-17T19:10:00Z",
+   "altura": 3.375,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-18T01:19:00Z",
+   "altura": 1.686,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-18T07:35:00Z",
+   "altura": 3.39,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-18T13:54:00Z",
+   "altura": 1.772,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-18T20:05:00Z",
+   "altura": 3.116,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-19T02:16:00Z",
+   "altura": 1.955,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-19T08:44:00Z",
+   "altura": 3.202,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-19T15:12:00Z",
+   "altura": 1.976,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-19T21:38:00Z",
+   "altura": 2.94,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-20T03:48:00Z",
+   "altura": 2.09,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-20T10:22:00Z",
+   "altura": 3.136,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-20T16:57:00Z",
+   "altura": 1.962,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-20T23:27:00Z",
+   "altura": 2.972,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-21T05:27:00Z",
+   "altura": 1.992,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-21T11:48:00Z",
+   "altura": 3.252,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-21T18:16:00Z",
+   "altura": 1.748,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-22T00:36:00Z",
+   "altura": 3.157,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-22T06:32:00Z",
+   "altura": 1.748,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-22T12:46:00Z",
+   "altura": 3.47,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-22T19:06:00Z",
+   "altura": 1.466,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-23T01:20:00Z",
+   "altura": 3.395,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-23T07:17:00Z",
+   "altura": 1.46,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-23T13:28:00Z",
+   "altura": 3.721,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-23T19:43:00Z",
+   "altura": 1.172,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-24T01:56:00Z",
+   "altura": 3.636,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-24T07:54:00Z",
+   "altura": 1.162,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-24T14:05:00Z",
+   "altura": 3.959,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-24T20:17:00Z",
+   "altura": 0.891,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-25T02:28:00Z",
+   "altura": 3.859,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-25T08:28:00Z",
+   "altura": 0.886,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-25T14:39:00Z",
+   "altura": 4.175,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-25T20:49:00Z",
+   "altura": 0.654,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-26T02:59:00Z",
+   "altura": 4.061,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-26T09:01:00Z",
+   "altura": 0.666,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-26T15:12:00Z",
+   "altura": 4.358,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-26T21:20:00Z",
+   "altura": 0.497,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-27T03:31:00Z",
+   "altura": 4.233,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-27T09:34:00Z",
+   "altura": 0.528,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-27T15:46:00Z",
+   "altura": 4.482,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-27T21:53:00Z",
+   "altura": 0.433,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-28T04:04:00Z",
+   "altura": 4.343,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-28T10:09:00Z",
+   "altura": 0.475,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-28T16:21:00Z",
+   "altura": 4.509,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-28T22:28:00Z",
+   "altura": 0.459,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-29T04:38:00Z",
+   "altura": 4.358,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-29T10:46:00Z",
+   "altura": 0.512,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-29T16:59:00Z",
+   "altura": 4.415,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-29T23:05:00Z",
+   "altura": 0.582,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-30T05:16:00Z",
+   "altura": 4.273,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-30T11:26:00Z",
+   "altura": 0.647,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-09-30T17:40:00Z",
+   "altura": 4.209,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-09-30T23:45:00Z",
+   "altura": 0.809,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-01T05:58:00Z",
+   "altura": 4.103,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-01T12:12:00Z",
+   "altura": 0.889,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-01T18:27:00Z",
+   "altura": 3.923,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-02T00:31:00Z",
+   "altura": 1.119,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-02T06:47:00Z",
+   "altura": 3.874,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-02T13:06:00Z",
+   "altura": 1.191,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-02T19:26:00Z",
+   "altura": 3.594,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-03T01:28:00Z",
+   "altura": 1.441,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-03T07:53:00Z",
+   "altura": 3.622,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-03T14:19:00Z",
+   "altura": 1.449,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-03T20:50:00Z",
+   "altura": 3.311,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-04T02:46:00Z",
+   "altura": 1.673,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-04T09:26:00Z",
+   "altura": 3.457,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-04T15:57:00Z",
+   "altura": 1.53,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-04T22:34:00Z",
+   "altura": 3.245,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-05T04:23:00Z",
+   "altura": 1.695,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-05T11:04:00Z",
+   "altura": 3.528,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-05T17:30:00Z",
+   "altura": 1.381,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-05T23:57:00Z",
+   "altura": 3.429,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-06T05:48:00Z",
+   "altura": 1.517,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-06T12:18:00Z",
+   "altura": 3.791,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-06T18:37:00Z",
+   "altura": 1.151,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-07T00:56:00Z",
+   "altura": 3.728,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-07T06:48:00Z",
+   "altura": 1.275,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-07T13:13:00Z",
+   "altura": 4.093,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-07T19:26:00Z",
+   "altura": 0.936,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-08T01:42:00Z",
+   "altura": 4.012,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-08T07:36:00Z",
+   "altura": 1.035,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-08T13:57:00Z",
+   "altura": 4.328,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-08T20:08:00Z",
+   "altura": 0.762,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-09T02:21:00Z",
+   "altura": 4.217,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-09T08:18:00Z",
+   "altura": 0.824,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-09T14:37:00Z",
+   "altura": 4.453,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-09T20:45:00Z",
+   "altura": 0.642,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-10T02:57:00Z",
+   "altura": 4.329,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-10T08:56:00Z",
+   "altura": 0.682,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-10T15:12:00Z",
+   "altura": 4.479,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-10T21:20:00Z",
+   "altura": 0.609,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-11T03:30:00Z",
+   "altura": 4.37,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-11T09:32:00Z",
+   "altura": 0.644,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-11T15:46:00Z",
+   "altura": 4.432,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-11T21:53:00Z",
+   "altura": 0.672,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-12T04:02:00Z",
+   "altura": 4.354,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-12T10:07:00Z",
+   "altura": 0.707,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-12T16:19:00Z",
+   "altura": 4.318,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-12T22:25:00Z",
+   "altura": 0.811,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-13T04:34:00Z",
+   "altura": 4.27,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-13T10:42:00Z",
+   "altura": 0.841,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-13T16:51:00Z",
+   "altura": 4.134,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-13T22:58:00Z",
+   "altura": 0.994,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-14T05:07:00Z",
+   "altura": 4.116,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-14T11:17:00Z",
+   "altura": 1.022,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-14T17:24:00Z",
+   "altura": 3.896,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-14T23:30:00Z",
+   "altura": 1.21,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-15T05:40:00Z",
+   "altura": 3.92,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-15T11:53:00Z",
+   "altura": 1.245,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-15T17:59:00Z",
+   "altura": 3.641,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-16T00:05:00Z",
+   "altura": 1.458,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-16T06:18:00Z",
+   "altura": 3.712,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-16T12:33:00Z",
+   "altura": 1.501,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-16T18:39:00Z",
+   "altura": 3.395,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-17T00:45:00Z",
+   "altura": 1.722,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-17T07:03:00Z",
+   "altura": 3.513,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-17T13:22:00Z",
+   "altura": 1.757,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-17T19:32:00Z",
+   "altura": 3.172,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-18T01:38:00Z",
+   "altura": 1.963,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-18T08:05:00Z",
+   "altura": 3.339,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-18T14:31:00Z",
+   "altura": 1.942,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-18T20:56:00Z",
+   "altura": 3.023,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-19T02:59:00Z",
+   "altura": 2.105,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-19T09:31:00Z",
+   "altura": 3.258,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-19T16:04:00Z",
+   "altura": 1.971,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-19T22:37:00Z",
+   "altura": 3.051,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-20T04:35:00Z",
+   "altura": 2.06,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-20T10:56:00Z",
+   "altura": 3.339,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-20T17:25:00Z",
+   "altura": 1.814,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-20T23:49:00Z",
+   "altura": 3.236,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-21T05:46:00Z",
+   "altura": 1.855,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-21T11:59:00Z",
+   "altura": 3.534,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-21T18:21:00Z",
+   "altura": 1.56,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-22T00:37:00Z",
+   "altura": 3.482,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-22T06:36:00Z",
+   "altura": 1.576,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-22T12:47:00Z",
+   "altura": 3.773,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-22T19:03:00Z",
+   "altura": 1.269,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-23T01:16:00Z",
+   "altura": 3.733,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-23T07:17:00Z",
+   "altura": 1.272,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-23T13:27:00Z",
+   "altura": 4.012,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-23T19:39:00Z",
+   "altura": 0.988,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-24T01:51:00Z",
+   "altura": 3.977,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-24T07:54:00Z",
+   "altura": 0.987,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-24T14:05:00Z",
+   "altura": 4.239,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-24T20:14:00Z",
+   "altura": 0.755,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-25T02:26:00Z",
+   "altura": 4.208,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-25T08:30:00Z",
+   "altura": 0.757,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-25T14:42:00Z",
+   "altura": 4.434,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-25T20:49:00Z",
+   "altura": 0.599,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-26T03:01:00Z",
+   "altura": 4.399,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-26T09:08:00Z",
+   "altura": 0.6,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-26T15:20:00Z",
+   "altura": 4.554,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-26T21:26:00Z",
+   "altura": 0.534,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-27T03:38:00Z",
+   "altura": 4.513,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-27T09:47:00Z",
+   "altura": 0.525,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-27T16:01:00Z",
+   "altura": 4.563,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-27T22:05:00Z",
+   "altura": 0.565,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-28T04:18:00Z",
+   "altura": 4.525,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-28T10:30:00Z",
+   "altura": 0.55,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-28T16:44:00Z",
+   "altura": 4.449,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-28T22:46:00Z",
+   "altura": 0.701,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-29T05:01:00Z",
+   "altura": 4.44,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-29T11:16:00Z",
+   "altura": 0.69,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-29T17:31:00Z",
+   "altura": 4.235,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-29T23:32:00Z",
+   "altura": 0.937,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-30T05:50:00Z",
+   "altura": 4.277,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-30T12:08:00Z",
+   "altura": 0.925,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-30T18:25:00Z",
+   "altura": 3.956,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-31T00:23:00Z",
+   "altura": 1.233,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-31T06:46:00Z",
+   "altura": 4.061,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-10-31T13:08:00Z",
+   "altura": 1.196,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-10-31T19:32:00Z",
+   "altura": 3.666,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-01T01:26:00Z",
+   "altura": 1.512,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-01T07:57:00Z",
+   "altura": 3.846,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-01T14:23:00Z",
+   "altura": 1.408,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-01T20:55:00Z",
+   "altura": 3.47,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-02T02:43:00Z",
+   "altura": 1.691,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-02T09:21:00Z",
+   "altura": 3.727,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-02T15:49:00Z",
+   "altura": 1.491,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-02T22:22:00Z",
+   "altura": 3.458,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-03T04:09:00Z",
+   "altura": 1.715,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-03T10:44:00Z",
+   "altura": 3.768,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-03T17:09:00Z",
+   "altura": 1.434,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-03T23:34:00Z",
+   "altura": 3.608,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-04T05:24:00Z",
+   "altura": 1.6,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-04T11:53:00Z",
+   "altura": 3.913,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-04T18:12:00Z",
+   "altura": 1.305,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-05T00:31:00Z",
+   "altura": 3.809,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-05T06:24:00Z",
+   "altura": 1.412,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-05T12:48:00Z",
+   "altura": 4.055,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-05T19:01:00Z",
+   "altura": 1.147,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-06T01:16:00Z",
+   "altura": 3.977,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-06T07:13:00Z",
+   "altura": 1.197,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-06T13:34:00Z",
+   "altura": 4.136,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-06T19:43:00Z",
+   "altura": 0.997,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-07T01:56:00Z",
+   "altura": 4.09,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-07T07:56:00Z",
+   "altura": 1.012,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-07T14:14:00Z",
+   "altura": 4.168,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-07T20:20:00Z",
+   "altura": 0.894,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-08T02:32:00Z",
+   "altura": 4.167,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-08T08:35:00Z",
+   "altura": 0.897,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-08T14:51:00Z",
+   "altura": 4.167,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-08T20:55:00Z",
+   "altura": 0.864,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-09T03:06:00Z",
+   "altura": 4.216,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-09T09:12:00Z",
+   "altura": 0.864,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-09T15:25:00Z",
+   "altura": 4.139,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-09T21:28:00Z",
+   "altura": 0.901,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-10T03:39:00Z",
+   "altura": 4.221,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-10T09:48:00Z",
+   "altura": 0.892,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-10T15:58:00Z",
+   "altura": 4.061,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-10T22:01:00Z",
+   "altura": 0.976,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-11T04:12:00Z",
+   "altura": 4.163,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-11T10:24:00Z",
+   "altura": 0.955,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-11T16:31:00Z",
+   "altura": 3.926,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-11T22:34:00Z",
+   "altura": 1.08,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-12T04:46:00Z",
+   "altura": 4.05,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-12T10:59:00Z",
+   "altura": 1.056,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-12T17:05:00Z",
+   "altura": 3.758,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-12T23:08:00Z",
+   "altura": 1.221,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-13T05:21:00Z",
+   "altura": 3.914,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-13T11:36:00Z",
+   "altura": 1.203,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-13T17:41:00Z",
+   "altura": 3.585,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-13T23:43:00Z",
+   "altura": 1.403,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-14T05:59:00Z",
+   "altura": 3.775,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-14T12:15:00Z",
+   "altura": 1.385,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-14T18:21:00Z",
+   "altura": 3.42,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-15T00:23:00Z",
+   "altura": 1.601,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-15T06:42:00Z",
+   "altura": 3.633,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-15T13:00:00Z",
+   "altura": 1.569,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-15T19:09:00Z",
+   "altura": 3.265,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-16T01:11:00Z",
+   "altura": 1.78,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-16T07:34:00Z",
+   "altura": 3.498,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-16T13:55:00Z",
+   "altura": 1.713,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-16T20:12:00Z",
+   "altura": 3.15,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-17T02:14:00Z",
+   "altura": 1.906,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-17T08:39:00Z",
+   "altura": 3.409,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-17T15:03:00Z",
+   "altura": 1.781,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-17T21:31:00Z",
+   "altura": 3.137,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-18T03:30:00Z",
+   "altura": 1.93,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-18T09:52:00Z",
+   "altura": 3.414,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-18T16:17:00Z",
+   "altura": 1.735,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-18T22:44:00Z",
+   "altura": 3.252,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-19T04:43:00Z",
+   "altura": 1.831,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-19T10:59:00Z",
+   "altura": 3.522,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-19T17:21:00Z",
+   "altura": 1.581,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-19T23:43:00Z",
+   "altura": 3.449,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-20T05:43:00Z",
+   "altura": 1.633,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-20T11:56:00Z",
+   "altura": 3.698,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-20T18:13:00Z",
+   "altura": 1.361,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-21T00:30:00Z",
+   "altura": 3.681,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-21T06:33:00Z",
+   "altura": 1.38,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-21T12:45:00Z",
+   "altura": 3.901,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-21T18:58:00Z",
+   "altura": 1.122,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-22T01:13:00Z",
+   "altura": 3.922,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-22T07:18:00Z",
+   "altura": 1.117,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-22T13:31:00Z",
+   "altura": 4.112,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-22T19:40:00Z",
+   "altura": 0.907,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-23T01:54:00Z",
+   "altura": 4.16,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-23T08:02:00Z",
+   "altura": 0.877,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-23T14:16:00Z",
+   "altura": 4.298,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-23T20:21:00Z",
+   "altura": 0.747,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-24T02:36:00Z",
+   "altura": 4.364,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-24T08:46:00Z",
+   "altura": 0.684,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-24T15:01:00Z",
+   "altura": 4.42,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-24T21:04:00Z",
+   "altura": 0.654,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-25T03:20:00Z",
+   "altura": 4.505,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-25T09:33:00Z",
+   "altura": 0.562,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-25T15:48:00Z",
+   "altura": 4.45,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-25T21:49:00Z",
+   "altura": 0.644,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-26T04:06:00Z",
+   "altura": 4.561,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-26T10:21:00Z",
+   "altura": 0.532,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-26T16:37:00Z",
+   "altura": 4.381,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-26T22:36:00Z",
+   "altura": 0.725,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-27T04:56:00Z",
+   "altura": 4.532,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-27T11:13:00Z",
+   "altura": 0.605,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-27T17:30:00Z",
+   "altura": 4.228,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-27T23:26:00Z",
+   "altura": 0.888,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-28T05:49:00Z",
+   "altura": 4.425,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-28T12:07:00Z",
+   "altura": 0.767,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-28T18:26:00Z",
+   "altura": 4.022,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-29T00:20:00Z",
+   "altura": 1.1,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-29T06:46:00Z",
+   "altura": 4.263,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-29T13:06:00Z",
+   "altura": 0.981,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-29T19:27:00Z",
+   "altura": 3.806,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-30T01:19:00Z",
+   "altura": 1.318,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-30T07:49:00Z",
+   "altura": 4.077,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-11-30T14:10:00Z",
+   "altura": 1.196,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-11-30T20:35:00Z",
+   "altura": 3.636,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-01T02:25:00Z",
+   "altura": 1.496,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-01T08:57:00Z",
+   "altura": 3.915,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-01T15:19:00Z",
+   "altura": 1.357,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-01T21:46:00Z",
+   "altura": 3.552,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-02T03:36:00Z",
+   "altura": 1.584,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-02T10:07:00Z",
+   "altura": 3.797,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-02T16:29:00Z",
+   "altura": 1.426,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-02T22:54:00Z",
+   "altura": 3.546,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-03T04:47:00Z",
+   "altura": 1.563,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-03T11:15:00Z",
+   "altura": 3.725,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-03T17:34:00Z",
+   "altura": 1.389,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-03T23:54:00Z",
+   "altura": 3.59,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-04T05:51:00Z",
+   "altura": 1.449,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-04T12:16:00Z",
+   "altura": 3.689,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-04T18:29:00Z",
+   "altura": 1.289,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-05T00:46:00Z",
+   "altura": 3.659,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-05T06:47:00Z",
+   "altura": 1.298,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-05T13:09:00Z",
+   "altura": 3.686,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-05T19:16:00Z",
+   "altura": 1.178,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-06T01:31:00Z",
+   "altura": 3.752,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-06T07:36:00Z",
+   "altura": 1.167,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-06T13:54:00Z",
+   "altura": 3.718,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-06T19:57:00Z",
+   "altura": 1.102,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-07T02:12:00Z",
+   "altura": 3.858,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-07T08:19:00Z",
+   "altura": 1.077,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-07T14:34:00Z",
+   "altura": 3.763,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-07T20:35:00Z",
+   "altura": 1.057,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-08T02:49:00Z",
+   "altura": 3.948,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-08T08:59:00Z",
+   "altura": 1.016,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-08T15:11:00Z",
+   "altura": 3.787,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-08T21:11:00Z",
+   "altura": 1.029,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-09T03:24:00Z",
+   "altura": 3.995,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-09T09:36:00Z",
+   "altura": 0.972,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-09T15:46:00Z",
+   "altura": 3.774,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-09T21:45:00Z",
+   "altura": 1.021,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-10T03:58:00Z",
+   "altura": 3.997,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-10T10:12:00Z",
+   "altura": 0.953,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-10T16:20:00Z",
+   "altura": 3.729,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-10T22:19:00Z",
+   "altura": 1.046,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-11T04:33:00Z",
+   "altura": 3.973,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-11T10:47:00Z",
+   "altura": 0.979,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-11T16:54:00Z",
+   "altura": 3.672,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-11T22:53:00Z",
+   "altura": 1.116,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-12T05:08:00Z",
+   "altura": 3.934,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-12T11:22:00Z",
+   "altura": 1.051,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-12T17:28:00Z",
+   "altura": 3.603,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-12T23:27:00Z",
+   "altura": 1.217,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-13T05:44:00Z",
+   "altura": 3.874,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-13T11:58:00Z",
+   "altura": 1.15,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-13T18:04:00Z",
+   "altura": 3.516,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-14T00:05:00Z",
+   "altura": 1.328,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-14T06:22:00Z",
+   "altura": 3.782,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-14T12:37:00Z",
+   "altura": 1.252,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-14T18:44:00Z",
+   "altura": 3.411,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-15T00:46:00Z",
+   "altura": 1.437,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-15T07:05:00Z",
+   "altura": 3.671,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-15T13:20:00Z",
+   "altura": 1.355,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-15T19:31:00Z",
+   "altura": 3.315,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-16T01:33:00Z",
+   "altura": 1.547,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-16T07:53:00Z",
+   "altura": 3.569,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-16T14:10:00Z",
+   "altura": 1.451,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-16T20:26:00Z",
+   "altura": 3.259,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-17T02:30:00Z",
+   "altura": 1.637,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-17T08:50:00Z",
+   "altura": 3.502,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-17T15:07:00Z",
+   "altura": 1.519,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-17T21:31:00Z",
+   "altura": 3.269,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-18T03:34:00Z",
+   "altura": 1.674,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-18T09:53:00Z",
+   "altura": 3.491,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-18T16:12:00Z",
+   "altura": 1.521,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-18T22:37:00Z",
+   "altura": 3.353,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-19T04:42:00Z",
+   "altura": 1.619,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-19T10:59:00Z",
+   "altura": 3.545,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-19T17:16:00Z",
+   "altura": 1.434,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-19T23:40:00Z",
+   "altura": 3.507,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-20T05:46:00Z",
+   "altura": 1.467,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-20T12:02:00Z",
+   "altura": 3.664,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-20T18:15:00Z",
+   "altura": 1.279,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-21T00:36:00Z",
+   "altura": 3.718,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-21T06:45:00Z",
+   "altura": 1.249,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-21T13:02:00Z",
+   "altura": 3.838,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-21T19:10:00Z",
+   "altura": 1.093,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-22T01:29:00Z",
+   "altura": 3.965,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-22T07:40:00Z",
+   "altura": 1.001,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-22T13:57:00Z",
+   "altura": 4.035,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-22T20:01:00Z",
+   "altura": 0.912,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-23T02:20:00Z",
+   "altura": 4.221,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-23T08:33:00Z",
+   "altura": 0.762,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-23T14:51:00Z",
+   "altura": 4.213,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-23T20:50:00Z",
+   "altura": 0.759,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-24T03:10:00Z",
+   "altura": 4.442,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-24T09:25:00Z",
+   "altura": 0.559,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-24T15:42:00Z",
+   "altura": 4.329,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-24T21:40:00Z",
+   "altura": 0.654,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-25T04:00:00Z",
+   "altura": 4.594,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-25T10:17:00Z",
+   "altura": 0.432,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-25T16:33:00Z",
+   "altura": 4.36,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-25T22:29:00Z",
+   "altura": 0.618,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-26T04:51:00Z",
+   "altura": 4.652,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-26T11:08:00Z",
+   "altura": 0.41,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-26T17:24:00Z",
+   "altura": 4.303,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-26T23:18:00Z",
+   "altura": 0.669,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-27T05:42:00Z",
+   "altura": 4.611,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-27T11:59:00Z",
+   "altura": 0.508,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-27T18:14:00Z",
+   "altura": 4.17,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-28T00:08:00Z",
+   "altura": 0.807,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-28T06:33:00Z",
+   "altura": 4.474,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-28T12:49:00Z",
+   "altura": 0.711,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-28T19:05:00Z",
+   "altura": 3.986,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-29T00:59:00Z",
+   "altura": 1.005,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-29T07:25:00Z",
+   "altura": 4.255,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-29T13:41:00Z",
+   "altura": 0.967,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-29T19:58:00Z",
+   "altura": 3.771,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-30T01:53:00Z",
+   "altura": 1.217,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-30T08:19:00Z",
+   "altura": 3.975,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-30T14:36:00Z",
+   "altura": 1.217,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-30T20:55:00Z",
+   "altura": 3.554,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-31T02:52:00Z",
+   "altura": 1.398,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-31T09:18:00Z",
+   "altura": 3.677,
+   "tipo": "pleamar"
+  },
+  {
+   "utc": "2026-12-31T15:37:00Z",
+   "altura": 1.404,
+   "tipo": "bajamar"
+  },
+  {
+   "utc": "2026-12-31T21:59:00Z",
+   "altura": 3.381,
+   "tipo": "pleamar"
+  }
+ ]
+}
