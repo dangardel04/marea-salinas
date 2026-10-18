@@ -1,11 +1,12 @@
-// Pendiente del frente de playa (βf) medida con el MDT05 del IGN, para la fórmula de run-up.
+// Pendiente del frente de playa (βf) medida con LiDAR (MDT05 del IGN y, en la playa, la nube PNOA
+// 2024), para la fórmula de run-up.
 // Uso: node tools/pendiente-playa.ts   → src/oleaje/playa.json
 //
 // Perfiles perpendiculares a la orilla (rumbo PLAYA.ejeGrados + 270) cada 25 m a lo largo de la
 // playa. En cada uno: distancia horizontal entre las cotas COTA_BAJA y COTA_ALTA (m sobre el CH),
 // solo con puntos MEDIDOS por el LiDAR. βf = desnivel / distancia. Se guardan mediana y cuartiles.
-// El LiDAR solo trae arena por encima de ~+3,1 m sobre el CH (el vuelo fue con marea media-alta),
-// así que se mide el tramo superior del frente de playa, alrededor de la pleamar (+3,3 a +4,6 m).
+// Se mide el tramo superior del frente de playa, alrededor de la pleamar (+3,3 a +4,6 m): el
+// MDT05 no trae arena por debajo de ~+3,1 m y la nube de 2024, por debajo de ~+2,0 m.
 // La pendiente de la parte baja, que queda bajo el agua en pleamar, no la mide el LiDAR: se toma
 // del perfil de la línea de agua de Sentinel‑2 (data/intermareal_s2.json) si existe.
 
@@ -51,7 +52,7 @@ for (let s = -100; s <= 2700; s += 25) {
 pendientes.sort((a, c) => a - c);
 const q = (p: number) => pendientes[Math.floor(p * (pendientes.length - 1))];
 const salida = {
-  fuente: 'MDT05 IGN (LiDAR PNOA) sobre el CH de Avilés, ver tools/pendiente-playa.ts',
+  fuente: 'LiDAR sobre el CH de Avilés: MDT05 IGN y, en la playa, LiDAR PNOA 2024 (public/bahia/fino.bin); ver tools/pendiente-playa.ts',
   cotas: [COTA_BAJA, COTA_ALTA],
   perfiles: pendientes.length,
   mediana: +q(0.5).toFixed(4),

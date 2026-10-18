@@ -6,7 +6,8 @@ Web estática (Vite + TypeScript + Three.js) con la bahía de Salinas (Castrill�
 - **Corrección en vivo** con el mareógrafo REDMAR de Avilés cuando hay red. El panel indica siempre si es **«Predicción»** o **«Predicción + corrección»**.
 - **Olas**: mar de fondo y mar de viento previstos, la medida de la boya de Gijón y hasta dónde sube el agua por la arena (fórmula de Stockdon, con su margen).
 - **Escena 3D**:
-  - Relieve LiDAR y ortofoto del IGN cargados por niveles de detalle (zoom libre a cualquier tramo, hasta ~0,4 m por píxel en la costa).
+  - Relieve LiDAR y ortofoto del IGN cargados por niveles de detalle (zoom libre a cualquier tramo, hasta ~0,4 m por píxel en la costa). En la playa, el paseo y las dunas, relieve de 1 m con el LiDAR de 2024.
+  - Arena que cubre y descubre la marea, medida con la orilla vista desde satélite.
   - 12.905 partes de edificio del Catastro.
   - Fondo marino de EMODnet.
   - Olas que se refractan hacia la orilla, rompen y suben por la arena.
@@ -35,7 +36,7 @@ npm test
 npm run build
 ```
 
-`npm run build` deja la web estática en `dist/` (unos 50 MB, casi todo la ortofoto y los edificios), con rutas relativas. La interfaz pesa unos 70 KB y aparece al momento; la escena 3D se carga después en su propio paquete.
+`npm run build` deja la web estática en `dist/` (unos 53 MB, casi todo la ortofoto, los edificios y el relieve fino), con rutas relativas. La interfaz pesa unos 70 KB y aparece al momento; la escena 3D se carga después en su propio paquete.
 
 ## De dónde salen los datos
 
@@ -53,12 +54,13 @@ Detalle completo, con URL, fecha de consulta y licencia, en [FUENTES.md](FUENTES
 | Olas medidas | Boya de Gijón de Puertos del Estado (id 1117) |
 | Subida del agua por las olas | Stockdon et al. (2006), con la pendiente de la arena medida (LiDAR arriba, satélite en la franja intermareal) |
 | Relieve en tierra y ortofoto | IGN: MDT de 5 m (LiDAR PNOA) y ortofoto PNOA de septiembre de 2023 |
+| Relieve de la playa | IGN/CNIG: nube LiDAR PNOA 2024 (3ª cobertura), suelo a 1 m. Las teselas se bajan a mano (la descarga pide un reCAPTCHA) y van en `data/raw/lidar/` |
 | Arena intermareal | Línea de agua en 15 imágenes Sentinel‑2 (Copernicus) de oct‑2025 a oct‑2026, con el nivel medido por el mareógrafo de Avilés |
 | Fondo marino | EMODnet Bathymetry DTM 2024 (referido a la LAT) |
 | Edificios | Catastro (INSPIRE Buildings): huella y número de plantas |
 | Sol y luna | suncalc 2.1.1 |
 
-Para regenerar los datos, en este orden. `tools/intermareal-s2.py` necesita Python 3 con numpy, rasterio y matplotlib, y `tools/bahia-relieve.ts` se ejecuta dos veces, antes y después:
+Para regenerar los datos, en este orden. Los dos scripts de Python necesitan Python 3 con numpy, rasterio, matplotlib, laspy[lazrs] y pyproj. `tools/bahia-relieve.ts` se ejecuta tres veces: la primera baja el MDT05, la segunda mete el LiDAR de 2024 y la tercera, la franja del satélite:
 
 ```bash
 node tools/descargar.ts
@@ -86,6 +88,10 @@ node tools/generar-constantes.ts hibrido
 
 ```bash
 node tools/residuo.ts
+```
+
+```bash
+python tools/lidar-fino.py
 ```
 
 ```bash
@@ -145,8 +151,9 @@ Error = predicción − tabla oficial.
 
 ### Arena intermareal (satélite)
 
-- **Perfil de la franja que cubre y descubre la marea**, de +1,0 a +3,0 m, en 96 tramos de 25 m de playa: ±0,5 m RMS en vertical, validado dejando cada imagen fuera. La pendiente genérica que se usaba antes fallaba 2,6 m RMS en esos mismos puntos.
-- En bajamar se descubre más arena de la que mostraba la escena: la cota +1,5 m queda unos 44 m más hacia el mar.
+- **Perfil de la franja que cubre y descubre la marea**, por debajo de lo que midió el LiDAR (unos +2 m) hasta +1,15 m: ±0,45 m RMS en vertical, validado dejando cada imagen fuera. La pendiente genérica fallaba 2,9 m RMS en esos mismos puntos.
+- Frente al LiDAR de 2024, sin usarlo en el ajuste: 0,46 m RMS el perfil del satélite y 0,68 m la pendiente genérica.
+- En bajamar se descubre más arena de la que mostraba la escena: la cota +1,5 m queda unos 25 m más hacia el mar.
 
 ### Olas
 
@@ -162,9 +169,9 @@ Error = predicción − tabla oficial.
 | Marea: constantes de observaciones reales, horas UTC verificadas | Desnivel entre el cero del puerto de Avilés y el cero hidrográfico (0,292 m, estimado; no hay datum oficial publicado) |
 | Elección de constantes por validación fuera de muestra | Ciclo estacional (SA, SSA…) de Gijón aplicado a Avilés |
 | Corrección con el mareógrafo en vivo | Corrección hacia el pasado (misma atenuación, sin backtest propio) |
-| Relieve LiDAR de tierra, dunas y arena seca; arena intermareal de +1,0 a +3,0 m desde satélite (±0,5 m); fondo marino EMODnet | Arena por debajo de +1,0 m y tramos sin perfil válido: pendiente 1:50 que pasa a EMODnet en 250 m |
+| Relieve LiDAR de tierra, dunas y arena (1 m en la playa, vuelo de 2024); arena intermareal hasta +1,15 m desde satélite (±0,45 m); fondo marino EMODnet | Arena por debajo de +1,15 m y tramos sin perfil válido (los huecos de hasta 150 m, interpolados): pendiente 1:50 que pasa a EMODnet en 250 m |
 | Ortofoto PNOA 2023, huellas y plantas del Catastro, color de los tejados | Altura de los edificios (3 m por planta, supuesta); fachadas y ventanas encendidas (decorativas) |
-| Altura, periodo y dirección de las olas (previsión), pendiente de la arena alta (1:14) | Forma de cada ola y del vaivén; sombra tras espigón y cabos |
+| Altura, periodo y dirección de las olas (previsión), pendiente de la arena alta (1:22) | Forma de cada ola y del vaivén; sombra tras espigón y cabos |
 | Posición del sol y de la luna, fase lunar | NMMA → CH del relieve (2,095 m, tomado de la relación de Gijón); tamaño de la luna (×3); colores del cielo |
 
 La marea se calcula en el mareógrafo de San Juan de Nieva, a unos 3 km de la playa. No se ha medido ni la marea ni la subida de las olas en la propia playa.
@@ -217,4 +224,5 @@ public/bahia/         relieve, teselas de ortofoto y edificios
 - Catastro y Puertos del Estado: reutilización libre citando la fuente.
 - IHM y Open‑Meteo: se usan citando su origen.
 - Sentinel‑2: contiene datos modificados de Copernicus Sentinel 2025–2026.
+- LiDAR PNOA 2024: © Instituto Geográfico Nacional (CNIG), CC BY 4.0.
 - Polígono de la playa: © colaboradores de OpenStreetMap (ODbL).

@@ -194,9 +194,11 @@ def main():
     cache = os.path.join(RAW, 's2_orillas.json')
     if os.path.exists(cache):
         O = json.load(open(cache))
-        if len(O['escenas'][0]['mndwi']) != len(P): raise SystemExit('La caché no corresponde a estos perfiles: bórrala.')
+        if O.get('perfiles') != P:
+            print('Los perfiles han cambiado: se vuelven a leer las imágenes.')
+            O = extraer(P); O['perfiles'] = P; json.dump(O, open(cache, 'w'))
     else:
-        O = extraer(P); json.dump(O, open(cache, 'w'))
+        O = extraer(P); O['perfiles'] = P; json.dump(O, open(cache, 'w'))
     for e in O['escenas']:
         e['orillas'] = [orilla(v, e['umbral']) for v in e['mndwi']]
     E = [e for e in O['escenas'] if e['hs'] is not None and e['hs'] < HS_MAX]
@@ -213,8 +215,10 @@ def main():
     mad = float(1.4826 * np.median(np.abs(dif - desplaz)))
     print(f'Orillas sobre arena medida: {len(dif)}, nivel − cota LiDAR mediana {desplaz:+.2f} m (MAD {mad:.2f})')
 
-    # Por perfil (con dos vecinos a cada lado): mediana de la orilla de cada imagen fuera de la
-    # arena medida y perfil monótono por regresión isotónica.
+    # Por perfil (con dos vecinos a cada lado): mediana de la orilla de cada imagen y perfil
+    # monótono por regresión isotónica. Las orillas que caen sobre arena medida por el LiDAR
+    # también cuentan para la forma del perfil, pero tools/bahia-relieve.ts solo lo aplica por
+    # debajo de lo medido.
     # Por encima de +3,0 m no se usa: ahí empieza la arena medida y, donde la orilla de pleamar cae
     # más allá de ella, la playa ha cambiado desde el vuelo del LiDAR y el perfil no casaría.
     ajustes, residuos, residuosG, motivos = [], [], [], {}
@@ -228,8 +232,6 @@ def main():
             for j in range(max(0, i - 2), min(len(P), i + 3)):
                 d = e['orillas'][j]
                 if d is None: continue
-                x, z = P[j]['bx'] + d * P[j]['nx'], P[j]['bz'] + d * P[j]['nz']
-                if bil(medido, x, z) > 0.99: continue
                 vs.append(d)
             if len(vs) >= 3: niv.append(e['nivel']); dd.append(float(np.median(vs))); pe.append(len(vs))
         if len(niv) < 6: descartar('menos de 6 imágenes'); continue

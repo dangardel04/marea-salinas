@@ -3,7 +3,8 @@
 // Salida: public/bahia/relieve.bin (Int16, cm sobre el CH de Avilés, N×N nodos, filas de norte
 //         a sur, columnas de oeste a este) y src/scene/bahia-meta.json.
 //
-// Cada nodo lleva en su último bit si la altura es MEDIDA por el MDT (impar) o no (par).
+// Cada nodo lleva en su último bit si la altura es MEDIDA por LiDAR (impar) o no (par): MDT05 del
+// IGN y, donde existe, la nube LiDAR PNOA 2024 (public/bahia/fino.bin, de tools/lidar-fino.py).
 // Eso cuesta 1 cm de precisión y ahorra un fichero de máscara.
 //
 // Referencias verticales:
@@ -134,6 +135,34 @@ for (let f = 0; f < N; f++) for (let c = 0; c < N; c++) {
   if (m.medido) { alto[f * N + c] = m.h + NMMA_SOBRE_CH_APROX; medido[f * N + c] = 1; }
 }
 
+// LiDAR PNOA 2024 (public/bahia/fino.bin, de tools/lidar-fino.py): más reciente que el MDT05 y
+// tomado con la marea más baja (+1,9 m), así que manda donde existe. Cada nodo de 5 m es la media
+// de los nodos de 1 m a menos de 2 m, si hay al menos 20 de los 25 con dato.
+const RUTA_FINO = join(RAIZ, 'public', 'bahia', 'fino.bin');
+let nodosFino = 0;
+if (existsSync(RUTA_FINO)) {
+  const meta = JSON.parse(readFileSync(join(RAIZ, 'src', 'scene', 'bahia-fino.json'), 'utf8')) as { bloque: number; sinDato: number; bloques: [number, number][] };
+  const b = readFileSync(RUTA_FINO);
+  const fino = new Int16Array(b.buffer, b.byteOffset, b.byteLength / 2);
+  const L = meta.bloque, V = L + 1;
+  meta.bloques.forEach(([bi, bj], q) => {
+    const base = q * V * V;
+    // nodos de 5 m cuyo entorno de ±2 m cae entero dentro del bloque
+    for (let zz = bj * L + 2; zz <= (bj + 1) * L - 2; zz++) for (let xx = bi * L + 2; xx <= (bi + 1) * L - 2; xx++) {
+      if ((xx + LADO / 2) % PASO_RELIEVE || (zz + LADO / 2) % PASO_RELIEVE) continue;
+      const c = (xx + LADO / 2) / PASO_RELIEVE, f = (zz + LADO / 2) / PASO_RELIEVE;
+      if (c < 0 || c >= N || f < 0 || f >= N) continue;
+      let s = 0, n = 0;
+      for (let dz = -2; dz <= 2; dz++) for (let dx = -2; dx <= 2; dx++) {
+        const v = fino[base + (zz + dz - bj * L) * V + (xx + dx - bi * L)];
+        if (v !== meta.sinDato) { s += v; n++; }
+      }
+      if (n >= 20) { alto[f * N + c] = s / n / 100; medido[f * N + c] = 1; nodosFino++; }
+    }
+  });
+  console.log(`LiDAR 2024: ${nodosFino} nodos de 5 m`);
+}
+
 const PENDIENTE = 1 / 50;
 const TRANSICION = 250; // m desde lo último conocido hasta fiarse del todo de EMODnet
 
@@ -188,7 +217,7 @@ function completar(conocido: Uint8Array, base: Float32Array) {
       suave[k] = (prev[k] * 4 + prev[k - 1] + prev[k + 1] + prev[k - N] + prev[k + N]) / 8;
     }
   }
-  return { suave, usadoEmod };
+  return { suave, usadoEmod, borde };
 }
 
 /** Int16 en cm con el bit de «medido» en la paridad. */
@@ -216,7 +245,7 @@ const RUTA_S2 = join(RAIZ, 'data', 'intermareal_s2.json');
 const s2 = existsSync(RUTA_S2) ? JSON.parse(readFileSync(RUTA_S2, 'utf8')) as { perfiles: PerfilS2[]; cotaMax: number; consultado: string } : null;
 const conocido = new Uint8Array(medido);
 const conS2 = new Float32Array(alto);
-let nodosS2 = 0;
+let nodosS2 = 0, perfilesInterpolados = 0;
 if (s2) {
   const COTA_BASE = 3.1; // cota de la curva sobre la que se apoyan los perfiles
   /** Distancia por el perfil a la que está la cota c (puntos con d creciente y cota decreciente). */
@@ -229,13 +258,63 @@ if (s2) {
   };
   const suma = new Float64Array(N * N), cuenta = new Uint16Array(N * N);
   const P = s2.perfiles;
+  const COS30 = Math.cos((30 * Math.PI) / 180);
+  const conBase = (p: PerfilS2): [number, number][] => [[0, COTA_BASE], ...p.ajuste!.puntos.filter(([d, z]) => d > 0 && z < COTA_BASE)];
+  // Perfiles que se usan: los válidos y, entre dos válidos separados por huecos de hasta
+  // HUECO_MAX perfiles descartados (150 m de playa), los intermedios, con la distancia de cada
+  // cota interpolada entre los dos. Sin eso la orilla sale festoneada (un tramo con el perfil
+  // medido, el siguiente con la pendiente genérica). Es una interpolación, no una medida.
+  const HUECO_MAX = 6;
+  const efectivos: ([number, number][] | null)[] = P.map((p) => (p.ajuste ? conBase(p) : null));
+  const validos = P.map((p, i) => (p.ajuste ? i : -1)).filter((i) => i >= 0);
+  let interpolados = 0;
+  for (let q = 0; q + 1 < validos.length; q++) {
+    const ia = validos[q], ib = validos[q + 1];
+    if (ib - ia < 2 || ib - ia > HUECO_MAX + 1) continue;
+    const pa = efectivos[ia]!, pb = efectivos[ib]!;
+    const cMin = Math.max(pa[pa.length - 1][1], pb[pb.length - 1][1]);
+    for (let k = ia + 1; k < ib; k++) {
+      const pk = P[k];
+      if (pk.nx * P[ia].nx + pk.nz * P[ia].nz < COS30 || pk.nx * P[ib].nx + pk.nz * P[ib].nz < COS30) continue;
+      const w = (k - ia) / (ib - ia);
+      const pts: [number, number][] = [];
+      for (let c = COTA_BASE; c >= cMin - 1e-9; c -= 0.05) {
+        const da = distanciaA(pa, c), db = distanciaA(pb, c);
+        if (da !== null && db !== null) pts.push([da * (1 - w) + db * w, c]);
+      }
+      if (pts.length >= 2) { efectivos[k] = pts; interpolados++; }
+    }
+  }
+  // Suavizado a lo largo de la playa: para cada cota, la distancia de cada perfil se promedia
+  // (1‑2‑1, dos pasadas) con la de sus vecinos que la tengan. Quita los dientes que deja un
+  // perfil muy distinto de los de al lado; la escala que se pierde (< 75 m) está por debajo de
+  // lo que resuelven 15 imágenes de 10–20 m.
+  const COTAS: number[] = [];
+  for (let c = COTA_BASE; c >= 0.5; c -= 0.05) COTAS.push(+c.toFixed(2));
+  let dist = efectivos.map((pts) => COTAS.map((c) => (pts ? distanciaA(pts, c) : null)));
+  for (let pasada = 0; pasada < 2; pasada++) {
+    dist = dist.map((fila, k) => fila.map((d, ci) => {
+      if (d === null) return null;
+      let s = 2 * d, w = 2;
+      for (const kk of [k - 1, k + 1]) {
+        const v = dist[kk]?.[ci];
+        if (v !== null && v !== undefined && P[kk].nx * P[k].nx + P[kk].nz * P[k].nz >= COS30) { s += v; w++; }
+      }
+      return s / w;
+    }));
+  }
+  dist.forEach((fila, k) => {
+    if (!efectivos[k]) return;
+    const pts: [number, number][] = [];
+    fila.forEach((d, ci) => { if (d !== null && (!pts.length || d > pts[pts.length - 1][0])) pts.push([d, COTAS[ci]]); });
+    efectivos[k] = pts.length >= 2 ? pts : null;
+  });
   for (let i = 0; i + 1 < P.length; i++) {
     const a = P[i], b = P[i + 1];
-    if (!a.ajuste || !b.ajuste) continue;
+    const pa = efectivos[i], pb = efectivos[i + 1];
+    if (!pa || !pb) continue;
     // Donde la base se curva mucho (cabos) las normales se cruzan: ese tramo no se usa.
-    if (a.nx * b.nx + a.nz * b.nz < Math.cos((30 * Math.PI) / 180)) continue;
-    const pa: [number, number][] = [[0, COTA_BASE], ...a.ajuste.puntos.filter(([d, z]) => d > 0 && z < COTA_BASE)];
-    const pb: [number, number][] = [[0, COTA_BASE], ...b.ajuste.puntos.filter(([d, z]) => d > 0 && z < COTA_BASE)];
+    if (a.nx * b.nx + a.nz * b.nz < COS30) continue;
     const cMin = Math.max(pa[pa.length - 1][1], pb[pb.length - 1][1]);
     for (let c = COTA_BASE; c >= cMin; c -= 0.005) {
       const da = distanciaA(pa, c), db = distanciaA(pb, c);
@@ -252,8 +331,12 @@ if (s2) {
       }
     }
   }
-  for (let k = 0; k < N * N; k++) if (cuenta[k]) { conS2[k] = suma[k] / cuenta[k]; conocido[k] = 1; nodosS2++; }
-  console.log(`Sentinel‑2: ${nodosS2} nodos de la franja intermareal (${((nodosS2 * PASO_RELIEVE ** 2) / 1e4).toFixed(1)} ha)`);
+  // Hacia el mar la arena no sube: la franja del satélite no pasa de la cota del borde medido más
+  // cercano. Donde la playa ha cambiado entre el vuelo LiDAR (2024) y las imágenes (2025‑26), esto
+  // evita un escalón en la unión.
+  for (let k = 0; k < N * N; k++) if (cuenta[k]) { conS2[k] = Math.min(suma[k] / cuenta[k], generico.borde[k]); conocido[k] = 1; nodosS2++; }
+  perfilesInterpolados = interpolados;
+  console.log(`Sentinel‑2: ${nodosS2} nodos de la franja intermareal (${((nodosS2 * PASO_RELIEVE ** 2) / 1e4).toFixed(1)} ha), ${interpolados} perfiles interpolados en huecos`);
 } else {
   console.log('Sin data/intermareal_s2.json: la franja intermareal queda con la pendiente genérica.');
 }
@@ -267,15 +350,17 @@ const meta = {
   fuentes: {
     intermareal: 'Copernicus Sentinel-2 L2A (línea de agua) + mareógrafo REDMAR Avilés: data/intermareal_s2.json',
     tierra: `IGN, MDT05 (LiDAR PNOA), WCS INSPIRE: ${URL_MDT}`,
+    playa: nodosFino ? 'IGN/CNIG, LiDAR PNOA 2024 (3ª cobertura), clase suelo, media de 1 m: public/bahia/fino.bin' : null,
     fondo: `EMODnet Bathymetry DTM 2024 (1/16′, referido a la LAT), WCS: ${URL_EMOD}`,
   },
   consultado: new Date().toISOString().slice(0, 10),
   nmmaSobreChAprox: +NMMA_SOBRE_CH_APROX.toFixed(4),
   pendienteGenerica: PENDIENTE,
   porcentajeMedido: +(100 * nMed / (N * N)).toFixed(1),
+  nodosLidar2024: nodosFino,
   porcentajeFondoEmodnet: +(100 * usadoEmod / (N * N)).toFixed(1),
   transicionMetros: TRANSICION,
-  intermarealSentinel2: s2 ? { fuente: 'data/intermareal_s2.json (tools/intermareal-s2.py)', consultado: s2.consultado, hectareas: +((nodosS2 * PASO_RELIEVE ** 2) / 1e4).toFixed(1) } : null,
+  intermarealSentinel2: s2 ? { fuente: 'data/intermareal_s2.json (tools/intermareal-s2.py)', consultado: s2.consultado, hectareas: +((nodosS2 * PASO_RELIEVE ** 2) / 1e4).toFixed(1), perfilesInterpolados, huecoMaxPerfiles: 6 } : null,
   nota: 'Tierra: medida (MDT05). Franja intermareal de la playa: perfil de la línea de agua de Sentinel-2 donde es válido. Resto de la franja y fondo cercano: pendiente 1:50 desde lo último conocido con transición a EMODnet (115 m) en 250 m, APROXIMADA.',
 };
 writeFileSync(join(RAIZ, 'src', 'scene', 'bahia-meta.json'), JSON.stringify(meta, null, 1));

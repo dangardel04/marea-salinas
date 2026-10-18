@@ -8,7 +8,8 @@ import { LADO, PASO_RELIEVE } from '../../bahia';
 import metaRelieve from '../bahia-meta.json';
 import metaOrto from '../bahia-orto.json';
 import metaEdificios from '../bahia-edificios.json';
-import { cargarRelieve } from './relieve';
+import metaFino from '../bahia-fino.json';
+import { cargarFino, cargarRelieve } from './relieve';
 import { crearTeselas } from './teselas';
 import { cargarEdificios } from './edificios';
 import { crearAgua } from './agua';
@@ -88,6 +89,12 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   const teselas = crearTeselas({
     relieve, indiceOrto: metaOrto.indice as Record<string, string[]>, urlBase: base, escena, comunes, movil,
     anisotropia: Math.min(8, render.capabilities.getMaxAnisotropy()),
+  });
+  // Relieve fino de la playa (LiDAR 2024, 1 m): llega después, sin bloquear el arranque.
+  cargarFino(`${base}bahia/fino.bin`).then((datos) => {
+    if (!datos) return;
+    relieve.ponerFino(metaFino, datos);
+    teselas.rehacerFino();
   });
   const agua = crearAgua({ escena, texRelieve, nRelieve: nRel, pasoRelieve: PASO_RELIEVE * 2, nCampo: Math.floor((relieve.n - 1) / PASO_CAMPO) + 1, comunes: comunesAgua, movil });
   const cielo = crearCielo(escena, movil);

@@ -1,0 +1,19 @@
+{
+ "vuelo": [
+  "2024-08-11T15:08:45+00:00",
+  "2024-08-11T15:18:22+00:00"
+ ],
+ "puntosSuelo": 12215568,
+ "bloques": 123,
+ "nodosConDato": 967772,
+ "comprobacionVertical": {
+  "mediana": 0.03,
+  "mad": 0.545,
+  "nodos": 316846,
+  "nota": "LiDAR 2024 (sin convertir) − MDT05 IGN (NMMA) en nodos de tierra por encima de +6 m"
+ },
+ "arenaMasBaja": {
+  "p01": 2.03,
+  "nota": "percentil 0,1 de la cota de suelo, m sobre el CH"
+ }
+}

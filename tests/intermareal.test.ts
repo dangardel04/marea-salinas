@@ -22,7 +22,7 @@ describe('intermareal Sentinel‑2', () => {
     const v = s2.resumen.validacionDejandoUnaFuera, g = s2.resumen.mismosPuntosRelieveGenerico;
     expect(v.casos).toBe(g.casos);
     expect(v.rms).toBeLessThan(g.rms);
-    // Resultado del 19/10/2026: 0,51 m frente a 2,61 m.
+    // Resultado del 19/10/2026 (con el LiDAR de 2024): 0,45 m frente a 2,86 m.
     expect(v.rms).toBeLessThan(0.6);
   });
 

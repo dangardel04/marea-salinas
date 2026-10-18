@@ -4,9 +4,12 @@
 // ortofoto de su nivel; si esa imagen no existe o aún no ha llegado, usa la del antepasado más
 // cercano que sí esté cargado (con su recorte de coordenadas UV). Los bordes llevan un faldón
 // vertical que tapa las grietas entre teselas de distinto nivel.
+//
+// Donde hay relieve fino (LiDAR 2024 de 1 m en la playa) la malla baja dos niveles más
+// (teselas de 100 y 50 m, ~1 m entre vértices); la ortofoto es la del nivel 5, recortada.
 
 import * as THREE from 'three';
-import { LADO, NIVEL_MAX_ORTO, PASO_RELIEVE, recuadroTesela } from '../../bahia';
+import { LADO, NIVEL_MAX_ORTO, recuadroTesela } from '../../bahia';
 import type { Relieve } from './relieve';
 import { TERRENO_FRAG, TERRENO_VERT } from './sombreado';
 
@@ -20,9 +23,13 @@ interface Tesela {
   malla?: THREE.Mesh<THREE.BufferGeometry, THREE.ShaderMaterial>;
   usada: number;
   texturaNivel: number; // nivel de la ortofoto que lleva ahora (−1: ninguna)
+  /** Hasta qué nivel se puede dividir (más donde hay relieve fino). */
+  nivelMax: number;
 }
 
 const NIVEL_MAX_MALLA = NIVEL_MAX_ORTO;
+/** Nivel máximo donde hay relieve fino: teselas de 50 m, ~1 m entre vértices con SEG = 48. */
+const NIVEL_MAX_FINO = NIVEL_MAX_ORTO + 2;
 const MAX_TEXTURAS = 260;
 const MAX_MALLAS = 420;
 const CARGAS_SIMULTANEAS = 6;
@@ -112,9 +119,9 @@ export function crearTeselas(opciones: {
     const nor = new Float32Array((nPrin + nFald) * 3);
     const uv = new Float32Array((nPrin + nFald) * 2);
     const med = new Float32Array(nPrin + nFald);
-    const e = PASO_RELIEVE;
     const poner = (k: number, x: number, z: number, y: number, a: number, b: number) => {
       pos[k * 3] = x; pos[k * 3 + 1] = y; pos[k * 3 + 2] = z;
+      const e = relieve.pasoEn(x, z);
       const nx = relieve.altura(x - e, z) - relieve.altura(x + e, z);
       const nz = relieve.altura(x, z - e) - relieve.altura(x, z + e);
       const l = Math.hypot(nx, 2 * e, nz);
@@ -177,7 +184,9 @@ export function crearTeselas(opciones: {
     let t = teselas.get(clave);
     if (!t) {
       const caja = cajaDe(nivel, i, j);
-      t = { clave, nivel, i, j, caja, minAltura: caja.minReal, usada: 0, texturaNivel: -1 };
+      const r = recuadroTesela(nivel, i, j);
+      const nivelMax = relieve.hayFino(r.x0, r.z0, r.x1, r.z1) ? NIVEL_MAX_FINO : NIVEL_MAX_MALLA;
+      t = { clave, nivel, i, j, caja, minAltura: caja.minReal, usada: 0, texturaNivel: -1, nivelMax };
       teselas.set(clave, t);
     }
     return t;
@@ -192,7 +201,7 @@ export function crearTeselas(opciones: {
     const t = obtener(nivel, i, j);
     if (!frustum.intersectsBox(t.caja)) return;
     const lado = LADO / 2 ** nivel;
-    if (nivel < NIVEL_MAX_MALLA && t.caja.distanceToPoint(cam) < lado * FACTOR) {
+    if (nivel < t.nivelMax && t.caja.distanceToPoint(cam) < lado * FACTOR) {
       for (let a = 0; a < 2; a++) for (let b = 0; b < 2; b++) recorrer(nivel + 1, i * 2 + a, j * 2 + b, cam);
     } else visibles.push(t);
   }
@@ -262,8 +271,29 @@ export function crearTeselas(opciones: {
   return {
     actualizar,
     grupo,
-    /** Teselas visibles en el último cuadro (para colocar los parches de agua). */
-    visibles: () => visibles.map((t) => { const r = recuadroTesela(t.nivel, t.i, t.j); return { clave: t.clave, x0: r.x0, z0: r.z0, lado: r.lado, minY: t.minAltura }; }),
+    /** Teselas visibles en el último cuadro, para colocar los parches de agua. Las de los niveles
+     *  finos se agrupan en su antepasada de nivel 5: el agua no necesita más detalle. */
+    visibles: () => {
+      const salida = new Map<string, { clave: string; x0: number; z0: number; lado: number; minY: number }>();
+      for (const t of visibles) {
+        const d = Math.max(0, t.nivel - NIVEL_MAX_MALLA), nivel = t.nivel - d, i = t.i >> d, j = t.j >> d;
+        const clave = `${nivel}_${i}_${j}`;
+        const prev = salida.get(clave);
+        if (prev) { prev.minY = Math.min(prev.minY, t.minAltura); continue; }
+        const r = recuadroTesela(nivel, i, j);
+        salida.set(clave, { clave, x0: r.x0, z0: r.z0, lado: r.lado, minY: t.minAltura });
+      }
+      return [...salida.values()];
+    },
+    /** Rehace las teselas que tocan el relieve fino (cuando acaba de llegar). */
+    rehacerFino() {
+      for (const [clave, t] of teselas) {
+        const r = recuadroTesela(t.nivel, t.i, t.j);
+        if (!relieve.hayFino(r.x0, r.z0, r.x1, r.z1)) continue;
+        if (t.malla) { grupo.remove(t.malla); t.malla.geometry.dispose(); t.malla.material.dispose(); }
+        teselas.delete(clave);
+      }
+    },
     /** Teselas de ortofoto pendientes de cargar (para la barra de carga). */
     pendientes: () => cola.length + cargando,
   };

@@ -71,9 +71,9 @@ Otras comprobaciones:
 | Dato | Valor | Fuente y licencia |
 |---|---|---|
 | Recuadro de la escena | Cuadrado de 6,4 km centrado en 43,589 N −5,955 E (de Arnao a la ría de Avilés) | `src/bahia.ts` |
-| Relieve en tierra | MDT de 5 m (LiDAR PNOA) sobre el NMMA, pasado al CH con el desnivel aproximado de §4 | IGN, WCS INSPIRE `servicios.idee.es/wcs-inspire/mdt`, cobertura `Elevacion4258_5`. © Instituto Geográfico Nacional, CC BY 4.0 |
+| Relieve en tierra | MDT de 5 m (LiDAR PNOA) sobre el NMMA, pasado al CH con el desnivel aproximado de §4. En la playa, el paseo y las dunas manda la nube LiDAR de 2024 (§8) | IGN, WCS INSPIRE `servicios.idee.es/wcs-inspire/mdt`, cobertura `Elevacion4258_5`. © Instituto Geográfico Nacional, CC BY 4.0 |
 | Fondo marino | EMODnet Bathymetry DTM 2024, rejilla de 1/16′ (~115 m), referido a la LAT (*«published for viewing and downloading in LAT»*) | https://emodnet.ec.europa.eu/en/bathymetry, WCS `ows.emodnet-bathymetry.eu`, cobertura `emodnet__mean`. CC BY 4.0 |
-| Franja intermareal de la playa | **Medida desde satélite** donde el perfil es válido (26,1 ha, entre +1,0 y +3,0 m sobre el CH): ver §7 | `tools/intermareal-s2.py`, `data/intermareal_s2.json` |
+| Franja intermareal de la playa | **Medida desde satélite** por debajo de lo que midió el LiDAR de 2024, donde el perfil es válido (22,2 ha, hasta +1,15 m sobre el CH): ver §7 | `tools/intermareal-s2.py`, `data/intermareal_s2.json` |
 | Resto de la franja intermedia | **APROXIMADA**: transición en 250 m de una pendiente 1:50 desde lo último conocido (arena medida o franja de §7) a EMODnet | `tools/bahia-relieve.ts` |
 | Ortofoto | PNOA máxima actualidad, vuelo de **septiembre de 2023** en la playa, 0,25 m/píxel. Servida en teselas de 12,5 a 0,39 m/píxel | IGN, WMS `www.ign.es/wms-inspire/pnoa-ma`, capa `OI.OrthoimageCoverage`. Fecha consultada con `GetFeatureInfo` de la capa `OI.MosaicElement`. CC BY 4.0, © IGN |
 | Edificios | Huella y número de plantas sobre rasante de 12.905 partes de edificio | Dirección General del Catastro, INSPIRE Buildings, `ovc.catastro.meh.es/INSPIRE/wfsBU.aspx`, `BU:BuildingPart`. Reutilización libre citando la fuente |
@@ -81,7 +81,7 @@ Otras comprobaciones:
 | Color de tejados | Media de la ortofoto dentro de cada huella | — |
 | Fachadas | **Decorativas** (color neutro y bandas de plantas) | — |
 | Puntos de arena de las vistas | Polígono de la playa en OpenStreetMap (way 516073411), © colaboradores de OpenStreetMap, ODbL | `src/scene/bahia/escena.ts` |
-| Pendiente del frente de playa | **Medida**: 1:14 (mediana de 94 perfiles; cuartiles 0,068–0,077) entre +3,3 y +4,6 m sobre el CH. Por debajo de +3,1 m no hay LiDAR (el vuelo fue con marea media‑alta). Entre +1,0 y +3,3 m, **medida desde satélite**: 1:71 (mediana de 96 perfiles; p10–p90 1:43–1:104), ver §7 | MDT05 IGN y §7, `tools/pendiente-playa.ts` |
+| Pendiente del frente de playa | **Medida**: 1:22 (mediana de 85 perfiles; cuartiles 0,045–0,065) entre +3,3 y +4,6 m sobre el CH, con el LiDAR de 2024 (§8). Con el MDT05 salía 1:14: la playa ha cambiado entre los dos vuelos. Entre +1,15 y +3,3 m, **medida desde satélite**: 1:85 (mediana de 102 perfiles; p10–p90 1:43–1:116), ver §7 | LiDAR (§5 y §8) y §7, `tools/pendiente-playa.ts` |
 
 ## 6. Oleaje (consultado el 18/10/2026)
 
@@ -98,7 +98,7 @@ Otras comprobaciones:
 
 ## 7. Franja intermareal con la línea de agua de Sentinel‑2 (consultado el 19/10/2026)
 
-La arena que el mar cubre y descubre no la capturó el LiDAR del MDT05. Se reconstruye con el método de la línea de agua: en cada imagen de satélite se localiza la orilla y se le asigna el nivel del mar medido en ese momento. Juntando imágenes tomadas con mareas distintas sale el perfil de la playa.
+La arena que el mar cubre y descubre no la capturó el LiDAR del MDT05, y la nube de 2024 (§8) solo llega a +2,0 m. Se reconstruye con el método de la línea de agua: en cada imagen de satélite se localiza la orilla y se le asigna el nivel del mar medido en ese momento. Juntando imágenes tomadas con mareas distintas sale el perfil de la playa.
 
 | Dato | Valor | Fuente |
 |---|---|---|
@@ -106,12 +106,25 @@ La arena que el mar cubre y descubre no la capturó el LiDAR del MDT05. Se recon
 | Orilla | Índice MNDWI = (B03 − B11)/(B03 + B11), umbral de Otsu de cada imagen y borde de la arena más hacia el mar, en perfiles cada 25 m normales a la curva de +3,1 m de la arena medida | Xu, H. (2006). *Modification of normalised difference water index (NDWI) to enhance open water features in remotely sensed imagery*. International Journal of Remote Sensing 27, 3025–3033. Otsu, N. (1979). *A threshold selection method from gray-level histograms*. IEEE Trans. SMC 9, 62–66 |
 | Nivel en cada imagen | Medido por el mareógrafo REDMAR de Avilés a la hora de la imagen, pasado al CH igual que en §3 | `data/obs_aviles_10min.csv`, Puertos del Estado |
 | Oleaje en cada imagen | Hs del modelo Open‑Meteo Marine en la celda de §6. Solo se usan imágenes con Hs < 1,3 m (15 de las 26 sin nubes) | Open‑Meteo Marine API (histórico) |
-| Subida de la orilla por las olas | La orilla de la imagen queda de mediana **0,33 m por encima** del nivel en reposo. Se mide donde la orilla cae sobre arena del LiDAR (374 casos, MAD 0,73 m) y se corrige con ese valor | `tools/intermareal-s2.py` |
-| Perfil | Por perfil, con dos vecinos a cada lado (125 m de playa): mediana de la orilla de cada imagen y perfil que solo baja hacia el mar (regresión isotónica). No se impone ninguna forma. Solo entre +1,0 m (la orilla más baja observada) y +3,0 m | `tools/intermareal-s2.py`, `data/intermareal_s2.json` |
-| Validez | 96 de 152 perfiles. El resto se descarta por pocas imágenes, por pendiente impropia de arena (roca de La Peñona) o porque no mejora el relieve genérico. Validación en VALIDACION.md §10 | — |
+| Subida de la orilla por las olas | La orilla de la imagen queda de mediana **0,50 m por encima** del nivel en reposo. Se mide donde la orilla cae sobre arena del LiDAR (582 casos, MAD 0,72 m) y se corrige con ese valor. Mezcla el efecto de las olas con el cambio de la playa entre el vuelo (agosto de 2024) y las imágenes | `tools/intermareal-s2.py` |
+| Perfil | Por perfil, con dos vecinos a cada lado (125 m de playa): mediana de la orilla de cada imagen y perfil que solo baja hacia el mar (regresión isotónica). No se impone ninguna forma. Solo hasta +1,15 m (la orilla más baja observada); por encima de +3,0 m no se usa. Se aplica solo por debajo de la arena medida por LiDAR y sin superar la cota de su borde | `tools/intermareal-s2.py`, `data/intermareal_s2.json` |
+| Validez | 102 de 189 perfiles. El resto se descarta por pocas imágenes, por pendiente impropia de arena (roca de La Peñona) o porque no mejora el relieve genérico. Validación en VALIDACION.md §10 | — |
+| Huecos entre perfiles válidos | **INTERPOLADOS**: entre dos perfiles válidos separados por hasta 6 descartados (150 m), la distancia de cada cota se interpola; después se suaviza a lo largo de la playa (1‑2‑1, dos pasadas). 25 perfiles interpolados | `tools/bahia-relieve.ts` |
 
 **Lo que no da:**
-- La arena por debajo de +1,0 m: las bajamares vivas bajan más, pero ninguna imagen útil del año las pilló.
+- La arena por debajo de +1,15 m: las bajamares vivas bajan más, pero ninguna imagen útil del año las pilló.
 - Los canales y las barras de bajamar: el píxel es de 10–20 m.
 - Los cambios de la playa a lo largo del año: es un perfil medio de oct‑2025 a oct‑2026.
+
+## 8. Nube LiDAR PNOA 2024 de la playa (consultado el 19/10/2026)
+
+| Dato | Valor | Fuente |
+|---|---|---|
+| Teselas | `PNOA_2024_AST_260-4829`, `260-4830`, `261-4829`, `261-4830`, `262-4829`, `262-4830` y `262-4831` (`_H30_NPC01.LAZ`), de 1×1 km. El nombre da la esquina noroeste en km UTM (la 260‑4829 cubre de 4828 a 4829 km norte) | Centro de Descargas del CNIG (`centrodedescargas.cnig.es`), «LiDAR 3ª cobertura». La descarga pide un reCAPTCHA y se hizo a mano. © Instituto Geográfico Nacional, CC BY 4.0 |
+| Formato | LAS 1.4, formato de punto 8 (con RGB e infrarrojo), clasificada. ETRS89 UTM 30N (EPSG:25830) | Cabeceras de los ficheros |
+| Sistema vertical | **No lo declaran los ficheros.** Comprobado frente al MDT05 (NMMA): diferencia mediana de +0,03 m en 316.846 nodos de tierra por encima de +6 m. Se trata como altitud ortométrica y se pasa al CH con el mismo desnivel que el resto | `tools/lidar-fino.py`, `data/lidar2024.json` |
+| Fecha y hora del vuelo | 11/08/2024, de 15:08 a 15:18 UTC, según el tiempo GPS de los puntos (tiempo GPS ajustado menos 18 s) | `data/lidar2024.json` |
+| Marea durante el vuelo | Unos +1,85 a +1,95 m sobre el CH, subiendo. El mareógrafo de Avilés no tiene datos de ese día: es la predicción para Avilés más el residuo medido en Gijón a esa hora (+0,01 a +0,04 m) | Constantes de este proyecto y `data/obs_gijon_10min.csv` |
+| Uso | Puntos de clase 2 (suelo), media por metro cuadrado en el marco local, rejilla de 1 m. 123 bloques de 100 m sobre la playa, el paseo, el club, las dunas y la primera línea de casas (967.772 nodos con dato, 2,5 MB). En el relieve de 5 m sustituye al MDT05 donde hay dato | `tools/lidar-fino.py`, `public/bahia/fino.bin`, `tools/bahia-relieve.ts` |
+| Arena más baja medida | +2,03 m sobre el CH (percentil 0,1) | `data/lidar2024.json` |
 

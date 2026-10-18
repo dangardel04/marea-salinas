@@ -1,22 +1,22 @@
 {
- "fuente": "MDT05 IGN (LiDAR PNOA) sobre el CH de Avilés, ver tools/pendiente-playa.ts",
+ "fuente": "LiDAR sobre el CH de Avilés: MDT05 IGN y, en la playa, LiDAR PNOA 2024 (public/bahia/fino.bin); ver tools/pendiente-playa.ts",
  "cotas": [
   3.3,
   4.6
  ],
- "perfiles": 94,
- "mediana": 0.0722,
- "p25": 0.0684,
- "p75": 0.0765,
+ "perfiles": 85,
+ "mediana": 0.0464,
+ "p25": 0.0448,
+ "p75": 0.065,
  "intermareal": {
   "fuente": "Línea de agua Sentinel-2 + mareógrafo de Avilés, ver tools/intermareal-s2.py (pendiente media de cada perfil válido)",
   "cotas": [
-   0.99,
+   1.15,
    3.3
   ],
-  "perfiles": 96,
-  "mediana": 0.014,
-  "p10": 0.0096,
+  "perfiles": 102,
+  "mediana": 0.0117,
+  "p10": 0.0086,
   "p90": 0.0234
  }
 }

@@ -232,26 +232,45 @@ Se activa **E**:
 **Qué no se ha podido validar:**
 - **Frente a Salinas**: el oleaje que usa la app es el de la celda del modelo frente a Salinas, a unos 14 km mar adentro. No hay boya allí.
 - **Propagación hasta la playa**: el asomeramiento, la rotura y la refracción por fast marching están comprobados con pruebas unitarias frente a la teoría lineal (`tests/propagacion.test.ts`), pero **no frente a medidas** dentro de la bahía.
-- **Subida del agua por las olas (R2)**: se calcula con la fórmula publicada de Stockdon et al. (2006) y la pendiente medida del frente de playa (1:14, por encima de +3,3 m). Entre +1,0 y +3,3 m usa la pendiente medida desde satélite (1:71, §10) y, por debajo, la aproximada (1:50). **No hay medidas de run‑up en Salinas para validarla.** Según el resumen del artículo (USGS, https://www.usgs.gov/publications/empirical-parameterization-setup-swash-and-runup), en sus 10 campañas de campo el error RMS de la fórmula fue de 38 cm, con un sesgo de −17 cm, para una subida media observada de 144 cm. La implementación reproduce el ejemplo de la documentación de py-wave-runup (Hs = 4 m, Tp = 11 s, β = 0,1 → R2 ≈ 2,54 m; https://py-wave-runup.readthedocs.io/en/stable/models.html), comprobado en `tests/oleaje.test.ts`.
+- **Subida del agua por las olas (R2)**: se calcula con la fórmula publicada de Stockdon et al. (2006) y la pendiente medida del frente de playa (1:22 con el LiDAR de 2024, por encima de +3,3 m). Entre +1,15 y +3,3 m usa la pendiente medida desde satélite (1:85, §10) y, por debajo, la aproximada (1:50). **No hay medidas de run‑up en Salinas para validarla.** Según el resumen del artículo (USGS, https://www.usgs.gov/publications/empirical-parameterization-setup-swash-and-runup), en sus 10 campañas de campo el error RMS de la fórmula fue de 38 cm, con un sesgo de −17 cm, para una subida media observada de 144 cm. La implementación reproduce el ejemplo de la documentación de py-wave-runup (Hs = 4 m, Tp = 11 s, β = 0,1 → R2 ≈ 2,54 m; https://py-wave-runup.readthedocs.io/en/stable/models.html), comprobado en `tests/oleaje.test.ts`.
 
 ## 10. Franja intermareal de la playa (`python tools/intermareal-s2.py`)
 
-Cálculo del 19/10/2026. El método se describe en FUENTES.md §7 y los resultados completos están en `data/intermareal_s2.json`.
+Cálculo del 19/10/2026. El método está en FUENTES.md §7 y los resultados completos, en `data/intermareal_s2.json`.
 
-**Qué se compara.** Para cada perfil y cada imagen, se rehace el perfil **sin esa imagen** y se mira qué cota da en el sitio donde estaba su orilla. La referencia es la cota real del suelo en ese punto: el nivel medido por el mareógrafo más la subida de la orilla por las olas (0,33 m). Se compara con lo que da en esos mismos puntos el relieve anterior, que usaba una pendiente genérica de 1:50 que pasa a EMODnet.
+### 10.1 Validación dejando cada imagen fuera
+
+**Qué se compara.** Para cada perfil y cada imagen, se rehace el perfil **sin esa imagen** y se mira qué cota da donde estaba su orilla. La referencia es la cota real del suelo en ese punto: el nivel medido por el mareógrafo más la subida de la orilla por las olas (0,50 m). Se compara con lo que da en esos mismos puntos el relieve genérico: lo medido por LiDAR y, por debajo, una pendiente de 1:50 que pasa a EMODnet.
 
 | | Casos | Sesgo (mediana) | MAD | RMS | 90 % de los errores por debajo de |
 |---|---|---|---|---|---|
-| Perfil Sentinel‑2 (dejando la imagen fuera) | 479 | −0,18 m | 0,47 m | **0,51 m** | 0,79 m |
-| Relieve genérico anterior | 479 | +1,29 m | 1,36 m | **2,61 m** | 4,33 m |
+| Perfil Sentinel‑2 (dejando la imagen fuera) | 458 | −0,10 m | 0,44 m | **0,45 m** | 0,71 m |
+| Relieve genérico | 458 | +0,66 m | 1,17 m | **2,86 m** | 6,13 m |
 
-- **El relieve anterior ponía la arena demasiado baja**, de mediana 1,3 m en la franja intermareal. La cota +1,5 m está, según el satélite, **44 m más hacia el mar** que en el relieve anterior (p10–p90: de 9 a 87 m). Es decir, en bajamar se descubre bastante más arena de la que mostraba la escena.
-- **Pendiente media de la franja**: 1:71 (p10–p90 1:43–1:104). Es más llana que la genérica de 1:50 y mucho más que la de la arena alta, que es 1:14 según el LiDAR.
-- **Error que queda**: unos ±0,5 m en vertical. En una pendiente de 1:71 equivale a unos ±35 m en horizontal. Las fuentes son el píxel de 10–20 m, la espuma y el vaivén de cada momento, y que la playa cambia a lo largo del año.
-- **Cobertura**: 96 de 152 perfiles (26,1 ha), entre +1,0 y +3,0 m. En los otros, y por debajo de +1,0 m, sigue la pendiente genérica.
+### 10.2 Comprobación independiente con el LiDAR de 2024
+
+Antes de usar la nube de 2024 (§8 de FUENTES), el perfil del satélite se calculó solo con el MDT05. Se comparó después con la nube en la arena que el MDT05 no había medido: 2853 nodos de 5 m entre +2,1 y +3,5 m. La nube es de agosto de 2024 y las imágenes, de oct‑2025 a oct‑2026, así que la diferencia mezcla el error del método con el cambio de la playa.
+
+| Relieve (sin el LiDAR de 2024) − LiDAR 2024 | Mediana | MAD | RMS |
+|---|---|---|---|
+| Con el perfil Sentinel‑2 | −0,23 m | 0,42 m | **0,46 m** |
+| Genérico (pendiente 1:50) | −0,59 m | 0,36 m | **0,68 m** |
+
+Ahora la nube de 2024 forma parte del relieve y del ajuste (es la arena «medida»), así que esta comparación ya no se puede repetir de forma independiente.
+
+### 10.3 Conclusiones
+
+- **La arena de la franja intermareal está más alta de lo que suponía la pendiente genérica.** La cota +1,5 m queda, según el satélite, unos 25 m más hacia el mar (mediana; p10–p90 de −21 a 108 m). En bajamar se descubre más arena.
+- **Pendiente media de la franja**: 1:85 (p10–p90 1:43–1:116). Es más llana que la genérica de 1:50, y mucho más que la de la arena alta, que es 1:22 con el LiDAR de 2024.
+- **Error que queda**: unos ±0,45 m en vertical. En una pendiente de 1:85 equivale a unos ±40 m en horizontal. Vienen del píxel de 10–20 m, de la espuma y el vaivén de cada momento, y de que la playa cambia a lo largo del año.
+- **Cobertura**: 102 de 189 perfiles válidos, más 25 interpolados en huecos de hasta 150 m (22,2 ha), de la arena medida por LiDAR a +1,15 m. En el resto, y por debajo de +1,15 m, sigue la pendiente genérica.
 
 **Limitaciones.**
-- Solo 9 de las 15 imágenes con poca ola caen por debajo de +3,0 m, y ninguna por debajo de +0,65 m de nivel.
-- La subida de la orilla por las olas (0,33 m) se mide en la arena alta, que es empinada, y se aplica en la franja baja, que es llana. Su dispersión es grande (MAD 0,73 m).
-- No hay medidas de campo (GPS o LiDAR en bajamar) para validarlo de forma independiente: la validación usa las mismas imágenes, dejando una fuera cada vez.
+- Solo 6 de las 15 imágenes con poca ola caen por debajo de +2,5 m de nivel, y ninguna por debajo de +0,65 m.
+- La subida de la orilla (0,50 m) se mide en la arena del LiDAR y se aplica en la franja baja, que es más llana. Su dispersión es grande (MAD 0,72 m).
+- No hay medidas de campo (GPS o LiDAR en bajamar).
 
+### 10.4 Relieve fino de 1 m
+
+- **Uniones**: en los últimos 8 m antes de un hueco del LiDAR, el relieve de 1 m pasa poco a poco al de 5 m. En 75 cortes a lo largo de la playa, el mayor salto entre puntos separados 0,5 m es de 3,5 cm de mediana (p90 6 cm).
+- **Franja del satélite bajo el borde del LiDAR**: no se deja que supere la cota del borde medido más cercano. Sin ese límite había escalones de hasta 0,5 m, por el cambio de la playa entre 2024 y 2025‑26.

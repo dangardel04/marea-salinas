@@ -15,7 +15,15 @@ export function calcularCampo(relieve: Relieve, nivel: number, periodo: number, 
   const n = Math.floor((relieve.n - 1) / PASO_CAMPO) + 1;
   const paso = PASO_RELIEVE * PASO_CAMPO;
   const prof = new Float32Array(n * n);
-  for (let f = 0; f < n; f++) for (let c = 0; c < n; c++) prof[f * n + c] = nivel - relieve.alto[f * PASO_CAMPO * relieve.n + c * PASO_CAMPO];
+  // En la franja de rompientes la ola ya es una resaca (bore) que avanza a ~√(g·(h + H)), no a
+  // √(g·h): con h de pocos centímetros sobre la terraza de bajamar, √(g·h) haría que la fase
+  // saltara de una celda a otra y el vaivén saldría en dedos. Para la fase, profundidad mínima de
+  // PROF_MIN_FASE donde hay agua.
+  const PROF_MIN_FASE = 1;
+  for (let f = 0; f < n; f++) for (let c = 0; c < n; c++) {
+    const h = nivel - relieve.alto[f * PASO_CAMPO * relieve.n + c * PASO_CAMPO];
+    prof[f * n + c] = h > 0.05 ? Math.max(h, PROF_MIN_FASE) : h;
+  }
   // Dirección hacia la que viaja (opuesta a la de procedencia), en x este / z sur.
   const r = (dirDesde * Math.PI) / 180;
   const hacia = { x: -Math.sin(r), z: Math.cos(r) };
