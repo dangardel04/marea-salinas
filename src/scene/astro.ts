@@ -45,6 +45,13 @@ export function vectorEscena(dir: Direccion): [number, number, number] {
   return [x, Math.sin(alt), -haciaMar];
 }
 
+/** Dirección del cielo en el marco de la bahía (x este, y arriba, z sur). Vector unitario. */
+export function vectorBahia(dir: Direccion): [number, number, number] {
+  const r = Math.PI / 180;
+  const alt = dir.altura * r, az = dir.acimut * r;
+  return [Math.cos(alt) * Math.sin(az), Math.sin(alt), -Math.cos(alt) * Math.cos(az)];
+}
+
 const NOMBRES_FASE = ['Luna nueva', 'Luna creciente', 'Cuarto creciente', 'Gibosa creciente', 'Luna llena', 'Gibosa menguante', 'Cuarto menguante', 'Luna menguante'];
 /** Nombre de la fase lunar (fase 0..1 de suncalc, en 8 tramos centrados). */
 export function nombreFase(fase: number): string {

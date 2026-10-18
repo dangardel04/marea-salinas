@@ -1,13 +1,13 @@
-// Punto de entrada: arranca la interfaz (funciona aunque falle el 3D) y después carga la escena,
-// que va en su propio paquete (three.js) para que el panel aparezca antes.
+// Punto de entrada: arranca la interfaz (funciona aunque falle el 3D) y después carga la escena
+// de la bahía, que va en su propio paquete (three.js) para que el panel aparezca antes.
 import './style.css';
 import { iniciarInterfaz } from './ui/app';
 
 const interfaz = iniciarInterfaz();
 const aviso = document.getElementById('aviso-escena')!;
 
-import('./scene/escena')
-  .then(({ crearEscena }) => crearEscena(document.querySelector<HTMLCanvasElement>('#escena')!))
+import('./scene/bahia/escena')
+  .then(({ crearEscenaBahia }) => crearEscenaBahia(document.querySelector<HTMLCanvasElement>('#escena')!, (texto) => { aviso.textContent = texto; }))
   .then((escena) => {
     interfaz.conectarEscena(escena);
     aviso.hidden = true;

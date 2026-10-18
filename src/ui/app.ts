@@ -8,6 +8,9 @@ import { diaCortoMadrid, fechaLargaMadrid, fechaMadrid, horaMadrid, inicioDiaMad
 import { crearCurva } from './curva';
 import { extremosOficiales, type ExtremoOficial } from './ihm';
 import { ICONOS } from './iconos';
+import { crearOleaje } from '../oleaje/estado';
+import { siguienteCuadro } from '../cuadro';
+import type { EstadoMar } from '../oleaje/datos';
 
 const MIN = 60_000, HORA = 3_600_000, DIA = 86_400_000;
 const REFRESCO_CORRECCION = 5 * MIN;
@@ -21,7 +24,9 @@ function poner(e: HTMLElement, valor: string, html = false) {
 }
 const metros = (h: number) => h.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-export interface DestinoEscena { actualizar(e: { t: number; nivel: number; nivelMax6h: number }): void }
+export interface DestinoEscena {
+  actualizar(e: { t: number; nivel: number; nivelMax6h: number; mar: EstadoMar | null; setup: number; r2: number }): void;
+}
 
 export function iniciarInterfaz() {
   const motor = crearMotor({ z0: constantes.z0Ch, constituyentes: constantes.constituyentes });
@@ -36,6 +41,8 @@ export function iniciarInterfaz() {
   let escena: DestinoEscena | null = null;
   let rango = calcularRango(Date.now());
 
+  const oleaje = crearOleaje();
+  let ultimoOleaje: ReturnType<typeof oleaje.en> | null = null;
   const nivel = (t: number) => motor.altura(t) + correccionEn(correccion, t);
 
   function calcularRango(ahora: number) {
@@ -228,7 +235,10 @@ export function iniciarInterfaz() {
       tSel += dt * velocidad * 1000;
       if (tSel >= rango.fin - MIN) { tSel = rango.fin - MIN; reproduciendo = false; }
     }
-    escena?.actualizar({ t: tSel, nivel: nivel(tSel), nivelMax6h: maxUltimas6h(tSel) });
+    const nAhora = nivel(tSel);
+    const ol = oleaje.en(tSel, nAhora, ahoraReal);
+    ultimoOleaje = ol;
+    escena?.actualizar({ t: tSel, nivel: nAhora, nivelMax6h: maxUltimas6h(tSel), mar: ol.mar, setup: ol.runup?.setup ?? 0, r2: ol.runup?.r2 ?? 0 });
     // Textos y curva a ~8 Hz: suficiente y más barato.
     if (ahoraPerf - ultimoTexto > 120) {
       ultimoTexto = ahoraPerf;
@@ -236,11 +246,13 @@ export function iniciarInterfaz() {
       pintarTextos(tSel, ahoraReal);
       curva.marcar(ahoraReal, tSel, nivel(tSel));
     }
-    requestAnimationFrame(cuadro);
+    siguienteCuadro(cuadro);
   }
-  requestAnimationFrame(cuadro);
+  siguienteCuadro(cuadro);
 
   return {
     conectarEscena(e: DestinoEscena) { escena = e; },
+    /** Último estado de oleaje calculado (para el panel y las pruebas). */
+    oleaje: () => ultimoOleaje,
   };
 }
