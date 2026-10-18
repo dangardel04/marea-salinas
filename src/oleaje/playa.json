@@ -7,5 +7,16 @@
  "perfiles": 94,
  "mediana": 0.0722,
  "p25": 0.0684,
- "p75": 0.0765
+ "p75": 0.0765,
+ "intermareal": {
+  "fuente": "Línea de agua Sentinel-2 + mareógrafo de Avilés, ver tools/intermareal-s2.py (pendiente media de cada perfil válido)",
+  "cotas": [
+   0.99,
+   3.3
+  ],
+  "perfiles": 96,
+  "mediana": 0.014,
+  "p10": 0.0096,
+  "p90": 0.0234
+ }
 }

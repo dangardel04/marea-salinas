@@ -253,7 +253,9 @@ export function iniciarInterfaz() {
       const r2 = ol.runup.r2;
       const pendiente = `1:${Math.round(1 / ol.pendiente)}`;
       poner(el.olSubida, `Las olas suben por la arena hasta unos <strong class="num">${metros(r2)} m</strong> sobre el nivel del mar, hasta la cota <span class="num">${metros(nivel(t) + r2)} m</span>. `
-        + (ol.pendienteMedida ? `Pendiente de la arena medida (${pendiente}). ` : `Con la marea baja, pendiente aproximada (${pendiente}). `)
+        + (ol.pendienteFuente === 'lidar' ? `Pendiente de la arena medida (${pendiente}). `
+          : ol.pendienteFuente === 'satelite' ? `Pendiente de la arena medida por satélite (${pendiente}). `
+          : `Con la marea muy baja, pendiente aproximada (${pendiente}). `)
         + 'Margen de la fórmula: unos ±0,4 m.', true);
     } else poner(el.olSubida, '');
     const b = ol?.boya;

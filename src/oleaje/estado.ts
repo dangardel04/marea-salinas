@@ -11,9 +11,10 @@ const REFRESCO = 30 * 60_000;
 export interface OleajeEn {
   mar: EstadoMar | null;
   runup: Runup | null;
-  /** Pendiente usada y si es medida (LiDAR) o aproximada (tramo bajo, sin datos). */
+  /** Pendiente usada y de dónde sale: LiDAR (arena alta), satélite (franja intermareal, línea
+   *  de agua de Sentinel‑2) o aproximada (por debajo de la orilla más baja observada). */
   pendiente: number;
-  pendienteMedida: boolean;
+  pendienteFuente: 'lidar' | 'satelite' | 'aproximada';
   /** Última medida de la boya de Gijón (si hay y es de las últimas 3 h). */
   boya: (EstadoMar & { t: number }) | null;
 }
@@ -42,17 +43,20 @@ export function crearOleaje() {
     /** Oleaje y subida del agua en el instante t con el mar a `nivel` m sobre el CH. */
     en(t: number, nivel: number, ahoraReal: number): OleajeEn {
       const mar = estadoEn(prevision, t);
-      // El LiDAR solo mide el frente de playa por encima de ~+3,3 m: por debajo, la pendiente
-      // es la genérica del relieve (aproximada).
-      const pendienteMedida = nivel >= playa.cotas[0];
-      const pendiente = pendienteMedida ? playa.mediana : metaRelieve.pendienteGenerica;
+      // El LiDAR mide el frente de playa por encima de ~+3,3 m; por debajo, la franja medida con
+      // Sentinel‑2; más abajo aún, la pendiente genérica del relieve (aproximada).
+      const s2 = playa.intermareal;
+      const pendienteFuente: OleajeEn['pendienteFuente'] = nivel >= playa.cotas[0] ? 'lidar'
+        : s2 && nivel >= s2.cotas[0] ? 'satelite' : 'aproximada';
+      const pendiente = pendienteFuente === 'lidar' ? playa.mediana
+        : pendienteFuente === 'satelite' && s2 ? s2.mediana : metaRelieve.pendienteGenerica;
       const runup = mar ? stockdon(mar.hs, mar.tp, pendiente) : null;
       let ultimaBoya: OleajeEn['boya'] = null;
       if (boya?.t.length) {
         const k = boya.t.length - 1;
         if (ahoraReal - boya.t[k] < 3 * 3_600_000) ultimaBoya = { ...boya.e[k], t: boya.t[k] };
       }
-      return { mar, runup, pendiente, pendienteMedida, boya: ultimaBoya };
+      return { mar, runup, pendiente, pendienteFuente, boya: ultimaBoya };
     },
   };
 }

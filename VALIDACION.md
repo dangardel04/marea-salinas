@@ -232,4 +232,26 @@ Se activa **E**:
 **Qué no se ha podido validar:**
 - **Frente a Salinas**: el oleaje que usa la app es el de la celda del modelo frente a Salinas, a unos 14 km mar adentro. No hay boya allí.
 - **Propagación hasta la playa**: el asomeramiento, la rotura y la refracción por fast marching están comprobados con pruebas unitarias frente a la teoría lineal (`tests/propagacion.test.ts`), pero **no frente a medidas** dentro de la bahía.
-- **Subida del agua por las olas (R2)**: se calcula con la fórmula publicada de Stockdon et al. (2006) y la pendiente medida del frente de playa (1:14, por encima de +3,3 m). Cuando la marea está más baja usa la pendiente aproximada (1:50). **No hay medidas de run‑up en Salinas para validarla.** Según el resumen del artículo (USGS, https://www.usgs.gov/publications/empirical-parameterization-setup-swash-and-runup), en sus 10 campañas de campo el error RMS de la fórmula fue de 38 cm, con un sesgo de −17 cm, para una subida media observada de 144 cm. La implementación reproduce el ejemplo de la documentación de py-wave-runup (Hs = 4 m, Tp = 11 s, β = 0,1 → R2 ≈ 2,54 m; https://py-wave-runup.readthedocs.io/en/stable/models.html), comprobado en `tests/oleaje.test.ts`.
+- **Subida del agua por las olas (R2)**: se calcula con la fórmula publicada de Stockdon et al. (2006) y la pendiente medida del frente de playa (1:14, por encima de +3,3 m). Entre +1,0 y +3,3 m usa la pendiente medida desde satélite (1:71, §10) y, por debajo, la aproximada (1:50). **No hay medidas de run‑up en Salinas para validarla.** Según el resumen del artículo (USGS, https://www.usgs.gov/publications/empirical-parameterization-setup-swash-and-runup), en sus 10 campañas de campo el error RMS de la fórmula fue de 38 cm, con un sesgo de −17 cm, para una subida media observada de 144 cm. La implementación reproduce el ejemplo de la documentación de py-wave-runup (Hs = 4 m, Tp = 11 s, β = 0,1 → R2 ≈ 2,54 m; https://py-wave-runup.readthedocs.io/en/stable/models.html), comprobado en `tests/oleaje.test.ts`.
+
+## 10. Franja intermareal de la playa (`python tools/intermareal-s2.py`)
+
+Cálculo del 19/10/2026. El método se describe en FUENTES.md §7 y los resultados completos están en `data/intermareal_s2.json`.
+
+**Qué se compara.** Para cada perfil y cada imagen, se rehace el perfil **sin esa imagen** y se mira qué cota da en el sitio donde estaba su orilla. La referencia es la cota real del suelo en ese punto: el nivel medido por el mareógrafo más la subida de la orilla por las olas (0,33 m). Se compara con lo que da en esos mismos puntos el relieve anterior, que usaba una pendiente genérica de 1:50 que pasa a EMODnet.
+
+| | Casos | Sesgo (mediana) | MAD | RMS | 90 % de los errores por debajo de |
+|---|---|---|---|---|---|
+| Perfil Sentinel‑2 (dejando la imagen fuera) | 479 | −0,18 m | 0,47 m | **0,51 m** | 0,79 m |
+| Relieve genérico anterior | 479 | +1,29 m | 1,36 m | **2,61 m** | 4,33 m |
+
+- **El relieve anterior ponía la arena demasiado baja**, de mediana 1,3 m en la franja intermareal. La cota +1,5 m está, según el satélite, **44 m más hacia el mar** que en el relieve anterior (p10–p90: de 9 a 87 m). Es decir, en bajamar se descubre bastante más arena de la que mostraba la escena.
+- **Pendiente media de la franja**: 1:71 (p10–p90 1:43–1:104). Es más llana que la genérica de 1:50 y mucho más que la de la arena alta, que es 1:14 según el LiDAR.
+- **Error que queda**: unos ±0,5 m en vertical. En una pendiente de 1:71 equivale a unos ±35 m en horizontal. Las fuentes son el píxel de 10–20 m, la espuma y el vaivén de cada momento, y que la playa cambia a lo largo del año.
+- **Cobertura**: 96 de 152 perfiles (26,1 ha), entre +1,0 y +3,0 m. En los otros, y por debajo de +1,0 m, sigue la pendiente genérica.
+
+**Limitaciones.**
+- Solo 9 de las 15 imágenes con poca ola caen por debajo de +3,0 m, y ninguna por debajo de +0,65 m de nivel.
+- La subida de la orilla por las olas (0,33 m) se mide en la arena alta, que es empinada, y se aplica en la franja baja, que es llana. Su dispersión es grande (MAD 0,73 m).
+- No hay medidas de campo (GPS o LiDAR en bajamar) para validarlo de forma independiente: la validación usa las mismas imágenes, dejando una fuera cada vez.
+

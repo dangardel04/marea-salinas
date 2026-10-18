@@ -73,14 +73,15 @@ Otras comprobaciones:
 | Recuadro de la escena | Cuadrado de 6,4 km centrado en 43,589 N −5,955 E (de Arnao a la ría de Avilés) | `src/bahia.ts` |
 | Relieve en tierra | MDT de 5 m (LiDAR PNOA) sobre el NMMA, pasado al CH con el desnivel aproximado de §4 | IGN, WCS INSPIRE `servicios.idee.es/wcs-inspire/mdt`, cobertura `Elevacion4258_5`. © Instituto Geográfico Nacional, CC BY 4.0 |
 | Fondo marino | EMODnet Bathymetry DTM 2024, rejilla de 1/16′ (~115 m), referido a la LAT (*«published for viewing and downloading in LAT»*) | https://emodnet.ec.europa.eu/en/bathymetry, WCS `ows.emodnet-bathymetry.eu`, cobertura `emodnet__mean`. CC BY 4.0 |
-| Franja intermedia | **APROXIMADA**: transición en 250 m de una pendiente 1:50 desde la última arena medida a EMODnet | `tools/bahia-relieve.ts` |
+| Franja intermareal de la playa | **Medida desde satélite** donde el perfil es válido (26,1 ha, entre +1,0 y +3,0 m sobre el CH): ver §7 | `tools/intermareal-s2.py`, `data/intermareal_s2.json` |
+| Resto de la franja intermedia | **APROXIMADA**: transición en 250 m de una pendiente 1:50 desde lo último conocido (arena medida o franja de §7) a EMODnet | `tools/bahia-relieve.ts` |
 | Ortofoto | PNOA máxima actualidad, vuelo de **septiembre de 2023** en la playa, 0,25 m/píxel. Servida en teselas de 12,5 a 0,39 m/píxel | IGN, WMS `www.ign.es/wms-inspire/pnoa-ma`, capa `OI.OrthoimageCoverage`. Fecha consultada con `GetFeatureInfo` de la capa `OI.MosaicElement`. CC BY 4.0, © IGN |
 | Edificios | Huella y número de plantas sobre rasante de 12.905 partes de edificio | Dirección General del Catastro, INSPIRE Buildings, `ovc.catastro.meh.es/INSPIRE/wfsBU.aspx`, `BU:BuildingPart`. Reutilización libre citando la fuente |
 | Altura de los edificios | **SUPUESTO**: 3 m por planta. El Catastro no da alturas | `tools/bahia-edificios.ts` |
 | Color de tejados | Media de la ortofoto dentro de cada huella | — |
 | Fachadas | **Decorativas** (color neutro y bandas de plantas) | — |
 | Puntos de arena de las vistas | Polígono de la playa en OpenStreetMap (way 516073411), © colaboradores de OpenStreetMap, ODbL | `src/scene/bahia/escena.ts` |
-| Pendiente del frente de playa | **Medida**: 1:14 (mediana de 94 perfiles; cuartiles 0,068–0,077) entre +3,3 y +4,6 m sobre el CH. Por debajo de +3,1 m no hay LiDAR (el vuelo fue con marea media‑alta) | MDT05 IGN, `tools/pendiente-playa.ts` |
+| Pendiente del frente de playa | **Medida**: 1:14 (mediana de 94 perfiles; cuartiles 0,068–0,077) entre +3,3 y +4,6 m sobre el CH. Por debajo de +3,1 m no hay LiDAR (el vuelo fue con marea media‑alta). Entre +1,0 y +3,3 m, **medida desde satélite**: 1:71 (mediana de 96 perfiles; p10–p90 1:43–1:104), ver §7 | MDT05 IGN y §7, `tools/pendiente-playa.ts` |
 
 ## 6. Oleaje (consultado el 18/10/2026)
 
@@ -94,3 +95,23 @@ Otras comprobaciones:
 | Refracción | Tiempo de llegada del frente con la ecuación eikonal \|∇T\| = 1/c, resuelta por fast marching | Sethian, J.A. (1996). *A fast marching level set method for monotonically advancing fronts*. PNAS 93, 1591–1595 |
 | Sombra tras espigón y cabos | **APROXIMADA**: se atenúan las olas que llegan girando mucho respecto al mar abierto. No es difracción rigurosa | `src/scene/bahia/agua.ts` |
 | Forma de las olas y del vaivén en la orilla | **Ilustrativa**: 4 componentes de Gerstner por sistema con la energía de Hs; la cota máxima del vaivén sí sale de R2 | `src/scene/bahia/agua.ts` |
+
+## 7. Franja intermareal con la línea de agua de Sentinel‑2 (consultado el 19/10/2026)
+
+La arena que el mar cubre y descubre no la capturó el LiDAR del MDT05. Se reconstruye con el método de la línea de agua: en cada imagen de satélite se localiza la orilla y se le asigna el nivel del mar medido en ese momento. Juntando imágenes tomadas con mareas distintas sale el perfil de la playa.
+
+| Dato | Valor | Fuente |
+|---|---|---|
+| Imágenes | Sentinel‑2 L2A (reflectancia de superficie), bandas B03 (verde, 10 m) y B11 (infrarrojo de onda corta, 20 m), y la clasificación SCL para descartar nubes y sombras. Tesela 29TQJ, del 01/10/2025 al 18/10/2026; todas pasan hacia las 11:30 UTC | Copernicus Sentinel‑2 (ESA), en formato COG del catálogo STAC Earth Search de Element 84: `earth-search.aws.element84.com/v1`, colección `sentinel-2-l2a`. Contiene datos modificados de Copernicus Sentinel 2025–2026 (uso libre citando la fuente) |
+| Orilla | Índice MNDWI = (B03 − B11)/(B03 + B11), umbral de Otsu de cada imagen y borde de la arena más hacia el mar, en perfiles cada 25 m normales a la curva de +3,1 m de la arena medida | Xu, H. (2006). *Modification of normalised difference water index (NDWI) to enhance open water features in remotely sensed imagery*. International Journal of Remote Sensing 27, 3025–3033. Otsu, N. (1979). *A threshold selection method from gray-level histograms*. IEEE Trans. SMC 9, 62–66 |
+| Nivel en cada imagen | Medido por el mareógrafo REDMAR de Avilés a la hora de la imagen, pasado al CH igual que en §3 | `data/obs_aviles_10min.csv`, Puertos del Estado |
+| Oleaje en cada imagen | Hs del modelo Open‑Meteo Marine en la celda de §6. Solo se usan imágenes con Hs < 1,3 m (15 de las 26 sin nubes) | Open‑Meteo Marine API (histórico) |
+| Subida de la orilla por las olas | La orilla de la imagen queda de mediana **0,33 m por encima** del nivel en reposo. Se mide donde la orilla cae sobre arena del LiDAR (374 casos, MAD 0,73 m) y se corrige con ese valor | `tools/intermareal-s2.py` |
+| Perfil | Por perfil, con dos vecinos a cada lado (125 m de playa): mediana de la orilla de cada imagen y perfil que solo baja hacia el mar (regresión isotónica). No se impone ninguna forma. Solo entre +1,0 m (la orilla más baja observada) y +3,0 m | `tools/intermareal-s2.py`, `data/intermareal_s2.json` |
+| Validez | 96 de 152 perfiles. El resto se descarta por pocas imágenes, por pendiente impropia de arena (roca de La Peñona) o porque no mejora el relieve genérico. Validación en VALIDACION.md §10 | — |
+
+**Lo que no da:**
+- La arena por debajo de +1,0 m: las bajamares vivas bajan más, pero ninguna imagen útil del año las pilló.
+- Los canales y las barras de bajamar: el píxel es de 10–20 m.
+- Los cambios de la playa a lo largo del año: es un perfil medio de oct‑2025 a oct‑2026.
+

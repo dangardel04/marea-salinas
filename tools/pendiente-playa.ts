@@ -6,9 +6,10 @@
 // solo con puntos MEDIDOS por el LiDAR. βf = desnivel / distancia. Se guardan mediana y cuartiles.
 // El LiDAR solo trae arena por encima de ~+3,1 m sobre el CH (el vuelo fue con marea media-alta),
 // así que se mide el tramo superior del frente de playa, alrededor de la pleamar (+3,3 a +4,6 m).
-// La pendiente de la parte baja, que queda bajo el agua en pleamar, NO está medida.
+// La pendiente de la parte baja, que queda bajo el agua en pleamar, no la mide el LiDAR: se toma
+// del perfil de la línea de agua de Sentinel‑2 (data/intermareal_s2.json) si existe.
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { LADO, N_RELIEVE, PASO_RELIEVE, aLocal } from '../src/bahia.ts';
 import { PLAYA } from '../src/config.ts';
@@ -56,6 +57,17 @@ const salida = {
   mediana: +q(0.5).toFixed(4),
   p25: +q(0.25).toFixed(4),
   p75: +q(0.75).toFixed(4),
+  intermareal: null as null | { fuente: string; cotas: [number, number]; perfiles: number; mediana: number; p10: number; p90: number },
 };
+const rutaS2 = join(RAIZ, 'data', 'intermareal_s2.json');
+if (existsSync(rutaS2)) {
+  const r = JSON.parse(readFileSync(rutaS2, 'utf8')).resumen;
+  salida.intermareal = {
+    fuente: 'Línea de agua Sentinel-2 + mareógrafo de Avilés, ver tools/intermareal-s2.py (pendiente media de cada perfil válido)',
+    cotas: [r.cotas[0], COTA_BAJA], perfiles: r.perfilesValidos,
+    mediana: +r.pendienteMediana.toFixed(4), p10: +r.pendienteP10.toFixed(4), p90: +r.pendienteP90.toFixed(4),
+  };
+}
 writeFileSync(join(RAIZ, 'src', 'oleaje', 'playa.json'), JSON.stringify(salida, null, 1));
 console.log(`${pendientes.length} perfiles: βf mediana ${salida.mediana} (1:${(1 / salida.mediana).toFixed(0)}), cuartiles ${salida.p25}–${salida.p75}`);
+if (salida.intermareal) console.log(`Intermareal (Sentinel‑2), ${salida.intermareal.perfiles} perfiles: βf mediana ${salida.intermareal.mediana} (1:${(1 / salida.intermareal.mediana).toFixed(0)})`);

@@ -51,13 +51,14 @@ Detalle completo, con URL, fecha de consulta y licencia, en [FUENTES.md](FUENTES
 | Tabla oficial para comparar | IHM, `ideihm.covam.es/api-ihm/getmarea`, puerto 7 «Avilés (San Juan de Nieva)» |
 | Previsión de olas | Open‑Meteo Marine (modelo), celda a unos 14 km frente a Salinas |
 | Olas medidas | Boya de Gijón de Puertos del Estado (id 1117) |
-| Subida del agua por las olas | Stockdon et al. (2006), con la pendiente de la arena medida en el LiDAR |
+| Subida del agua por las olas | Stockdon et al. (2006), con la pendiente de la arena medida (LiDAR arriba, satélite en la franja intermareal) |
 | Relieve en tierra y ortofoto | IGN: MDT de 5 m (LiDAR PNOA) y ortofoto PNOA de septiembre de 2023 |
+| Arena intermareal | Línea de agua en 15 imágenes Sentinel‑2 (Copernicus) de oct‑2025 a oct‑2026, con el nivel medido por el mareógrafo de Avilés |
 | Fondo marino | EMODnet Bathymetry DTM 2024 (referido a la LAT) |
 | Edificios | Catastro (INSPIRE Buildings): huella y número de plantas |
 | Sol y luna | suncalc 2.1.1 |
 
-Para regenerar los datos, en este orden:
+Para regenerar los datos, en este orden. `tools/intermareal-s2.py` necesita Python 3 con numpy, rasterio y matplotlib, y `tools/bahia-relieve.ts` se ejecuta dos veces, antes y después:
 
 ```bash
 node tools/descargar.ts
@@ -85,6 +86,14 @@ node tools/generar-constantes.ts hibrido
 
 ```bash
 node tools/residuo.ts
+```
+
+```bash
+node tools/bahia-relieve.ts
+```
+
+```bash
+python tools/intermareal-s2.py
 ```
 
 ```bash
@@ -134,6 +143,11 @@ Error = predicción − tabla oficial.
 - **Por qué**: la tabla oficial de Avilés y el mareógrafo actual de Avilés discrepan. Según el IHM, Avilés tiene un 4 % más de rango que Gijón; según los dos radares REDMAR, un 2 % menos. En Gijón, donde las fuentes son coherentes, el mismo método cumple el 100 %.
 - **Si se prefiere coincidir con la tabla oficial**: `node tools/generar-constantes.ts ticon` (98,6 % dentro frente al IHM, pero peor frente a lo medido).
 
+### Arena intermareal (satélite)
+
+- **Perfil de la franja que cubre y descubre la marea**, de +1,0 a +3,0 m, en 96 tramos de 25 m de playa: ±0,5 m RMS en vertical, validado dejando cada imagen fuera. La pendiente genérica que se usaba antes fallaba 2,6 m RMS en esos mismos puntos.
+- En bajamar se descubre más arena de la que mostraba la escena: la cota +1,5 m queda unos 44 m más hacia el mar.
+
 ### Olas
 
 - **Altura en mar abierto**: comparando el modelo con la boya de Gijón en su mismo punto (2106 horas, jul–oct 2026), sesgo de −2 cm, error RMS de 17 cm (13 %) y correlación de 0,955.
@@ -148,7 +162,7 @@ Error = predicción − tabla oficial.
 | Marea: constantes de observaciones reales, horas UTC verificadas | Desnivel entre el cero del puerto de Avilés y el cero hidrográfico (0,292 m, estimado; no hay datum oficial publicado) |
 | Elección de constantes por validación fuera de muestra | Ciclo estacional (SA, SSA…) de Gijón aplicado a Avilés |
 | Corrección con el mareógrafo en vivo | Corrección hacia el pasado (misma atenuación, sin backtest propio) |
-| Relieve LiDAR de tierra, dunas y arena seca; fondo marino EMODnet | Franja intermareal baja (sin LiDAR): pendiente 1:50 que pasa a EMODnet en 250 m |
+| Relieve LiDAR de tierra, dunas y arena seca; arena intermareal de +1,0 a +3,0 m desde satélite (±0,5 m); fondo marino EMODnet | Arena por debajo de +1,0 m y tramos sin perfil válido: pendiente 1:50 que pasa a EMODnet en 250 m |
 | Ortofoto PNOA 2023, huellas y plantas del Catastro, color de los tejados | Altura de los edificios (3 m por planta, supuesta); fachadas y ventanas encendidas (decorativas) |
 | Altura, periodo y dirección de las olas (previsión), pendiente de la arena alta (1:14) | Forma de cada ola y del vaivén; sombra tras espigón y cabos |
 | Posición del sol y de la luna, fase lunar | NMMA → CH del relieve (2,095 m, tomado de la relación de Gijón); tamaño de la luna (×3); colores del cielo |
@@ -202,4 +216,5 @@ public/bahia/         relieve, teselas de ortofoto y edificios
 - IGN (MDT y ortofoto PNOA) y EMODnet: CC BY 4.0, citando la fuente.
 - Catastro y Puertos del Estado: reutilización libre citando la fuente.
 - IHM y Open‑Meteo: se usan citando su origen.
+- Sentinel‑2: contiene datos modificados de Copernicus Sentinel 2025–2026.
 - Polígono de la playa: © colaboradores de OpenStreetMap (ODbL).

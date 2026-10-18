@@ -10,9 +10,12 @@
 //   MDT05 IGN: metros sobre el NMMA (Alicante). Se pasa al CH sumando NMMA_SOBRE_CH_APROX.
 //   EMODnet DTM: metros respecto a la LAT, que es lo que el IHM usa como cero hidrográfico.
 //
-// Franja sin datos (la arena que cubre el mar y que el LiDAR no captó; EMODnet, con celdas de
-// 115 m, no la resuelve): junto a la última arena medida manda una pendiente genérica 1:50 y se
-// pasa gradualmente a EMODnet, que manda del todo a partir de 250 m. APROXIMADO.
+// Franja intermareal (la arena que cubre el mar y que el LiDAR no captó; EMODnet, con celdas de
+// 115 m, no la resuelve): donde hay perfil de Sentinel‑2 (data/intermareal_s2.json, de
+// tools/intermareal-s2.py) manda ese perfil, medido con la línea de agua. Más allá, y donde no
+// hay perfil válido, junto a lo último conocido manda una pendiente genérica 1:50 y se pasa
+// gradualmente a EMODnet, que manda del todo a 250 m. Eso último es APROXIMADO.
+// También deja en data/raw/relieve_generico.bin el relieve sin Sentinel‑2 (referencia del ajuste).
 
 import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -131,70 +134,138 @@ for (let f = 0; f < N; f++) for (let c = 0; c < N; c++) {
   if (m.medido) { alto[f * N + c] = m.h + NMMA_SOBRE_CH_APROX; medido[f * N + c] = 1; }
 }
 
-// Distancia a la tierra medida más cercana y altura de ese borde (transformada de distancia
-// por barrido en dos pasadas, métrica de chaflán 3-4 en unidades de celda).
-const INF = 1e9;
-const dist = new Float32Array(N * N).fill(INF);
-const borde = new Float32Array(N * N);
-for (let k = 0; k < N * N; k++) if (medido[k]) { dist[k] = 0; borde[k] = alto[k]; }
-const vec1 = [[-1, -1, 4], [-1, 0, 3], [-1, 1, 4], [0, -1, 3]];
-const vec2 = [[1, 1, 4], [1, 0, 3], [1, -1, 4], [0, 1, 3]];
-for (const [dirs, inicio, paso] of [[vec1, 0, 1], [vec2, N - 1, -1]] as const) {
-  for (let f = inicio; f >= 0 && f < N; f += paso) for (let c = inicio; c >= 0 && c < N; c += paso) {
-    const k = f * N + c;
-    for (const [df, dc, w] of dirs) {
-      const ff = f + df, cc = c + dc;
-      if (ff < 0 || ff >= N || cc < 0 || cc >= N) continue;
-      const kk = ff * N + cc;
-      if (dist[kk] + w < dist[k]) { dist[k] = dist[kk] + w; borde[k] = borde[kk]; }
+const PENDIENTE = 1 / 50;
+const TRANSICION = 250; // m desde lo último conocido hasta fiarse del todo de EMODnet
+
+/** Completa lo que no es `conocido` (pendiente genérica desde el borde conocido más cercano y
+ *  transición a EMODnet) y suaviza ligeramente lo no medido. */
+function completar(conocido: Uint8Array, base: Float32Array) {
+  // Distancia a lo conocido más cercano y altura de ese borde (transformada de distancia por
+  // barrido en dos pasadas, métrica de chaflán 3-4 en unidades de celda).
+  const INF = 1e9;
+  const dist = new Float32Array(N * N).fill(INF);
+  const borde = new Float32Array(N * N);
+  const h = new Float32Array(base);
+  for (let k = 0; k < N * N; k++) if (conocido[k]) { dist[k] = 0; borde[k] = base[k]; }
+  const vec1 = [[-1, -1, 4], [-1, 0, 3], [-1, 1, 4], [0, -1, 3]];
+  const vec2 = [[1, 1, 4], [1, 0, 3], [1, -1, 4], [0, 1, 3]];
+  for (const [dirs, inicio, paso] of [[vec1, 0, 1], [vec2, N - 1, -1]] as const) {
+    for (let f = inicio; f >= 0 && f < N; f += paso) for (let c = inicio; c >= 0 && c < N; c += paso) {
+      const k = f * N + c;
+      for (const [df, dc, w] of dirs) {
+        const ff = f + df, cc = c + dc;
+        if (ff < 0 || ff >= N || cc < 0 || cc >= N) continue;
+        const kk = ff * N + cc;
+        if (dist[kk] + w < dist[k]) { dist[k] = dist[kk] + w; borde[k] = borde[kk]; }
+      }
     }
   }
-}
-const PENDIENTE = 1 / 50;
-const TRANSICION = 250; // m desde la última arena medida hasta fiarse del todo de EMODnet
-let usadoEmod = 0;
-for (let f = 0; f < N; f++) for (let c = 0; c < N; c++) {
-  const k = f * N + c;
-  if (medido[k]) continue;
-  const g = aGeo(-LADO / 2 + c * PASO_RELIEVE, -LADO / 2 + f * PASO_RELIEVE);
-  const dMetros = (dist[k] / 3) * PASO_RELIEVE;
-  const generica = (dist[k] >= INF ? -30 : borde[k]) - dMetros * PENDIENTE;
-  const e = muestraEmod(g.lat, g.lon);
-  // EMODnet positivo junto a la costa es tierra de su modelo de 115 m: no vale para el fondo.
-  if (Number.isFinite(e) && e < 0) {
-    // Transición suave (smoothstep) de la pendiente genérica a EMODnet entre 0 y TRANSICION m.
-    const t = Math.min(1, dMetros / TRANSICION), w = t * t * (3 - 2 * t);
-    alto[k] = Math.max(-60, generica * (1 - w) + Math.min(e, generica) * w);
-    if (w > 0.5) usadoEmod++;
-  } else {
-    alto[k] = Math.max(-60, generica);
-  }
-}
-
-// Suavizado ligero solo en lo no medido (la rejilla de EMODnet deja escalones de 115 m).
-const suave = new Float32Array(alto);
-for (let pasada = 0; pasada < 3; pasada++) {
-  const prev = new Float32Array(suave);
-  for (let f = 1; f < N - 1; f++) for (let c = 1; c < N - 1; c++) {
+  let usadoEmod = 0;
+  for (let f = 0; f < N; f++) for (let c = 0; c < N; c++) {
     const k = f * N + c;
-    if (medido[k]) continue;
-    suave[k] = (prev[k] * 4 + prev[k - 1] + prev[k + 1] + prev[k - N] + prev[k + N]) / 8;
+    if (conocido[k]) continue;
+    const g = aGeo(-LADO / 2 + c * PASO_RELIEVE, -LADO / 2 + f * PASO_RELIEVE);
+    const dMetros = (dist[k] / 3) * PASO_RELIEVE;
+    const generica = (dist[k] >= INF ? -30 : borde[k]) - dMetros * PENDIENTE;
+    const e = muestraEmod(g.lat, g.lon);
+    // EMODnet positivo junto a la costa es tierra de su modelo de 115 m: no vale para el fondo.
+    if (Number.isFinite(e) && e < 0) {
+      // Transición suave (smoothstep) de la pendiente genérica a EMODnet entre 0 y TRANSICION m.
+      const t = Math.min(1, dMetros / TRANSICION), w = t * t * (3 - 2 * t);
+      h[k] = Math.max(-60, generica * (1 - w) + Math.min(e, generica) * w);
+      if (w > 0.5) usadoEmod++;
+    } else {
+      h[k] = Math.max(-60, generica);
+    }
   }
+  // Suavizado ligero solo en lo no medido (la rejilla de EMODnet deja escalones de 115 m).
+  const suave = new Float32Array(h);
+  for (let pasada = 0; pasada < 3; pasada++) {
+    const prev = new Float32Array(suave);
+    for (let f = 1; f < N - 1; f++) for (let c = 1; c < N - 1; c++) {
+      const k = f * N + c;
+      if (medido[k]) continue;
+      suave[k] = (prev[k] * 4 + prev[k - 1] + prev[k + 1] + prev[k - N] + prev[k + N]) / 8;
+    }
+  }
+  return { suave, usadoEmod };
 }
 
-const cm = new Int16Array(N * N);
-for (let k = 0; k < N * N; k++) {
-  let v = Math.round(suave[k] * 100);
-  if ((Math.abs(v) % 2 === 1) !== (medido[k] === 1)) v += v >= 0 ? 1 : -1; // bit de «medido»
-  cm[k] = Math.max(-32767, Math.min(32767, v));
+/** Int16 en cm con el bit de «medido» en la paridad. */
+function aCm(suave: Float32Array) {
+  const cm = new Int16Array(N * N);
+  for (let k = 0; k < N * N; k++) {
+    let v = Math.round(suave[k] * 100);
+    if ((Math.abs(v) % 2 === 1) !== (medido[k] === 1)) v += v >= 0 ? 1 : -1;
+    cm[k] = Math.max(-32767, Math.min(32767, v));
+  }
+  return Buffer.from(cm.buffer);
 }
-writeFileSync(join(RAIZ, 'public', 'bahia', 'relieve.bin'), Buffer.from(cm.buffer));
+
+// 1) Relieve genérico (solo lo medido + pendiente 1:50 → EMODnet). Lo usa tools/intermareal-s2.py
+//    como referencia, para que su resultado no dependa de haberlo aplicado ya.
+const generico = completar(medido, alto);
+writeFileSync(join(RAW, 'relieve_generico.bin'), aCm(generico.suave));
+
+// 2) Franja intermareal medida con la línea de agua de Sentinel‑2 (data/intermareal_s2.json, de
+//    tools/intermareal-s2.py). Cada perfil válido da la distancia a la que está cada cota; entre
+//    dos perfiles vecinos se interpolan las curvas de nivel (misma cota en los dos) y se marca
+//    como conocido cada nodo que tocan. Solo entre la arena medida y la orilla más baja observada.
+interface PerfilS2 { bx: number; bz: number; nx: number; nz: number; ajuste: null | { puntos: [number, number][] } }
+const RUTA_S2 = join(RAIZ, 'data', 'intermareal_s2.json');
+const s2 = existsSync(RUTA_S2) ? JSON.parse(readFileSync(RUTA_S2, 'utf8')) as { perfiles: PerfilS2[]; cotaMax: number; consultado: string } : null;
+const conocido = new Uint8Array(medido);
+const conS2 = new Float32Array(alto);
+let nodosS2 = 0;
+if (s2) {
+  const COTA_BASE = 3.1; // cota de la curva sobre la que se apoyan los perfiles
+  /** Distancia por el perfil a la que está la cota c (puntos con d creciente y cota decreciente). */
+  const distanciaA = (pts: [number, number][], c: number) => {
+    for (let q = 1; q < pts.length; q++) {
+      const [d0, z0] = pts[q - 1], [d1, z1] = pts[q];
+      if (c <= z0 && c >= z1) return z0 === z1 ? d0 : d0 + ((z0 - c) / (z0 - z1)) * (d1 - d0);
+    }
+    return null;
+  };
+  const suma = new Float64Array(N * N), cuenta = new Uint16Array(N * N);
+  const P = s2.perfiles;
+  for (let i = 0; i + 1 < P.length; i++) {
+    const a = P[i], b = P[i + 1];
+    if (!a.ajuste || !b.ajuste) continue;
+    // Donde la base se curva mucho (cabos) las normales se cruzan: ese tramo no se usa.
+    if (a.nx * b.nx + a.nz * b.nz < Math.cos((30 * Math.PI) / 180)) continue;
+    const pa: [number, number][] = [[0, COTA_BASE], ...a.ajuste.puntos.filter(([d, z]) => d > 0 && z < COTA_BASE)];
+    const pb: [number, number][] = [[0, COTA_BASE], ...b.ajuste.puntos.filter(([d, z]) => d > 0 && z < COTA_BASE)];
+    const cMin = Math.max(pa[pa.length - 1][1], pb[pb.length - 1][1]);
+    for (let c = COTA_BASE; c >= cMin; c -= 0.005) {
+      const da = distanciaA(pa, c), db = distanciaA(pb, c);
+      if (da === null || db === null) continue;
+      const xa = a.bx + da * a.nx, za = a.bz + da * a.nz, xb = b.bx + db * b.nx, zb = b.bz + db * b.nz;
+      const pasos = Math.ceil(Math.hypot(xb - xa, zb - za) / 1);
+      for (let s = 0; s <= pasos; s++) {
+        const u = s / pasos;
+        const col = Math.round((xa + (xb - xa) * u + LADO / 2) / PASO_RELIEVE), fil = Math.round((za + (zb - za) * u + LADO / 2) / PASO_RELIEVE);
+        if (col < 0 || col >= N || fil < 0 || fil >= N) continue;
+        const k = fil * N + col;
+        if (medido[k]) continue;
+        suma[k] += c; cuenta[k]++;
+      }
+    }
+  }
+  for (let k = 0; k < N * N; k++) if (cuenta[k]) { conS2[k] = suma[k] / cuenta[k]; conocido[k] = 1; nodosS2++; }
+  console.log(`Sentinel‑2: ${nodosS2} nodos de la franja intermareal (${((nodosS2 * PASO_RELIEVE ** 2) / 1e4).toFixed(1)} ha)`);
+} else {
+  console.log('Sin data/intermareal_s2.json: la franja intermareal queda con la pendiente genérica.');
+}
+const { suave, usadoEmod } = s2 ? completar(conocido, conS2) : generico;
+writeFileSync(join(RAIZ, 'public', 'bahia', 'relieve.bin'), aCm(suave));
 
 const nMed = medido.reduce((s, x) => s + x, 0);
 const meta = {
   centro: CENTRO, lado: LADO, paso: PASO_RELIEVE, n: N,
   formato: 'Int16 little-endian, cm sobre el CH de Avilés; filas de norte a sur, columnas de oeste a este. Altura impar = medida por el MDT, par = estimada.',
   fuentes: {
+    intermareal: 'Copernicus Sentinel-2 L2A (línea de agua) + mareógrafo REDMAR Avilés: data/intermareal_s2.json',
     tierra: `IGN, MDT05 (LiDAR PNOA), WCS INSPIRE: ${URL_MDT}`,
     fondo: `EMODnet Bathymetry DTM 2024 (1/16′, referido a la LAT), WCS: ${URL_EMOD}`,
   },
@@ -204,7 +275,8 @@ const meta = {
   porcentajeMedido: +(100 * nMed / (N * N)).toFixed(1),
   porcentajeFondoEmodnet: +(100 * usadoEmod / (N * N)).toFixed(1),
   transicionMetros: TRANSICION,
-  nota: 'Tierra: medida. Fondo: EMODnet (115 m). Franja intermedia: transición suave de una pendiente 1:50 desde la última arena emergida a EMODnet en 250 m. APROXIMADA.',
+  intermarealSentinel2: s2 ? { fuente: 'data/intermareal_s2.json (tools/intermareal-s2.py)', consultado: s2.consultado, hectareas: +((nodosS2 * PASO_RELIEVE ** 2) / 1e4).toFixed(1) } : null,
+  nota: 'Tierra: medida (MDT05). Franja intermareal de la playa: perfil de la línea de agua de Sentinel-2 donde es válido. Resto de la franja y fondo cercano: pendiente 1:50 desde lo último conocido con transición a EMODnet (115 m) en 250 m, APROXIMADA.',
 };
 writeFileSync(join(RAIZ, 'src', 'scene', 'bahia-meta.json'), JSON.stringify(meta, null, 1));
 console.log(`relieve ${N}×${N}: medido ${meta.porcentajeMedido}%, fondo EMODnet ${meta.porcentajeFondoEmodnet}%`);

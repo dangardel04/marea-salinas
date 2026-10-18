@@ -8,6 +8,7 @@
  "n": 1281,
  "formato": "Int16 little-endian, cm sobre el CH de Avilés; filas de norte a sur, columnas de oeste a este. Altura impar = medida por el MDT, par = estimada.",
  "fuentes": {
+  "intermareal": "Copernicus Sentinel-2 L2A (línea de agua) + mareógrafo REDMAR Avilés: data/intermareal_s2.json",
   "tierra": "IGN, MDT05 (LiDAR PNOA), WCS INSPIRE: https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=Elevacion4258_5&SUBSET=Lat(43.559658,43.618342)&SUBSET=Long(-5.995368,-5.914632)&FORMAT=application/asc",
   "fondo": "EMODnet Bathymetry DTM 2024 (1/16′, referido a la LAT), WCS: https://ows.emodnet-bathymetry.eu/wcs?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=emodnet__mean&SUBSET=Lat(43.549658,43.628342)&SUBSET=Long(-6.005368,-5.904632)&FORMAT=image/tiff"
  },
@@ -15,7 +16,12 @@
  "nmmaSobreChAprox": 2.0945,
  "pendienteGenerica": 0.02,
  "porcentajeMedido": 45,
- "porcentajeFondoEmodnet": 48.6,
+ "porcentajeFondoEmodnet": 48,
  "transicionMetros": 250,
- "nota": "Tierra: medida. Fondo: EMODnet (115 m). Franja intermedia: transición suave de una pendiente 1:50 desde la última arena emergida a EMODnet en 250 m. APROXIMADA."
+ "intermarealSentinel2": {
+  "fuente": "data/intermareal_s2.json (tools/intermareal-s2.py)",
+  "consultado": "2026-10-19",
+  "hectareas": 26.1
+ },
+ "nota": "Tierra: medida (MDT05). Franja intermareal de la playa: perfil de la línea de agua de Sentinel-2 donde es válido. Resto de la franja y fondo cercano: pendiente 1:50 desde lo último conocido con transición a EMODnet (115 m) en 250 m, APROXIMADA."
 }
