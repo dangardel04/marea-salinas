@@ -1,0 +1,355 @@
+{
+ "estacion": "gijon",
+ "fuenteDatos": "Puertos del Estado, REDMAR, mareógrafo Gijón 2 (3108), StationData minutal, QC=1, medias de 10 min",
+ "referenciaAlturas": "cero REDMAR de la estación («Cero del Puerto»)",
+ "metodo": "Mínimos cuadrados (ecuaciones normales + Cholesky), astronomía y correcciones nodales IHO de @neaps/tide-predictor 0.11.0, selección por Rayleigh R=1. Ver tools/ajuste.ts",
+ "periodo": {
+  "desde": "2021-01-01T00:10:00.000Z",
+  "hasta": "2026-10-17T23:50:00.000Z",
+  "valores": 298774
+ },
+ "z0": 2.8104,
+ "residuo": {
+  "rms_m": 0.1131,
+  "max_abs_m": 0.643
+ },
+ "noSeparables": [
+  "MSM (sin definición)",
+  "3N2",
+  "3L2",
+  "MO3",
+  "SK3"
+ ],
+ "constituyentes": [
+  {
+   "name": "M2",
+   "amplitude": 1.28404,
+   "phase": 91.681,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "S2",
+   "amplitude": 0.44934,
+   "phase": 124.042,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "N2",
+   "amplitude": 0.26938,
+   "phase": 72.257,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "K2",
+   "amplitude": 0.12739,
+   "phase": 121.285,
+   "errorAmplitudBlanco": 0.00023
+  },
+  {
+   "name": "O1",
+   "amplitude": 0.06773,
+   "phase": 323.785,
+   "errorAmplitudBlanco": 0.00025
+  },
+  {
+   "name": "K1",
+   "amplitude": 0.06569,
+   "phase": 71.75,
+   "errorAmplitudBlanco": 0.00027
+  },
+  {
+   "name": "SA",
+   "amplitude": 0.05847,
+   "phase": 240.489,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "NU2",
+   "amplitude": 0.05101,
+   "phase": 74.789,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "MU2",
+   "amplitude": 0.04398,
+   "phase": 49.938,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "2N2",
+   "amplitude": 0.03869,
+   "phase": 54.257,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "L2",
+   "amplitude": 0.03088,
+   "phase": 109.429,
+   "errorAmplitudBlanco": 0.00027
+  },
+  {
+   "name": "T2",
+   "amplitude": 0.02567,
+   "phase": 117.959,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "Q1",
+   "amplitude": 0.02242,
+   "phase": 276.375,
+   "errorAmplitudBlanco": 0.00025
+  },
+  {
+   "name": "SSA",
+   "amplitude": 0.0206,
+   "phase": 92.135,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "M4",
+   "amplitude": 0.02059,
+   "phase": 318.146,
+   "errorAmplitudBlanco": 0.00031
+  },
+  {
+   "name": "P1",
+   "amplitude": 0.01999,
+   "phase": 61.372,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "MM",
+   "amplitude": 0.01412,
+   "phase": 248.539,
+   "errorAmplitudBlanco": 0.00033
+  },
+  {
+   "name": "M3",
+   "amplitude": 0.01176,
+   "phase": 147.884,
+   "errorAmplitudBlanco": 0.00031
+  },
+  {
+   "name": "MN4",
+   "amplitude": 0.01046,
+   "phase": 274.407,
+   "errorAmplitudBlanco": 0.00031
+  },
+  {
+   "name": "EP2",
+   "amplitude": 0.00988,
+   "phase": 25.583,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "MF",
+   "amplitude": 0.0089,
+   "phase": 200.882,
+   "errorAmplitudBlanco": 0.00021
+  },
+  {
+   "name": "LAMBDA2",
+   "amplitude": 0.0081,
+   "phase": 98.33,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "MSF",
+   "amplitude": 0.00762,
+   "phase": 163.439,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "MS4",
+   "amplitude": 0.00699,
+   "phase": 21.269,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "MTM",
+   "amplitude": 0.00693,
+   "phase": 46.745,
+   "errorAmplitudBlanco": 0.00033
+  },
+  {
+   "name": "R2",
+   "amplitude": 0.00517,
+   "phase": 135.941,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "SGM",
+   "amplitude": 0.00445,
+   "phase": 241.445,
+   "errorAmplitudBlanco": 0.00025
+  },
+  {
+   "name": "2Q1",
+   "amplitude": 0.00429,
+   "phase": 230.175,
+   "errorAmplitudBlanco": 0.00025
+  },
+  {
+   "name": "MB2",
+   "amplitude": 0.00429,
+   "phase": 143.189,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "MA2",
+   "amplitude": 0.00402,
+   "phase": 44.634,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "RHO1",
+   "amplitude": 0.0036,
+   "phase": 287.426,
+   "errorAmplitudBlanco": 0.00025
+  },
+  {
+   "name": "S1",
+   "amplitude": 0.00357,
+   "phase": 342.25,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "M6",
+   "amplitude": 0.00327,
+   "phase": 113.991,
+   "errorAmplitudBlanco": 0.00032
+  },
+  {
+   "name": "R3",
+   "amplitude": 0.00315,
+   "phase": 31.038,
+   "errorAmplitudBlanco": 0.00027
+  },
+  {
+   "name": "T3",
+   "amplitude": 0.00306,
+   "phase": 298.175,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "N4",
+   "amplitude": 0.00291,
+   "phase": 225.888,
+   "errorAmplitudBlanco": 0.00031
+  },
+  {
+   "name": "MKS2",
+   "amplitude": 0.00288,
+   "phase": 67.574,
+   "errorAmplitudBlanco": 0.00024
+  },
+  {
+   "name": "2MS6",
+   "amplitude": 0.00253,
+   "phase": 165.981,
+   "errorAmplitudBlanco": 0.00031
+  },
+  {
+   "name": "J1",
+   "amplitude": 0.00219,
+   "phase": 127.553,
+   "errorAmplitudBlanco": 0.00024
+  },
+  {
+   "name": "2MN6",
+   "amplitude": 0.00203,
+   "phase": 91.057,
+   "errorAmplitudBlanco": 0.00032
+  },
+  {
+   "name": "MK4",
+   "amplitude": 0.00199,
+   "phase": 20.397,
+   "errorAmplitudBlanco": 0.00024
+  },
+  {
+   "name": "MSQM",
+   "amplitude": 0.00191,
+   "phase": 6.301,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "2SM2",
+   "amplitude": 0.00167,
+   "phase": 341.788,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "2MK3",
+   "amplitude": 0.00139,
+   "phase": 34.549,
+   "errorAmplitudBlanco": 0.00028
+  },
+  {
+   "name": "MK3",
+   "amplitude": 0.00127,
+   "phase": 309.761,
+   "errorAmplitudBlanco": 0.00028
+  },
+  {
+   "name": "OO1",
+   "amplitude": 0.00107,
+   "phase": 211.698,
+   "errorAmplitudBlanco": 0.0002
+  },
+  {
+   "name": "S3",
+   "amplitude": 0.00086,
+   "phase": 283.399,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "SN4",
+   "amplitude": 0.00075,
+   "phase": 351.371,
+   "errorAmplitudBlanco": 0.0003
+  },
+  {
+   "name": "M1",
+   "amplitude": 0.00066,
+   "phase": 341.818,
+   "errorAmplitudBlanco": 0.00017
+  },
+  {
+   "name": "MSN6",
+   "amplitude": 0.00066,
+   "phase": 165.771,
+   "errorAmplitudBlanco": 0.00031
+  },
+  {
+   "name": "M8",
+   "amplitude": 0.00063,
+   "phase": 251.332,
+   "errorAmplitudBlanco": 0.00033
+  },
+  {
+   "name": "SO3",
+   "amplitude": 0.00062,
+   "phase": 57.668,
+   "errorAmplitudBlanco": 0.00025
+  },
+  {
+   "name": "S4",
+   "amplitude": 0.00041,
+   "phase": 98.606,
+   "errorAmplitudBlanco": 0.00029
+  },
+  {
+   "name": "2MK5",
+   "amplitude": 0.00037,
+   "phase": 86.798,
+   "errorAmplitudBlanco": 0.00028
+  },
+  {
+   "name": "2MO5",
+   "amplitude": 0.00035,
+   "phase": 14.001,
+   "errorAmplitudBlanco": 0.00027
+  }
+ ]
+}

@@ -30,5 +30,15 @@ export const PUERTO_IHM = {
   lon: -5.93,
 } as const;
 
+/**
+ * Altura del NMMA (cero del MDT del IGN) sobre el cero hidrográfico de Avilés, en metros.
+ * APROXIMADA, solo para colocar el relieve de la escena (no interviene en la marea):
+ *   nivel medio sobre el CH en Avilés (media de la curva IHM 2026)            2,4675 m
+ * − nivel medio local sobre el NMMA, tomado de Gijón (datum oficial Gijón 2:
+ *   NM 2,734 m − NMMA 2,361 m sobre el cero REDMAR = 0,373 m)                 0,373 m
+ * Para Avilés no hay esquema de datum publicado; se asume la misma diferencia que en Gijón.
+ */
+export const NMMA_SOBRE_CH_APROX = 2.4675 - 0.373;
+
 /** Zona horaria en la que se muestra todo. Internamente se trabaja en UTC. */
 export const ZONA_HORARIA = 'Europe/Madrid';

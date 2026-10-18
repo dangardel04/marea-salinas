@@ -1,0 +1,355 @@
+{
+ "estacion": "aviles",
+ "fuenteDatos": "Puertos del Estado, REDMAR, mareógrafo Avilés 2 (3107), StationData minutal, QC=1, medias de 10 min",
+ "referenciaAlturas": "cero REDMAR de la estación («Cero del Puerto»)",
+ "metodo": "Mínimos cuadrados (ecuaciones normales + Cholesky), astronomía y correcciones nodales IHO de @neaps/tide-predictor 0.11.0, selección por Rayleigh R=1. Ver tools/ajuste.ts",
+ "periodo": {
+  "desde": "2025-10-01T00:10:00.000Z",
+  "hasta": "2026-10-17T23:50:00.000Z",
+  "valores": 54954
+ },
+ "z0": 2.7623,
+ "residuo": {
+  "rms_m": 0.1028,
+  "max_abs_m": 0.504
+ },
+ "noSeparables": [
+  "MSM (sin definición)",
+  "3N2",
+  "3L2",
+  "MO3",
+  "SK3"
+ ],
+ "constituyentes": [
+  {
+   "name": "M2",
+   "amplitude": 1.25686,
+   "phase": 92.163,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "S2",
+   "amplitude": 0.44114,
+   "phase": 124.504,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "N2",
+   "amplitude": 0.26506,
+   "phase": 72.857,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "K2",
+   "amplitude": 0.12434,
+   "phase": 121.645,
+   "errorAmplitudBlanco": 0.00048
+  },
+  {
+   "name": "SA",
+   "amplitude": 0.08573,
+   "phase": 269.486,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "O1",
+   "amplitude": 0.06912,
+   "phase": 323.484,
+   "errorAmplitudBlanco": 0.00053
+  },
+  {
+   "name": "K1",
+   "amplitude": 0.06508,
+   "phase": 72.833,
+   "errorAmplitudBlanco": 0.00056
+  },
+  {
+   "name": "NU2",
+   "amplitude": 0.04879,
+   "phase": 76.155,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "MU2",
+   "amplitude": 0.04433,
+   "phase": 50.035,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "SSA",
+   "amplitude": 0.04187,
+   "phase": 201.582,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "2N2",
+   "amplitude": 0.03944,
+   "phase": 56.215,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "L2",
+   "amplitude": 0.03417,
+   "phase": 104.832,
+   "errorAmplitudBlanco": 0.00049
+  },
+  {
+   "name": "T2",
+   "amplitude": 0.02401,
+   "phase": 120.087,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "Q1",
+   "amplitude": 0.01906,
+   "phase": 279.484,
+   "errorAmplitudBlanco": 0.00053
+  },
+  {
+   "name": "M4",
+   "amplitude": 0.01855,
+   "phase": 318.553,
+   "errorAmplitudBlanco": 0.00066
+  },
+  {
+   "name": "P1",
+   "amplitude": 0.01802,
+   "phase": 61.666,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "MSQM",
+   "amplitude": 0.01352,
+   "phase": 50.862,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "MSF",
+   "amplitude": 0.01208,
+   "phase": 327.274,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "M3",
+   "amplitude": 0.01142,
+   "phase": 146.296,
+   "errorAmplitudBlanco": 0.00065
+  },
+  {
+   "name": "EP2",
+   "amplitude": 0.01024,
+   "phase": 23.886,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "MN4",
+   "amplitude": 0.00977,
+   "phase": 275.271,
+   "errorAmplitudBlanco": 0.00066
+  },
+  {
+   "name": "MM",
+   "amplitude": 0.00937,
+   "phase": 170.617,
+   "errorAmplitudBlanco": 0.00075
+  },
+  {
+   "name": "LAMBDA2",
+   "amplitude": 0.00679,
+   "phase": 98.383,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "MTM",
+   "amplitude": 0.00648,
+   "phase": 205.396,
+   "errorAmplitudBlanco": 0.00075
+  },
+  {
+   "name": "MS4",
+   "amplitude": 0.00573,
+   "phase": 22.872,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "MB2",
+   "amplitude": 0.00517,
+   "phase": 94.505,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "SGM",
+   "amplitude": 0.00474,
+   "phase": 240.392,
+   "errorAmplitudBlanco": 0.00053
+  },
+  {
+   "name": "R2",
+   "amplitude": 0.00451,
+   "phase": 139.418,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "J1",
+   "amplitude": 0.00412,
+   "phase": 115.676,
+   "errorAmplitudBlanco": 0.0005
+  },
+  {
+   "name": "RHO1",
+   "amplitude": 0.00391,
+   "phase": 287.386,
+   "errorAmplitudBlanco": 0.00053
+  },
+  {
+   "name": "MF",
+   "amplitude": 0.00367,
+   "phase": 155.256,
+   "errorAmplitudBlanco": 0.00042
+  },
+  {
+   "name": "T3",
+   "amplitude": 0.00358,
+   "phase": 303.64,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "MA2",
+   "amplitude": 0.00354,
+   "phase": 345.741,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "S1",
+   "amplitude": 0.00342,
+   "phase": 281.066,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "2MK3",
+   "amplitude": 0.00328,
+   "phase": 338.468,
+   "errorAmplitudBlanco": 0.0006
+  },
+  {
+   "name": "MKS2",
+   "amplitude": 0.00327,
+   "phase": 66.501,
+   "errorAmplitudBlanco": 0.0005
+  },
+  {
+   "name": "2Q1",
+   "amplitude": 0.00314,
+   "phase": 217.135,
+   "errorAmplitudBlanco": 0.00053
+  },
+  {
+   "name": "R3",
+   "amplitude": 0.00305,
+   "phase": 43.349,
+   "errorAmplitudBlanco": 0.00056
+  },
+  {
+   "name": "N4",
+   "amplitude": 0.00301,
+   "phase": 224.162,
+   "errorAmplitudBlanco": 0.00066
+  },
+  {
+   "name": "M6",
+   "amplitude": 0.0025,
+   "phase": 105.124,
+   "errorAmplitudBlanco": 0.00069
+  },
+  {
+   "name": "2MS6",
+   "amplitude": 0.00194,
+   "phase": 171.689,
+   "errorAmplitudBlanco": 0.00066
+  },
+  {
+   "name": "MK4",
+   "amplitude": 0.00181,
+   "phase": 24.029,
+   "errorAmplitudBlanco": 0.0005
+  },
+  {
+   "name": "2MN6",
+   "amplitude": 0.0016,
+   "phase": 93.759,
+   "errorAmplitudBlanco": 0.00069
+  },
+  {
+   "name": "2SM2",
+   "amplitude": 0.0012,
+   "phase": 313.847,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "M1",
+   "amplitude": 0.00091,
+   "phase": 337.337,
+   "errorAmplitudBlanco": 0.00046
+  },
+  {
+   "name": "S3",
+   "amplitude": 0.00084,
+   "phase": 270.145,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "MK3",
+   "amplitude": 0.00081,
+   "phase": 235.662,
+   "errorAmplitudBlanco": 0.00058
+  },
+  {
+   "name": "SO3",
+   "amplitude": 0.00079,
+   "phase": 70.485,
+   "errorAmplitudBlanco": 0.00053
+  },
+  {
+   "name": "MSN6",
+   "amplitude": 0.00075,
+   "phase": 197.164,
+   "errorAmplitudBlanco": 0.00066
+  },
+  {
+   "name": "OO1",
+   "amplitude": 0.00073,
+   "phase": 265.389,
+   "errorAmplitudBlanco": 0.00041
+  },
+  {
+   "name": "M8",
+   "amplitude": 0.00065,
+   "phase": 247.534,
+   "errorAmplitudBlanco": 0.00071
+  },
+  {
+   "name": "SN4",
+   "amplitude": 0.00041,
+   "phase": 0.043,
+   "errorAmplitudBlanco": 0.00064
+  },
+  {
+   "name": "S4",
+   "amplitude": 0.0004,
+   "phase": 105.446,
+   "errorAmplitudBlanco": 0.00062
+  },
+  {
+   "name": "2MO5",
+   "amplitude": 0.00037,
+   "phase": 34.643,
+   "errorAmplitudBlanco": 0.00056
+  },
+  {
+   "name": "2MK5",
+   "amplitude": 0.0003,
+   "phase": 47.478,
+   "errorAmplitudBlanco": 0.0006
+  }
+ ]
+}
