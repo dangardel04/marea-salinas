@@ -20,10 +20,11 @@ describe('corrección en vivo', () => {
     expect(correccionEn(c, T0)).toBeCloseTo(0.23, 6);
   });
 
-  it('decae con τ y no toca el pasado', () => {
+  it('decae con τ hacia delante y hacia atrás, sin saltos en t0', () => {
     const c = calcularCorreccion(sinteticas(0.2), motor, T0)!;
     expect(correccionEn(c, T0 + TAU_HORAS * 3_600_000)).toBeCloseTo(0.2 / Math.E, 6);
-    expect(correccionEn(c, T0 - 60_000)).toBe(0);
+    expect(correccionEn(c, T0 - TAU_HORAS * 3_600_000)).toBeCloseTo(0.2 / Math.E, 6);
+    expect(Math.abs(correccionEn(c, T0 - 1) - correccionEn(c, T0 + 1))).toBeLessThan(1e-6);
   });
 
   it('descarta datos viejos (más de 3 h) o escasos', () => {

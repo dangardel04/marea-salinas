@@ -3,11 +3,82 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Marea en la playa de Salinas (Castrillón, Asturias): altura actual, pleamares y bajamares y escena 3D." />
+    <meta name="theme-color" content="#0b1116" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#dfe6ea" media="(prefers-color-scheme: light)" />
     <title>Marea en Salinas</title>
   </head>
   <body>
-    <canvas id="escena"></canvas>
+    <canvas id="escena" aria-label="Vista 3D de la playa de Salinas con el nivel del mar"></canvas>
+    <p class="aviso-escena" id="aviso-escena">Cargando la playa…</p>
+
+    <section class="panel" aria-label="Estado de la marea">
+      <header class="cabecera">
+        <div>
+          <h1 class="lugar">Playa de Salinas</h1>
+          <p class="momento" id="momento">&nbsp;</p>
+        </div>
+        <button class="boton boton-icono" id="tema" type="button" aria-label="Cambiar tema"></button>
+      </header>
+
+      <div>
+        <div class="altura">
+          <span class="altura-valor num" id="altura">-,--<small>m</small></span>
+          <span class="tendencia" id="tendencia"></span>
+        </div>
+        <p class="referencia">Sobre el cero hidrográfico del puerto de Avilés</p>
+      </div>
+
+      <div class="modo" id="modo" data-estado="prediccion" aria-live="polite">
+        <span class="modo-punto" aria-hidden="true"></span>
+        <span class="modo-etiqueta" id="modo-etiqueta">Predicción</span>
+        <span class="modo-detalle" id="modo-detalle">Conectando con el mareógrafo de Avilés…</span>
+      </div>
+
+      <dl class="proximos">
+        <div class="proximo">
+          <dt>Próxima pleamar</dt>
+          <dd class="num" id="pleamar-hora">--:--</dd>
+          <span class="alto num" id="pleamar-altura"></span>
+          <span class="oficial num" id="pleamar-oficial"></span>
+        </div>
+        <div class="proximo">
+          <dt>Próxima bajamar</dt>
+          <dd class="num" id="bajamar-hora">--:--</dd>
+          <span class="alto num" id="bajamar-altura"></span>
+          <span class="oficial num" id="bajamar-oficial"></span>
+        </div>
+      </dl>
+
+      <figure class="curva" style="margin:0">
+        <figcaption class="curva-titulo"><span id="curva-dia">Hoy</span><span>metros</span></figcaption>
+        <svg id="curva" role="img" aria-label="Curva de marea del día"></svg>
+        <div class="leyenda"><span><i class="l-pred"></i>Esta predicción</span><span><i class="l-ihm"></i>Tabla oficial IHM</span></div>
+      </figure>
+
+      <details class="notas">
+        <summary><span id="icono-info"></span>Precisión y fuentes</summary>
+        <p>Constantes armónicas ajustadas a un año del mareógrafo REDMAR de Avilés (Puertos del Estado). Frente a la tabla oficial del IHM, las horas coinciden con menos de 9 minutos de diferencia, pero las pleamares salen hasta unos 17 cm más bajas: la tabla oficial y el mareógrafo no coinciden en Avilés.</p>
+        <p>Relieve: MDT de 5 m del IGN. La parte baja de la playa, por debajo de lo que capturó el LiDAR, es una pendiente aproximada. El oleaje es decorativo.</p>
+      </details>
+    </section>
+
+    <section class="barra" aria-label="Control de tiempo">
+      <button class="boton boton-acento" id="ahora" type="button"></button>
+      <button class="boton boton-icono" id="reproducir" type="button" aria-label="Reproducir"></button>
+      <select class="velocidad" id="velocidad" aria-label="Velocidad de reproducción">
+        <option value="60">1 min/s</option>
+        <option value="600" selected>10 min/s</option>
+        <option value="3600">1 h/s</option>
+      </select>
+      <div class="deslizador">
+        <div class="deslizador-etiqueta"><strong id="seleccion">&nbsp;</strong><span id="rango">&nbsp;</span></div>
+        <input type="range" id="tiempo" min="0" max="1" step="1" value="0" aria-label="Momento a mostrar" />
+        <div class="dias" id="dias" aria-hidden="true"></div>
+      </div>
+    </section>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

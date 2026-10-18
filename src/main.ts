@@ -1,13 +1,17 @@
-// Punto de entrada provisional de la fase 6: escena a la hora actual con la marea predicha.
+// Punto de entrada: arranca la interfaz (funciona aunque falle el 3D) y después la escena.
 import './style.css';
+import { iniciarInterfaz } from './ui/app';
 import { crearEscena } from './scene/escena';
-import { crearMotor } from './tide/motor';
-import constantes from './tide/constantes.json';
 
-const motor = crearMotor({ z0: constantes.z0Ch, constituyentes: constantes.constituyentes });
-const lienzo = document.querySelector<HTMLCanvasElement>('#escena')!;
-const params = new URLSearchParams(location.search);
-const t = params.has('t') ? Date.parse(params.get('t')!) : Date.now();
-const escena = await crearEscena(lienzo);
-const max6h = Math.max(...motor.serie(t - 6 * 3_600_000, t, 600_000).map((p) => p.h));
-escena.actualizar({ t, nivel: motor.altura(t), nivelMax6h: max6h });
+const interfaz = iniciarInterfaz();
+const aviso = document.getElementById('aviso-escena')!;
+
+crearEscena(document.querySelector<HTMLCanvasElement>('#escena')!)
+  .then((escena) => {
+    interfaz.conectarEscena(escena);
+    aviso.hidden = true;
+  })
+  .catch((e) => {
+    console.error(e);
+    aviso.textContent = 'No se pudo mostrar la escena 3D en este navegador. Los datos de marea siguen disponibles.';
+  });

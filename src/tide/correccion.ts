@@ -2,9 +2,10 @@
 //
 // residuo = observado − predicho (ambos sobre el cero del puerto). Se toma la mediana del
 // residuo de la última hora disponible (r0, en t0) y se aplica a la predicción como
-//   corrección(t) = r0 · exp(−(t − t0) / τ)   para t ≥ t0,   τ = 72 h
+//   corrección(t) = r0 · exp(−|t − t0| / τ),   τ = 72 h
 // τ sale del backtest de tools/residuo.ts (VALIDACION.md §5), no de un valor supuesto.
-// Para t < t0 no se corrige: el pasado se muestra como predicción astronómica.
+// También hacia atrás: el residuo cambia despacio y su autocorrelación es simétrica en el
+// tiempo, así que la misma atenuación vale antes de t0 (y la curva no da un salto en t0).
 
 import constantes from './constantes.json';
 import { MAREOGRAFO_AVILES } from '../config.ts';
@@ -60,6 +61,6 @@ export function calcularCorreccion(obs: [number, number][], motorCh: Motor, ahor
 
 /** Corrección (m) a sumar a la predicción en el instante t. */
 export function correccionEn(c: Correccion | null, t: number): number {
-  if (!c || t < c.t0) return 0;
-  return c.r0 * Math.exp(-(t - c.t0) / (TAU_HORAS * 3_600_000));
+  if (!c) return 0;
+  return c.r0 * Math.exp(-Math.abs(t - c.t0) / (TAU_HORAS * 3_600_000));
 }

@@ -6,6 +6,7 @@ import { ZONA_HORARIA } from './config.ts';
 
 const fmtHora = new Intl.DateTimeFormat('es-ES', { timeZone: ZONA_HORARIA, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 const fmtFecha = new Intl.DateTimeFormat('es-ES', { timeZone: ZONA_HORARIA, weekday: 'short', day: 'numeric', month: 'short' });
+const fmtDiaCorto = new Intl.DateTimeFormat('es-ES', { timeZone: ZONA_HORARIA, weekday: 'short', day: 'numeric' });
 const fmtFechaLarga = new Intl.DateTimeFormat('es-ES', { timeZone: ZONA_HORARIA, weekday: 'long', day: 'numeric', month: 'long' });
 const fmtPartes = new Intl.DateTimeFormat('en-US', {
   timeZone: ZONA_HORARIA, year: 'numeric', month: '2-digit', day: '2-digit',
@@ -15,6 +16,8 @@ const fmtZona = new Intl.DateTimeFormat('es-ES', { timeZone: ZONA_HORARIA, timeZ
 
 export const horaMadrid = (t: number) => fmtHora.format(t);
 export const fechaMadrid = (t: number) => fmtFecha.format(t);
+/** Día de la semana y número, p. ej. «dom 18». */
+export const diaCortoMadrid = (t: number) => fmtDiaCorto.format(t).replace(',', '');
 export const fechaLargaMadrid = (t: number) => fmtFechaLarga.format(t);
 
 /** Abreviatura de la zona en ese instante (p. ej. «CEST» o «CET»). */
