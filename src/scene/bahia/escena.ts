@@ -9,6 +9,7 @@ import metaRelieve from '../bahia-meta.json';
 import metaOrto from '../bahia-orto.json';
 import metaEdificios from '../bahia-edificios.json';
 import metaFino from '../bahia-fino.json';
+import metaArena from '../bahia-arena.json';
 import { cargarFino, cargarRelieve } from './relieve';
 import { crearTeselas } from './teselas';
 import { cargarEdificios } from './edificios';
@@ -85,6 +86,14 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     uCieloCenit: { value: new THREE.Color() },
     uLuzDia: { value: 1 },
   };
+  // El terreno también necesita el cielo y el brillo del sol (reflejo de la arena mojada) y el
+  // color de la arena seca medido en la ortofoto (tools/arena-color.py, de sRGB a lineal).
+  const [ar, ag, ab] = metaArena.secaSrgb;
+  Object.assign(comunes, {
+    uDirBrillo: comunesAgua.uDirBrillo, uColorBrillo: comunesAgua.uColorBrillo,
+    uCieloHorizonte: comunesAgua.uCieloHorizonte, uCieloCenit: comunesAgua.uCieloCenit, uLuzDia: comunesAgua.uLuzDia,
+    uArenaSeca: { value: new THREE.Color().setRGB(ar / 255, ag / 255, ab / 255, THREE.SRGBColorSpace) },
+  });
 
   const teselas = crearTeselas({
     relieve, indiceOrto: metaOrto.indice as Record<string, string[]>, urlBase: base, escena, comunes, movil,

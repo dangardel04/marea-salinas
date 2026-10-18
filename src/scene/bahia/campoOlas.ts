@@ -2,7 +2,8 @@
 // dirección local de propagación, en una textura RGBA float sobre toda la bahía.
 //   R = tiempo de llegada (s), relativo; G, B = dirección de propagación unitaria (x este, z sur);
 //   A = 1 si el oleaje alcanza ese nodo. En tierra se copian los cuatro valores del agua más
-//       cercana, para que el vaivén de la orilla tenga fase y alcance sobre la arena.
+//       cercana, para que el vaivén de la orilla tenga fase y alcance sobre la arena. El agua
+//       que el oleaje no alcanza (charcos y canales aislados de bajamar) se queda con A = 0.
 
 import * as THREE from 'three';
 import { PASO_RELIEVE } from '../../bahia';
@@ -56,7 +57,7 @@ export function calcularCampo(relieve: Relieve, nivel: number, periodo: number, 
       datos[kk * 4] = datos[k * 4]; // misma fase que el agua contigua
       datos[kk * 4 + 1] = datos[k * 4 + 1];
       datos[kk * 4 + 2] = datos[k * 4 + 2];
-      datos[kk * 4 + 3] = datos[k * 4 + 3];
+      datos[kk * 4 + 3] = prof[kk] > 0.05 ? 0 : datos[k * 4 + 3];
       cola.push(kk);
     }
   }

@@ -51,6 +51,12 @@ ${COMUNES}
 uniform sampler2D uOrto;
 uniform vec4 uUv;
 uniform float uTieneOrto;
+uniform vec3 uArenaSeca;       // color de la arena seca medido en la ortofoto (lineal)
+uniform vec3 uCieloHorizonte;
+uniform vec3 uCieloCenit;
+uniform vec3 uDirBrillo;
+uniform vec3 uColorBrillo;
+uniform float uLuzDia;
 varying vec2 vUv;
 varying vec3 vPos;
 varying vec3 vNor;
@@ -61,29 +67,70 @@ float ruido(vec2 p) {
   vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
   return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
 }
+// Suma de octavas que se apagan con la distancia (lo que sería más fino que un píxel, fuera).
+float grano(vec2 p, float d) {
+  float s = (ruido(p * 0.045) - 0.5) * 0.10;                                  // manchas de ~20 m
+  s += (ruido(p * 0.4 + 3.1) - 0.5) * 0.07 * (1.0 - smoothstep(150.0, 400.0, d));  // ~2 m
+  s += (ruido(p * 2.3 + 7.7) - 0.5) * 0.08 * (1.0 - smoothstep(25.0, 90.0, d));    // ~40 cm
+  s += (ruido(p * 9.0 + 1.3) - 0.5) * 0.07 * (1.0 - smoothstep(6.0, 22.0, d));     // ~10 cm
+  return s;
+}
 
 void main() {
   float h = vPos.y;
-  vec3 orto = uTieneOrto > 0.5 ? texture2D(uOrto, uUv.xy + vUv * uUv.zw).rgb : vec3(0.36, 0.34, 0.28);
-  // Donde el LiDAR no midió (arena que cubre el mar, fondo): color procedural, no la foto,
-  // que en esas zonas muestra el mar del día del vuelo.
-  float grano = ruido(vPos.xz * 0.35) * 0.06 + ruido(vPos.xz * 0.05) * 0.08;
-  vec3 arena = vec3(0.58, 0.47, 0.30) * (0.92 + grano);
-  vec3 fondo = mix(vec3(0.34, 0.29, 0.20), vec3(0.05, 0.08, 0.09), smoothstep(-0.5, -14.0, h));
-  vec3 proc = mix(fondo, arena, smoothstep(-1.5, 0.5, h));
-  vec3 c = mix(proc, orto, smoothstep(0.3, 0.95, vMed));
-  // Grano fino de cerca (la ortofoto da ~0,4 m por píxel): ruido que se desvanece a 60 m.
-  float cerca = 1.0 - smoothstep(15.0, 60.0, length(vPos - cameraPosition));
-  c *= 1.0 + cerca * ((ruido(vPos.xz * 6.0) - 0.5) * 0.16 + (ruido(vPos.xz * 1.7) - 0.5) * 0.1);
+  float d = length(vPos - cameraPosition);
+  vec3 orto = uTieneOrto > 0.5 ? texture2D(uOrto, uUv.xy + vUv * uUv.zw).rgb : uArenaSeca * 0.7;
 
-  // Arena mojada: lo que el agua ha cubierto en las últimas horas, más oscuro cuanto más reciente.
+  // ---------- Arena dibujada (donde la foto no sirve) ----------
+  // Donde el LiDAR no midió (la arena que cubre la marea) la ortofoto enseña el mar del día del
+  // vuelo; y en la playa medida, a veces la espuma o el agua de aquel momento. Ahí se dibuja la
+  // arena con el color medido en la propia ortofoto (tools/arena-color.py).
+  float playa = 1.0 - smoothstep(5.0, 6.5, h);
+  float fotoAgua = smoothstep(0.012, 0.05, orto.b - orto.r);
+  float fotoEspuma = smoothstep(0.66, 0.82, min(orto.r, min(orto.g, orto.b)));
+  float usarFoto = smoothstep(0.3, 0.95, vMed) * (1.0 - playa * max(fotoAgua, fotoEspuma));
+  float g = grano(vPos.xz, d);
+  vec3 arena = uArenaSeca * (1.0 + g);
+  // Bajo el agua la arena se va apagando y verdeando con la profundidad (lo que se ve a través).
+  float hondo = uNivel - h;
+  vec3 fondo = mix(arena * vec3(0.62, 0.68, 0.64), vec3(0.03, 0.06, 0.07), smoothstep(0.5, 10.0, hondo));
+  vec3 c = mix(mix(arena, fondo, smoothstep(0.0, 1.5, hondo)), orto, usarFoto);
+  // De cerca la foto (0,4 m por píxel) se ve borrosa: en la arena pasa a la dibujada, con el tono
+  // local de la foto (más clara u oscura) para que no cambie el color al acercarse.
+  float cerca = (1.0 - smoothstep(18.0, 70.0, d)) * playa * usarFoto;
+  float tono = clamp(dot(orto, vec3(0.333)) / max(dot(uArenaSeca, vec3(0.333)), 1e-3), 0.55, 1.35);
+  c = mix(c, arena * mix(1.0, tono, 0.7), cerca * 0.85);
+  c *= 1.0 + usarFoto * playa * g * 0.6 * (1.0 - cerca);
+
+  // ---------- Humedad ----------
+  // Lo que el agua ha cubierto en las últimas horas está mojado, más cuanto más reciente; justo
+  // por encima de la orilla queda una lámina de agua que brilla.
   float rango = max(uNivelMax - uNivel, 0.25);
   float humedad = clamp((uNivelMax + 0.12 - h) / rango, 0.0, 1.0);
-  humedad = max(pow(humedad, 0.6) * 0.9, 1.0 - smoothstep(uNivel, uNivel + 0.35, h));
-  humedad *= 1.0 - smoothstep(5.5, 7.5, h); // solo en la playa
-  c *= mix(1.0, 0.58, humedad);
+  humedad = max(pow(humedad, 0.6) * 0.85, 1.0 - smoothstep(uNivel, uNivel + 0.35, h));
+  humedad *= playa;
+  float lamina = (1.0 - smoothstep(uNivel + 0.02, uNivel + 0.45, h)) * playa;
+  // La arena mojada oscurece a la mitad y se vuelve algo más fría y saturada.
+  c = mix(c, c * vec3(0.46, 0.49, 0.5), humedad);
 
-  c *= luz(vNor, 1.0 - vMed * 0.6);
+  // ---------- Luz ----------
+  // Relieve fino solo en la normal (de cerca): da textura a la luz rasante.
+  vec2 e = vec2(0.08, 0.0);
+  float b0 = ruido(vPos.xz * 2.3 + 7.7), bx = ruido((vPos.xz + e.xy) * 2.3 + 7.7), bz = ruido((vPos.xz + e.yx) * 2.3 + 7.7);
+  vec3 n = normalize(vNor + vec3(b0 - bx, 0.0, b0 - bz) * 0.9 * (1.0 - smoothstep(10.0, 45.0, d)) * playa);
+  // La foto ya trae la luz del vuelo: relieve suave. La arena dibujada, igual, para que casen.
+  c *= luz(n, mix(0.55, 0.4, usarFoto));
+
+  // Arena mojada: refleja el cielo y el sol (Fresnel), mucho más donde aún hay lámina de agua.
+  vec3 v = normalize(cameraPosition - vPos);
+  float fres = pow(1.0 - max(dot(n, v), 0.0), 5.0);
+  vec3 r = reflect(-v, n);
+  vec3 cielo = mix(uCieloHorizonte, uCieloCenit, clamp(r.y * 1.6, 0.0, 1.0));
+  float brillo = humedad * 0.25 + lamina * 0.75;
+  c = mix(c, cielo, brillo * (0.04 + 0.6 * fres));
+  float sol = pow(max(dot(r, uDirBrillo), 0.0), mix(40.0, 400.0, lamina)) * step(0.0, uDirBrillo.y);
+  c += uColorBrillo * sol * brillo * mix(0.25, 2.0, lamina);
+
   gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
   #include <colorspace_fragment>
 }

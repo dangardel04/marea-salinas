@@ -79,6 +79,7 @@ Otras comprobaciones:
 | Edificios | Huella y número de plantas sobre rasante de 12.905 partes de edificio | Dirección General del Catastro, INSPIRE Buildings, `ovc.catastro.meh.es/INSPIRE/wfsBU.aspx`, `BU:BuildingPart`. Reutilización libre citando la fuente |
 | Altura de los edificios | **SUPUESTO**: 3 m por planta. El Catastro no da alturas | `tools/bahia-edificios.ts` |
 | Color de tejados | Media de la ortofoto dentro de cada huella | — |
+| Color de la arena dibujada | **Medido**: arena seca de la ortofoto, sRGB (199, 199, 193) de mediana en 15.833 píxeles (nodos de LiDAR entre +3,4 y +5,5 m con poca pendiente). Se usa donde la foto no sirve (arena que cubre la marea, o agua y espuma del día del vuelo sobre la playa) y de cerca, donde la foto se ve borrosa, con el tono local de la foto. El grano, el oscurecimiento al mojarse y el brillo de la lámina de agua son **ilustrativos** | `tools/arena-color.py`, `src/scene/bahia-arena.json` |
 | Fachadas | **Decorativas** (color neutro y bandas de plantas) | — |
 | Puntos de arena de las vistas | Polígono de la playa en OpenStreetMap (way 516073411), © colaboradores de OpenStreetMap, ODbL | `src/scene/bahia/escena.ts` |
 | Pendiente del frente de playa | **Medida**: 1:22 (mediana de 85 perfiles; cuartiles 0,045–0,065) entre +3,3 y +4,6 m sobre el CH, con el LiDAR de 2024 (§8). Con el MDT05 salía 1:14: la playa ha cambiado entre los dos vuelos. Entre +1,15 y +3,3 m, **medida desde satélite**: 1:85 (mediana de 102 perfiles; p10–p90 1:43–1:116), ver §7 | LiDAR (§5 y §8) y §7, `tools/pendiente-playa.ts` |
@@ -94,7 +95,8 @@ Otras comprobaciones:
 | Rotura | La ola rompe cuando H > 0,78·h (índice de rotura de McCowan, 1894) | Valor clásico de la teoría de la ola solitaria |
 | Refracción | Tiempo de llegada del frente con la ecuación eikonal \|∇T\| = 1/c, resuelta por fast marching | Sethian, J.A. (1996). *A fast marching level set method for monotonically advancing fronts*. PNAS 93, 1591–1595 |
 | Sombra tras espigón y cabos | **APROXIMADA**: se atenúan las olas que llegan girando mucho respecto al mar abierto. No es difracción rigurosa | `src/scene/bahia/agua.ts` |
-| Forma de las olas y del vaivén en la orilla | **Ilustrativa**: 4 componentes de Gerstner por sistema con la energía de Hs; la cota máxima del vaivén sí sale de R2 | `src/scene/bahia/agua.ts` |
+| Forma de las olas y del vaivén en la orilla | **Ilustrativa**: 4 componentes de Gerstner por sistema con la energía de Hs; la cota máxima del vaivén sí sale de R2. En la franja de rompientes, la fase se calcula con una profundidad mínima de 1 m (el frente roto avanza como una resaca) | `src/scene/bahia/agua.ts`, `src/scene/bahia/campoOlas.ts` |
+| Aspecto del agua | **Ilustrativo**: transparencia según la profundidad (se ve el fondo en poca agua), reflejo del cielo con Fresnel, rizado de ruido, espuma en encaje (ruido celular) en el frente de las olas rotas, sus estelas y la orilla. Dónde rompe y hasta dónde sube sí salen del modelo de oleaje | `src/scene/bahia/agua.ts` |
 
 ## 7. Franja intermareal con la línea de agua de Sentinel‑2 (consultado el 19/10/2026)
 

@@ -38,6 +38,8 @@ varying vec3 vNormal;
 varying float vRotura;
 varying float vFase;
 varying float vVaiven;
+varying vec2 vDir;
+varying float vAlcance;
 
 const float G = 9.81;
 const float PI2 = 6.28318531;
@@ -131,6 +133,9 @@ void main() {
   vRotura = rotura;
   vFase = fase;
   vVaiven = vaiven;
+  vec4 cA = texture(uCampoA, uvNodo(p.xz - desp.xz, uCampo));
+  vDir = normalize(cA.gb + vec2(1e-5));
+  vAlcance = uLejos > 0.5 ? 1.0 : cA.a;
   vec4 m = modelMatrix * vec4(p, 1.0);
   vPos = m.xyz;
   gl_Position = projectionMatrix * viewMatrix * m;
@@ -155,6 +160,8 @@ varying vec3 vNormal;
 varying float vRotura;
 varying float vFase;
 varying float vVaiven;
+varying vec2 vDir;
+varying float vAlcance;
 
 const float MEDIO = ${(LADO / 2).toFixed(1)};
 vec2 uvNodo(vec2 xz, vec2 rej) { return ((xz + MEDIO) / rej.y + 0.5) / rej.x; }
@@ -168,6 +175,20 @@ float ruidoV(vec2 p) {
   return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
 }
 float ruido(vec2 p) { return ruidoV(p) * 0.6 + ruidoV(p * 2.3 + 7.1) * 0.4; }
+vec2 hash2(vec2 p) { return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453); }
+/** Ruido celular: distancia entre los dos puntos más cercanos (F2 − F1). Vale ~0 en los bordes
+ *  entre celdas, que es donde se dibujan las paredes de las burbujas. */
+float celdas(vec2 p) {
+  vec2 i = floor(p), f = fract(p);
+  float d1 = 8.0, d2 = 8.0;
+  for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++) {
+    vec2 o = vec2(float(x), float(y));
+    vec2 c = o + hash2(i + o) - f;
+    float dd = dot(c, c);
+    if (dd < d1) { d2 = d1; d1 = dd; } else if (dd < d2) { d2 = dd; }
+  }
+  return sqrt(d2) - sqrt(d1);
+}
 
 uniform float uLejos;
 void main() {
@@ -175,42 +196,76 @@ void main() {
   if (uLejos > 0.5 && abs(vPos.x) < MEDIO && abs(vPos.z) < MEDIO) discard;
   float prof = vPos.y - fondo(vPos.xz);
   float d = length(vPos - cameraPosition);
-  // Rizado fino del viento (decorativo, solo en la normal): cuatro ondas en direcciones no
-  // alineadas con los ejes (evita la cuadrícula) que se desvanecen con la distancia (evita el
-  // aliasing; de lejos ya lo hace la reflexión del cielo).
+  // ---------- Superficie ----------
+  // Rizado fino del viento (decorativo, solo en la normal): tres octavas de ruido que se mueven
+  // con el viento, sin la regularidad de unas pocas ondas; se apagan con la distancia (aliasing).
   vec2 q = vPos.xz;
   vec2 g = vec2(0.0);
-  g += vec2(0.83, 0.56) * cos(dot(q, vec2(0.83, 0.56)) * 0.9 + uTiempo * 2.9) * 0.9;
-  g += vec2(-0.47, 0.88) * cos(dot(q, vec2(-0.47, 0.88)) * 1.37 + uTiempo * 3.6) * 0.7;
-  g += vec2(0.21, -0.98) * cos(dot(q, vec2(0.21, -0.98)) * 2.11 + uTiempo * 4.4) * 0.5;
-  g += vec2(-0.93, -0.36) * cos(dot(q, vec2(-0.93, -0.36)) * 3.3 + uTiempo * 5.5) * 0.35;
-  float fuerza = 0.045 * (1.0 - smoothstep(30.0, 450.0, d));
+  float amp = 1.0, fr = 0.35;
+  for (int o = 0; o < 3; o++) {
+    vec2 p = q * fr + vec2(uTiempo * 0.35, uTiempo * 0.22) * fr * 3.0 + float(o) * 17.3;
+    float a0 = ruidoV(p), ax = ruidoV(p + vec2(0.07, 0.0)), az = ruidoV(p + vec2(0.0, 0.07));
+    g += vec2(a0 - ax, a0 - az) / 0.07 * amp * fr;
+    amp *= 0.55; fr *= 2.3;
+  }
+  float fuerza = 0.06 * (1.0 - smoothstep(25.0, 380.0, d));
   vec3 n = normalize(vNormal + vec3(g.x, 0.0, g.y) * fuerza);
   vec3 v = normalize(cameraPosition - vPos);
   float fres = 0.02 + 0.98 * pow(1.0 - max(dot(n, v), 0.0), 5.0);
   vec3 r = reflect(-v, n);
-  vec3 cielo = mix(uCieloHorizonte, uCieloCenit, clamp(r.y * 1.6, 0.0, 1.0));
-  vec3 profundo = mix(vec3(0.008, 0.02, 0.035), vec3(0.015, 0.11, 0.16), uLuzDia);
-  vec3 somero = mix(vec3(0.02, 0.05, 0.06), vec3(0.13, 0.33, 0.31), uLuzDia);
-  vec3 agua = mix(somero, profundo, smoothstep(0.0, 9.0, prof));
-  vec3 c = mix(agua, cielo, fres);
-  c += uColorBrillo * pow(max(dot(r, uDirBrillo), 0.0), 260.0) * 3.0 * step(0.0, uDirBrillo.y);
+  r.y = abs(r.y); // la ola no refleja el suelo: siempre cielo
+  vec3 cielo = mix(uCieloHorizonte, uCieloCenit, pow(clamp(r.y, 0.0, 1.0), 0.6));
+  float sol = pow(max(dot(r, uDirBrillo), 0.0), 900.0) * 6.0 + pow(max(dot(r, uDirBrillo), 0.0), 90.0) * 0.25;
+  sol *= step(0.0, uDirBrillo.y);
 
-  // Espuma: borde del agua (con el vaivén), crestas que rompen en la rompiente y estela del lavado.
-  float patron = smoothstep(0.25, 0.75, ruido(vPos.xz * vec2(0.22, 0.3) + vec2(uTiempo * 0.12, uTiempo * 0.3)));
-  float hilos = smoothstep(0.35, 0.8, ruido(vPos.xz * 0.9 + vec2(uTiempo * 0.2, 0.0)));
-  float borde = 1.0 - smoothstep(0.0, 0.18 + 0.1 * patron, prof);
-  // Rompiente: banda blanca en la cara de la ola que rompe y estela que se va deshaciendo detrás
-  // (sigue la fase de la ola, así que avanza con ella hacia la orilla).
+  // ---------- Cuerpo del agua ----------
+  // Transparente según la profundidad (luz que atraviesa ida y vuelta hasta el fondo): en poca
+  // agua se ve la arena, verdosa; mar adentro, azul oscuro. Con la espuma en suspensión de la
+  // rompiente el agua se enturbia (más clara y menos transparente).
+  float turbia = clamp(vRotura * 0.8 + (1.0 - smoothstep(0.0, 2.5, prof)) * 0.25, 0.0, 1.0);
+  float atraviesa = exp(-max(prof, 0.0) * mix(0.55, 1.6, turbia));
+  vec3 profundo = vec3(0.006, 0.035, 0.055) * (0.12 + 0.88 * uLuzDia);
+  vec3 verde = vec3(0.05, 0.16, 0.15) * (0.1 + 0.9 * uLuzDia);
+  vec3 cuerpo = mix(profundo, verde, exp(-max(prof, 0.0) * 0.18));
+  cuerpo = mix(cuerpo, vec3(0.32, 0.4, 0.38) * (0.12 + 0.88 * uLuzDia), turbia * 0.35);
+  // Luz que pasa por la cresta delgada antes de romper: un verde más vivo en la cara de la ola.
   float s = sin(vFase + 0.6);
-  float cresta = vRotura * smoothstep(0.55, 0.98, s) * (0.6 + 0.4 * patron);
-  float estela = vRotura * smoothstep(-0.2, 0.6, s) * (1.0 - smoothstep(0.6, 1.0, s)) * hilos * 0.55;
-  float lavado = smoothstep(0.02, 0.4, vVaiven) * (1.0 - smoothstep(0.0, 0.5, prof)) * patron;
-  float espuma = clamp(max(max(borde * (0.6 + 0.4 * patron), cresta), max(lavado, estela)), 0.0, 1.0);
-  c = mix(c, vec3(0.9, 0.93, 0.94) * (0.18 + 0.82 * uLuzDia), espuma);
+  cuerpo += vec3(0.02, 0.09, 0.08) * uLuzDia * smoothstep(0.2, 0.9, s) * (1.0 - vRotura) * smoothstep(1.0, 4.0, prof) * (1.0 - smoothstep(10.0, 25.0, prof));
 
-  // Lámina fina transparente para ver la arena mojada debajo.
-  float alfa = max(mix(0.2, 0.96, smoothstep(0.0, 1.0, prof)), espuma * 0.92);
+  // ---------- Espuma ----------
+  // Encaje de burbujas (bordes de celdas) y vetas alargadas a lo largo de la cresta, que se
+  // mueven con el agua. De lejos el encaje no se resuelve: queda su promedio y las vetas.
+  vec2 ve = vec2(uTiempo * 0.18, uTiempo * 0.27);
+  float lejos = smoothstep(60.0, 260.0, d);
+  float encaje = 1.0 - smoothstep(0.0, 0.25, celdas(vPos.xz * 0.7 + ve));
+  float encajeFino = 1.0 - smoothstep(0.0, 0.2, celdas(vPos.xz * 2.1 - ve * 1.7 + 5.0));
+  encaje = mix(max(encaje, encajeFino * 0.8), 0.45, lejos);
+  vec2 perp = vec2(-vDir.y, vDir.x);
+  vec2 qa = vec2(dot(vPos.xz, vDir) * 0.35, dot(vPos.xz, perp) * 0.045);
+  float vetas = ruido(qa + vec2(0.0, uTiempo * 0.03)) * 0.65 + ruido(qa * 3.1 + 9.0) * 0.35;
+  // Rompiente: el frente de cada ola rota es una línea blanca; detrás queda la espuma que se
+  // abre en vetas y encaje y se va deshaciendo. Sigue la fase, así que avanza hacia la orilla.
+  float frenteOla = vRotura * smoothstep(0.86, 0.995, s);
+  float resto = vRotura * smoothstep(0.05, 0.86, s) * (1.0 - smoothstep(0.86, 0.995, s));
+  float espuma = frenteOla * (0.75 + 0.25 * encaje);
+  espuma = max(espuma, resto * smoothstep(0.5, 0.85, vetas * 0.6 + encaje * 0.5) * 0.85);
+  // Orilla, solo donde llega el oleaje: una línea fina en el borde del agua y burbujas sueltas
+  // en la lámina que sube y baja.
+  float frente = (1.0 - smoothstep(0.0, 0.05 + 0.06 * vetas, prof)) * vAlcance;
+  float lavado = smoothstep(0.03, 0.35, vVaiven) * (1.0 - smoothstep(0.0, 0.5, prof)) * vAlcance;
+  espuma = max(espuma, frente * (0.55 + 0.45 * encaje));
+  espuma = max(espuma, lavado * smoothstep(0.55, 0.9, encaje * 0.6 + vetas * 0.5) * 0.7);
+  espuma = clamp(espuma, 0.0, 1.0) * (1.0 - smoothstep(300.0, 1200.0, d) * 0.5);
+  vec3 blanco = vec3(0.86, 0.9, 0.9) * (0.06 + 0.94 * uLuzDia) * (0.8 + 0.2 * max(dot(n, uDirBrillo), 0.0));
+
+  // ---------- Composición (mezcla alfa sobre el fondo ya dibujado) ----------
+  float alfaCuerpo = 1.0 - atraviesa;
+  vec3 c = mix(cuerpo, cielo, fres) + uColorBrillo * sol * (1.0 - espuma);
+  float alfa = clamp(alfaCuerpo + fres * (1.0 - alfaCuerpo) + sol, 0.0, 1.0);
+  c = mix(c, blanco, espuma);
+  alfa = max(alfa, espuma * 0.95);
+  // La lámina del vaivén apenas tapa: casi solo reflejo.
+  alfa *= mix(1.0, 0.85, smoothstep(0.0, 0.3, vVaiven) * (1.0 - smoothstep(0.0, 0.4, prof)));
   c = mix(c, uColorNiebla, 1.0 - exp(-uDensidadNiebla * uDensidadNiebla * d * d));
   gl_FragColor = vec4(c, alfa);
   #include <colorspace_fragment>

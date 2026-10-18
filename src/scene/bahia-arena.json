@@ -1,0 +1,25 @@
+{
+ "fuente": "Ortofoto PNOA 2023 (IGN), nivel 5 de public/bahia/orto, en nodos de arena seca medidos por LiDAR entre +3,4 y +5,5 m; ver tools/arena-color.py",
+ "pixeles": 15833,
+ "descartados": 7795,
+ "secaSrgb": [
+  199,
+  199,
+  193
+ ],
+ "p25Srgb": [
+  187,
+  188,
+  181
+ ],
+ "p75Srgb": [
+  210,
+  209,
+  203
+ ],
+ "desviacionSrgb": [
+  24.5,
+  23.5,
+  23.7
+ ]
+}
