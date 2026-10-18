@@ -10,7 +10,7 @@ import { extremosOficiales, type ExtremoOficial } from './ihm';
 import { ICONOS } from './iconos';
 import { crearOleaje } from '../oleaje/estado';
 import { siguienteCuadro } from '../cuadro';
-import type { EstadoMar } from '../oleaje/datos';
+import { rumbo, type EstadoMar } from '../oleaje/datos';
 
 const MIN = 60_000, HORA = 3_600_000, DIA = 86_400_000;
 const REFRESCO_CORRECCION = 5 * MIN;
@@ -26,7 +26,12 @@ const metros = (h: number) => h.toLocaleString('es-ES', { minimumFractionDigits:
 
 export interface DestinoEscena {
   actualizar(e: { t: number; nivel: number; nivelMax6h: number; mar: EstadoMar | null; setup: number; r2: number }): void;
+  volarA?(id: string): void;
 }
+
+/** «1,1 m, 11 s, NNE»: altura significante, periodo de pico y rumbo de procedencia. */
+const textoMar = (m?: { hs: number; tp: number; dir: number }) =>
+  m && m.hs > 0.02 ? `${m.hs.toLocaleString('es-ES', { maximumFractionDigits: 1, minimumFractionDigits: 1 })} m, ${Math.round(m.tp)} s, ${rumbo(m.dir)}` : 'en calma';
 
 export function iniciarInterfaz() {
   const motor = crearMotor({ z0: constantes.z0Ch, constituyentes: constantes.constituyentes });
@@ -61,9 +66,32 @@ export function iniciarInterfaz() {
     tiempo: $<HTMLInputElement>('tiempo'), ahora: $<HTMLButtonElement>('ahora'),
     reproducir: $<HTMLButtonElement>('reproducir'), velocidad: $<HTMLSelectElement>('velocidad'),
     tema: $<HTMLButtonElement>('tema'),
+    olFuente: $('oleaje-fuente'), olFondo: $('ol-fondo'), olViento: $('ol-viento'), olSubida: $('ol-subida'), olBoya: $('ol-boya'),
   };
   el.ahora.innerHTML = `${ICONOS.ahora}<span>Ahora</span>`;
   $('icono-info').innerHTML = ICONOS.info;
+
+  // ---------- Panel plegable (móvil) ----------
+  const panel = document.querySelector<HTMLElement>('.panel')!;
+  const plegar = $<HTMLButtonElement>('plegar');
+  plegar.innerHTML = ICONOS.plegar;
+  plegar.addEventListener('click', () => {
+    const plegado = panel.classList.toggle('plegado');
+    plegar.setAttribute('aria-expanded', String(!plegado));
+    plegar.setAttribute('aria-label', plegado ? 'Desplegar el panel' : 'Plegar el panel');
+  });
+
+  // ---------- Vistas de la escena ----------
+  const botonesVista = [...document.querySelectorAll<HTMLButtonElement>('.vista')];
+  const marcarVista = (id: string | null) => botonesVista.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.vista === id)));
+  botonesVista.forEach((b) => b.addEventListener('click', () => { escena?.volarA?.(b.dataset.vista!); marcarVista(b.dataset.vista!); }));
+  // Si se mueve la cámara a mano, ninguna vista queda marcada.
+  const lienzo = document.getElementById('escena')!;
+  // La ayuda de los controles solo hace falta hasta que se usa la escena por primera vez.
+  for (const ev of ['pointerdown', 'wheel'] as const) lienzo.addEventListener(ev, () => { marcarVista(null); document.getElementById('ayuda-controles')?.classList.add('oculta'); }, { passive: true });
+  const ayuda = document.getElementById('ayuda-controles');
+  if (ayuda && matchMedia('(pointer: coarse)').matches) ayuda.textContent = 'Arrastra con un dedo para moverte; pellizca para acercar y gira con dos dedos';
+  else if (ayuda) ayuda.textContent = 'Arrastra para moverte, usa la rueda para acercar y el botón derecho para girar';
 
   // ---------- Tema ----------
   const TEMAS = ['sistema', 'light', 'dark'] as const;
@@ -209,6 +237,27 @@ export function iniciarInterfaz() {
     poner(el.reproducir, reproduciendo ? ICONOS.pausa : ICONOS.play, true);
     el.reproducir.setAttribute('aria-label', reproduciendo ? 'Pausar' : 'Reproducir');
     el.ahora.setAttribute('aria-pressed', String(modo === 'ahora'));
+    pintarOleaje(t, ahoraReal);
+  }
+
+  function pintarOleaje(t: number, ahoraReal: number) {
+    const ol = ultimoOleaje;
+    const est = oleaje.estado();
+    const mar = ol?.mar ?? null;
+    poner(el.olFuente, est === 'conectando' ? 'Cargando previsión…'
+      : est === 'sin-datos' ? 'Sin datos de oleaje: mar en calma en la escena'
+      : mar ? 'Previsión Open‑Meteo, mar abierto' : 'Sin previsión para este momento');
+    poner(el.olFondo, mar ? textoMar(mar.fondo ?? mar) : '--');
+    poner(el.olViento, mar ? textoMar(mar.viento) : '--');
+    if (ol?.runup && mar) {
+      const r2 = ol.runup.r2;
+      const pendiente = `1:${Math.round(1 / ol.pendiente)}`;
+      poner(el.olSubida, `Las olas suben por la arena hasta unos <strong class="num">${metros(r2)} m</strong> sobre el nivel del mar, hasta la cota <span class="num">${metros(nivel(t) + r2)} m</span>. `
+        + (ol.pendienteMedida ? `Pendiente de la arena medida (${pendiente}). ` : `Con la marea baja, pendiente aproximada (${pendiente}). `)
+        + 'Margen de la fórmula: unos ±0,4 m.', true);
+    } else poner(el.olSubida, '');
+    const b = ol?.boya;
+    poner(el.olBoya, b ? `Boya de Gijón, medido hace ${Math.max(0, Math.round((ahoraReal - b.t) / MIN))} min: ${textoMar(b)}` : '');
   }
 
   function pintarCurva(t: number) {

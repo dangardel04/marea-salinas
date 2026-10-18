@@ -19,7 +19,10 @@
           <h1 class="lugar">Playa de Salinas</h1>
           <p class="momento" id="momento">&nbsp;</p>
         </div>
-        <button class="boton boton-icono" id="tema" type="button" aria-label="Cambiar tema"></button>
+        <div class="cabecera-botones">
+          <button class="boton boton-icono" id="tema" type="button" aria-label="Cambiar tema"></button>
+          <button class="boton boton-icono plegar" id="plegar" type="button" aria-expanded="true" aria-controls="detalle-panel" aria-label="Plegar el panel"></button>
+        </div>
       </header>
 
       <div>
@@ -30,11 +33,13 @@
         <p class="referencia">Sobre el cero hidrográfico del puerto de Avilés</p>
       </div>
 
+      <div class="detalle-panel" id="detalle-panel">
       <div class="modo" id="modo" data-estado="prediccion">
         <span class="modo-punto" aria-hidden="true"></span>
         <span class="modo-etiqueta" id="modo-etiqueta">Predicción</span>
         <span class="modo-detalle" id="modo-detalle">Conectando con el mareógrafo de Avilés…</span>
       </div>
+
 
       <dl class="proximos">
         <div class="proximo">
@@ -57,12 +62,36 @@
         <div class="leyenda"><span><i class="l-pred"></i>Esta predicción</span><span id="leyenda-ihm" hidden><i class="l-ihm"></i>Tabla oficial IHM</span></div>
       </figure>
 
+      <section class="oleaje" aria-labelledby="oleaje-titulo">
+        <div class="oleaje-cab">
+          <h2 class="oleaje-titulo" id="oleaje-titulo">Olas</h2>
+          <span class="oleaje-fuente" id="oleaje-fuente">Cargando previsión…</span>
+        </div>
+        <dl class="oleaje-datos">
+          <div><dt>Mar de fondo</dt><dd id="ol-fondo">--</dd></div>
+          <div><dt>Mar de viento</dt><dd id="ol-viento">--</dd></div>
+        </dl>
+        <p class="oleaje-subida" id="ol-subida"></p>
+        <p class="oleaje-boya" id="ol-boya"></p>
+      </section>
+
       <details class="notas">
         <summary><span id="icono-info"></span>Precisión y fuentes</summary>
         <p>Constantes armónicas ajustadas al mareógrafo REDMAR de Avilés, con el ciclo estacional de 5,8 años del de Gijón (Puertos del Estado): el juego que más se acerca a lo medido. Frente a la tabla oficial del IHM, las horas difieren menos de 9 minutos y las alturas quedan dentro de ±15 cm en 9 de cada 10 pleamares o bajamares. Las pleamares salen algo más bajas porque la tabla oficial y el mareógrafo no coinciden en Avilés.</p>
-        <p>Relieve: MDT de 5 m del IGN. La parte baja de la playa, por debajo de lo que capturó el LiDAR, es una pendiente aproximada. El oleaje es decorativo.</p>
+        <p>Olas: previsión de Open‑Meteo (modelo, unos 14 km mar adentro) propagada sobre el fondo de la bahía. La altura de las olas en mar abierto coincide con la boya de Gijón con un error típico de 17 cm. La subida del agua por las olas sale de la fórmula de Stockdon (2006), con un error típico de ±0,4 m; no se ha medido en Salinas. La forma de cada ola es ilustrativa.</p>
+        <p>Escena: relieve LiDAR y ortofoto de 2023 del IGN, fondo marino de EMODnet y edificios del Catastro (altura supuesta de 3 m por planta). La parte baja de la playa, que no capturó el LiDAR, es una pendiente aproximada.</p>
       </details>
+      </div>
     </section>
+
+    <nav class="vistas" aria-label="Vistas de la playa">
+      <button class="vista" type="button" data-vista="bahia" aria-pressed="true">Bahía</button>
+      <button class="vista" type="button" data-vista="salinas" aria-pressed="false">Salinas</button>
+      <button class="vista" type="button" data-vista="espartal" aria-pressed="false">El Espartal</button>
+      <button class="vista" type="button" data-vista="sanjuan" aria-pressed="false">San Juan</button>
+      <button class="vista" type="button" data-vista="pie" aria-pressed="false">A pie de playa</button>
+    </nav>
+    <p class="ayuda-controles" id="ayuda-controles">Arrastra para moverte · rueda para acercar · botón derecho para girar</p>
 
     <section class="barra" aria-label="Control de tiempo">
       <button class="boton boton-acento" id="ahora" type="button"></button>
