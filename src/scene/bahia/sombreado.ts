@@ -18,6 +18,7 @@ uniform float uNivel;
 uniform float uNivelMax;
 uniform vec3 uColorNiebla;
 uniform float uDensidadNiebla;
+uniform float uNoche;
 vec3 conNiebla(vec3 c, vec3 pos) {
   float d = length(pos - cameraPosition);
   float f = 1.0 - exp(-uDensidadNiebla * uDensidadNiebla * d * d);
@@ -117,6 +118,10 @@ void main() {
   float hueco = step(0.35, planta) * step(planta, 0.8) * step(0.45, fract((vPos.x + vPos.z) / 2.6));
   vec3 base = mix(vColor, vColor * vec3(0.55, 0.6, 0.66), hueco * fachada * 0.8);
   vec3 c = base * luz(n, mix(0.5, 1.0, fachada));
+  // De noche, algunas ventanas encendidas al azar (DECORATIVO).
+  vec2 celda = floor(vec2((vPos.x + vPos.z) / 2.6, vPos.y / 3.0));
+  float encendida = step(0.72, fract(sin(dot(celda, vec2(12.9898, 78.233))) * 43758.5453));
+  c += vec3(1.0, 0.72, 0.38) * 0.55 * hueco * fachada * encendida * smoothstep(0.5, 0.9, uNoche);
   gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
   #include <colorspace_fragment>
 }

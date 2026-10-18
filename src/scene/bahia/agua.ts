@@ -18,7 +18,8 @@ import * as THREE from 'three';
 import { LADO, PASO_RELIEVE } from '../../bahia';
 import { PASO_CAMPO } from './campoOlas';
 
-const AGUA_VERT = /* glsl */ `
+const crearAguaVert = (segmentos: number) => /* glsl */ `
+#define SEGMENTOS ${segmentos.toFixed(1)}
 uniform vec3 uTesela;     // x0, z0, lado
 uniform float uLejos;
 uniform sampler2D uRelieve;
@@ -64,7 +65,13 @@ void componente(float a, float T, float psi, float abanico, vec2 d, vec2 p, floa
                 vec2 xz, inout vec3 desp, inout vec3 nrm, inout float fase) {
   if (a < 0.002) return;
   float w = PI2 / T;
-  float k = PI2 / longitud(T, h);
+  float L = longitud(T, h);
+  float k = PI2 / L;
+  // Nivel de detalle de las olas: una ola más corta que ~4 separaciones de vértice no se puede
+  // dibujar en esta malla (aliasing); se desvanece. Lejos, las olas cortas no se distinguirían.
+  float esp = uTesela.z / SEGMENTOS;
+  if (uLejos < 0.5) a *= smoothstep(2.5 * esp, 5.0 * esp, L);
+  if (a < 0.002) return;
   float th = w * (tLlegada - uTiempo) + psi + k * abanico * dot(p, xz);
   float s = min(0.42, k * a * 1.6);           // pendiente efectiva de la cresta
   float Q = s / max(k * a, 1e-4);
@@ -167,10 +174,18 @@ void main() {
   // El anillo de mar lejano no se dibuja dentro del cuadrado modelado (allí están los parches).
   if (uLejos > 0.5 && abs(vPos.x) < MEDIO && abs(vPos.z) < MEDIO) discard;
   float prof = vPos.y - fondo(vPos.xz);
-  vec2 q = vPos.xz * 0.45;
-  vec3 rizo = vec3(0.05 * cos(q.x * 1.7 + uTiempo * 1.3) + 0.035 * cos(q.x * 3.1 - q.y * 2.3 + uTiempo * 2.1), 0.0,
-                   0.05 * cos(q.y * 1.9 + uTiempo * 1.1) + 0.035 * cos(q.y * 2.7 + q.x * 1.3 - uTiempo * 1.7));
-  vec3 n = normalize(vNormal + rizo);
+  float d = length(vPos - cameraPosition);
+  // Rizado fino del viento (decorativo, solo en la normal): cuatro ondas en direcciones no
+  // alineadas con los ejes (evita la cuadrícula) que se desvanecen con la distancia (evita el
+  // aliasing; de lejos ya lo hace la reflexión del cielo).
+  vec2 q = vPos.xz;
+  vec2 g = vec2(0.0);
+  g += vec2(0.83, 0.56) * cos(dot(q, vec2(0.83, 0.56)) * 0.9 + uTiempo * 2.9) * 0.9;
+  g += vec2(-0.47, 0.88) * cos(dot(q, vec2(-0.47, 0.88)) * 1.37 + uTiempo * 3.6) * 0.7;
+  g += vec2(0.21, -0.98) * cos(dot(q, vec2(0.21, -0.98)) * 2.11 + uTiempo * 4.4) * 0.5;
+  g += vec2(-0.93, -0.36) * cos(dot(q, vec2(-0.93, -0.36)) * 3.3 + uTiempo * 5.5) * 0.35;
+  float fuerza = 0.045 * (1.0 - smoothstep(30.0, 450.0, d));
+  vec3 n = normalize(vNormal + vec3(g.x, 0.0, g.y) * fuerza);
   vec3 v = normalize(cameraPosition - vPos);
   float fres = 0.02 + 0.98 * pow(1.0 - max(dot(n, v), 0.0), 5.0);
   vec3 r = reflect(-v, n);
@@ -183,16 +198,19 @@ void main() {
 
   // Espuma: borde del agua (con el vaivén), crestas que rompen en la rompiente y estela del lavado.
   float patron = smoothstep(0.25, 0.75, ruido(vPos.xz * vec2(0.22, 0.3) + vec2(uTiempo * 0.12, uTiempo * 0.3)));
+  float hilos = smoothstep(0.35, 0.8, ruido(vPos.xz * 0.9 + vec2(uTiempo * 0.2, 0.0)));
   float borde = 1.0 - smoothstep(0.0, 0.18 + 0.1 * patron, prof);
-  float cresta = vRotura * smoothstep(0.35, 0.95, sin(vFase + 0.6)) * (0.55 + 0.45 * patron);
+  // Rompiente: banda blanca en la cara de la ola que rompe y estela que se va deshaciendo detrás
+  // (sigue la fase de la ola, así que avanza con ella hacia la orilla).
+  float s = sin(vFase + 0.6);
+  float cresta = vRotura * smoothstep(0.55, 0.98, s) * (0.6 + 0.4 * patron);
+  float estela = vRotura * smoothstep(-0.2, 0.6, s) * (1.0 - smoothstep(0.6, 1.0, s)) * hilos * 0.55;
   float lavado = smoothstep(0.02, 0.4, vVaiven) * (1.0 - smoothstep(0.0, 0.5, prof)) * patron;
-  float espumaRemanente = vRotura * 0.35 * patron;
-  float espuma = clamp(max(max(borde * (0.6 + 0.4 * patron), cresta), max(lavado, espumaRemanente)), 0.0, 1.0);
+  float espuma = clamp(max(max(borde * (0.6 + 0.4 * patron), cresta), max(lavado, estela)), 0.0, 1.0);
   c = mix(c, vec3(0.9, 0.93, 0.94) * (0.18 + 0.82 * uLuzDia), espuma);
 
   // Lámina fina transparente para ver la arena mojada debajo.
   float alfa = max(mix(0.2, 0.96, smoothstep(0.0, 1.0, prof)), espuma * 0.92);
-  float d = length(vPos - cameraPosition);
   c = mix(c, uColorNiebla, 1.0 - exp(-uDensidadNiebla * uDensidadNiebla * d * d));
   gl_FragColor = vec4(c, alfa);
   #include <colorspace_fragment>
@@ -229,7 +247,7 @@ export function crearAgua(opciones: {
     uR2: { value: 0 },
   };
   const base = new THREE.ShaderMaterial({
-    vertexShader: AGUA_VERT, fragmentShader: AGUA_FRAG,
+    vertexShader: crearAguaVert(SEG), fragmentShader: AGUA_FRAG,
     uniforms: { ...u, uTesela: { value: new THREE.Vector3() }, uLejos: { value: 0 } },
     transparent: true, depthWrite: false,
   });

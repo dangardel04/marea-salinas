@@ -70,6 +70,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     uNivelMax: { value: 2.5 },
     uColorNiebla: { value: new THREE.Color() },
     uDensidadNiebla: { value: movil ? 0.00011 : 0.00008 },
+    /** 0 de día, 1 de noche cerrada. */
+    uNoche: { value: 0 },
   };
   const comunesAgua = {
     uTiempo: { value: 0 },
@@ -170,6 +172,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
       comunes.uLuzSol.value = brilloLuna;
     }
     comunes.uAmbiente.value.copy(p.cenit).lerp(new THREE.Color(1, 1, 1), 0.7).multiplyScalar(0.03 + 0.43 * p.luzDia);
+    comunes.uNoche.value = c.noche;
     comunes.uColorNiebla.value.copy(p.horizonte);
     const noche = c.noche > 0.6 && c.estado.luna.altura > 0;
     comunesAgua.uDirBrillo.value.copy(noche ? c.vLuna : c.vSol);
