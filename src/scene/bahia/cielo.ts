@@ -128,5 +128,7 @@ export function crearCielo(escena: THREE.Scene, movil: boolean) {
     luna.position.copy(camara).addScaledVector(vLuna, DIST_LUNA);
   }
 
-  return { actualizar, seguir };
+  /** Lo que es cielo (para que el reflejo del agua lo ponga aparte). */
+  const objetos: THREE.Object3D[] = [cielo, cupula, estrellas, luna];
+  return { actualizar, seguir, objetos };
 }

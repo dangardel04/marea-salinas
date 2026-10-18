@@ -40,6 +40,8 @@ varying float vFase;
 varying float vVaiven;
 varying vec2 vDir;
 varying float vAlcance;
+varying vec4 vRefl;
+uniform mat4 uMatReflejo;
 
 const float G = 9.81;
 const float PI2 = 6.28318531;
@@ -137,6 +139,7 @@ void main() {
   vDir = normalize(cA.gb + vec2(1e-5));
   vAlcance = uLejos > 0.5 ? 1.0 : cA.a;
   vec4 m = modelMatrix * vec4(p, 1.0);
+  vRefl = uMatReflejo * m;
   vPos = m.xyz;
   gl_Position = projectionMatrix * viewMatrix * m;
 }
@@ -162,6 +165,10 @@ varying float vFase;
 varying float vVaiven;
 varying vec2 vDir;
 varying float vAlcance;
+varying vec4 vRefl;
+uniform sampler2D uNormAgua;
+uniform sampler2D uReflejo;
+uniform float uConReflejo;
 
 const float MEDIO = ${(LADO / 2).toFixed(1)};
 vec2 uvNodo(vec2 xz, vec2 rej) { return ((xz + MEDIO) / rej.y + 0.5) / rej.x; }
@@ -202,24 +209,28 @@ void main() {
   float prof = vPos.y - fondo(vPos.xz);
   float d = length(vPos - cameraPosition);
   // ---------- Superficie ----------
-  // Rizado fino del viento (decorativo, solo en la normal): tres octavas de ruido que se mueven
-  // con el viento, sin la regularidad de unas pocas ondas; se apagan con la distancia (aliasing).
+  // Rizado fino del viento (solo en la normal): mapa de normales fotográfico de agua (three.js,
+  // examples/textures/waternormals.jpg) a dos escalas que se desplazan en direcciones distintas.
+  // Con mipmaps, de lejos se suaviza solo.
   vec2 q = vPos.xz;
-  vec2 g = vec2(0.0);
-  float amp = 1.0, fr = 0.35;
-  for (int o = 0; o < 3; o++) {
-    vec2 p = q * fr + vec2(uTiempo * 0.35, uTiempo * 0.22) * fr * 3.0 + float(o) * 17.3;
-    float a0 = ruidoV(p), ax = ruidoV(p + vec2(0.07, 0.0)), az = ruidoV(p + vec2(0.0, 0.07));
-    g += vec2(a0 - ax, a0 - az) / 0.07 * amp * fr;
-    amp *= 0.55; fr *= 2.3;
-  }
-  float fuerza = 0.06 * (1.0 - smoothstep(25.0, 380.0, d));
-  vec3 n = normalize(vNormal + vec3(g.x, 0.0, g.y) * fuerza);
+  vec3 nA = texture2D(uNormAgua, q / 21.0 + vec2(uTiempo * 0.011, uTiempo * 0.007)).xyz * 2.0 - 1.0;
+  vec3 nB = texture2D(uNormAgua, q / 7.3 + vec2(-uTiempo * 0.019, uTiempo * 0.015)).xyz * 2.0 - 1.0;
+  vec3 nC = texture2D(uNormAgua, q / 2.1 + vec2(uTiempo * 0.035, -uTiempo * 0.028)).xyz * 2.0 - 1.0;
+  vec2 g = nA.xy + nB.xy * 0.8 + nC.xy * 0.5 * (1.0 - smoothstep(10.0, 40.0, d));
+  float fuerza = mix(0.38, 0.12, smoothstep(30.0, 600.0, d));
+  vec3 n = normalize(vNormal + vec3(g.x, 0.0, -g.y) * fuerza);
   vec3 v = normalize(cameraPosition - vPos);
   float fres = 0.02 + 0.98 * pow(1.0 - max(dot(n, v), 0.0), 5.0);
   vec3 r = reflect(-v, n);
   r.y = abs(r.y); // la ola no refleja el suelo: siempre cielo
   vec3 cielo = mix(uCieloHorizonte, uCieloCenit, pow(clamp(r.y, 0.0, 1.0), 0.6));
+  // Reflejo de la escena (acantilados, edificios, cielo) desde la cámara espejo, deformado por
+  // el rizado; donde la deformación saca la muestra de la imagen, el cielo.
+  vec2 uvR = vRefl.xy / vRefl.w + (n.xz - vNormal.xz) * mix(0.06, 0.02, smoothstep(30.0, 400.0, d));
+  vec4 escenaR = texture2D(uReflejo, uvR);
+  float dentroR = step(0.001, uvR.x) * step(uvR.x, 0.999) * step(0.001, uvR.y) * step(uvR.y, 0.999);
+  // Alfa 0 en la textura = cielo (no se dibuja en el reflejo): ahí, el degradado de cielo.
+  vec3 reflejo = mix(cielo, escenaR.rgb / max(escenaR.a, 1e-3), clamp(escenaR.a, 0.0, 1.0) * dentroR * uConReflejo);
   float sol = pow(max(dot(r, uDirBrillo), 0.0), 900.0) * 6.0 + pow(max(dot(r, uDirBrillo), 0.0), 90.0) * 0.25;
   sol *= step(0.0, uDirBrillo.y);
 
@@ -271,7 +282,7 @@ void main() {
 
   // ---------- Composición (mezcla alfa sobre el fondo ya dibujado) ----------
   float alfaCuerpo = 1.0 - atraviesa;
-  vec3 c = mix(cuerpo, cielo, fres) + uColorBrillo * sol * (1.0 - espuma);
+  vec3 c = mix(cuerpo, reflejo, fres) + uColorBrillo * sol * (1.0 - espuma);
   float alfa = clamp(alfaCuerpo + fres * (1.0 - alfaCuerpo) + sol, 0.0, 1.0);
   c = mix(c, blanco, espuma);
   alfa = max(alfa, espuma * 0.95);
@@ -293,6 +304,7 @@ export function crearAgua(opciones: {
   nCampo: number;
   comunes: UniformesAgua;
   movil: boolean;
+  normales: THREE.Texture;
 }) {
   const SEG = opciones.movil ? 40 : 72;
   const geo = new THREE.PlaneGeometry(1, 1, SEG, SEG);
@@ -311,6 +323,10 @@ export function crearAgua(opciones: {
     uSisB: { value: new THREE.Vector4() },
     uSetup: { value: 0 },
     uR2: { value: 0 },
+    uNormAgua: { value: opciones.normales },
+    uReflejo: { value: null as THREE.Texture | null },
+    uMatReflejo: { value: new THREE.Matrix4() },
+    uConReflejo: { value: 0 },
   };
   const base = new THREE.ShaderMaterial({
     vertexShader: crearAguaVert(SEG), fragmentShader: AGUA_FRAG,
@@ -354,6 +370,8 @@ export function crearAgua(opciones: {
 
   return {
     uniformes: u,
+    /** Lo que no debe salir en el reflejo (el agua misma). */
+    objetos: [grupo, lejos] as THREE.Object3D[],
     /** Muestra un parche por cada tesela visible que pueda tener agua; oculta el resto. */
     actualizar(teselas: { clave: string; x0: number; z0: number; lado: number; minY: number }[], nivelMax: number) {
       for (const m of grupo.children) m.visible = false;

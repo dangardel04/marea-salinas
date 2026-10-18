@@ -57,6 +57,11 @@ uniform vec3 uCieloCenit;
 uniform vec3 uDirBrillo;
 uniform vec3 uColorBrillo;
 uniform float uLuzDia;
+uniform sampler2D uTexArena;   // arena (Poly Haven «Aerial Beach 01», 30 × 30 m, CC0)
+uniform sampler2D uTexArenaN;
+uniform sampler2D uTexArenaR;
+uniform sampler2D uTexMojada;  // arena húmeda (Poly Haven «Damp Beach Sand 02», 1,87 m, CC0)
+uniform sampler2D uTexMojadaN;
 varying vec2 vUv;
 varying vec3 vPos;
 varying vec3 vNor;
@@ -85,6 +90,12 @@ vec3 variacion(vec2 p, float d) {
   return mix(gris, calida, smoothstep(0.3, 0.7, grande)) * (1.0 + luzV);
 }
 
+// Muestra sin repetición visible: dos lecturas a escalas y giros distintos mezcladas con ruido.
+const mat2 GIRO = mat2(0.8, -0.6, 0.6, 0.8);
+vec4 muestraArena(sampler2D t, vec2 p, float mezcla) {
+  return mix(texture2D(t, p / 30.0), texture2D(t, GIRO * p / 23.0 + 0.37), mezcla);
+}
+
 void main() {
   float h = vPos.y;
   float d = length(vPos - cameraPosition);
@@ -106,7 +117,17 @@ void main() {
   float muro = smoothstep(0.45, 0.75, pendiente) * costa;
 
   // ---------- Arena dibujada ----------
-  vec3 arena = uArenaSeca * variacion(vPos.xz, d);
+  // Textura fotográfica de arena, normalizada a su media (el último nivel de mipmap) y llevada al
+  // color medido en la ortofoto: el dibujo es de la foto; el color, el de Salinas.
+  float mezcla = smoothstep(0.35, 0.65, fbm(vPos.xz * 0.03));
+  vec3 texA = muestraArena(uTexArena, vPos.xz, mezcla).rgb;
+  vec3 mediaA = textureLod(uTexArena, vec2(0.5), 12.0).rgb;
+  vec3 detalle = texA / max(mediaA, vec3(1e-3));
+  // De muy cerca, el grano de la arena húmeda (1,87 m) encima, solo en luz.
+  float muyCerca = 1.0 - smoothstep(4.0, 18.0, d);
+  float lumM = dot(texture2D(uTexMojada, vPos.xz / 1.87).rgb, vec3(0.333)) / max(dot(textureLod(uTexMojada, vec2(0.5), 12.0).rgb, vec3(0.333)), 1e-3);
+  detalle *= mix(1.0, lumM, muyCerca * 0.6);
+  vec3 arena = uArenaSeca * mix(vec3(1.0), detalle, 0.9) * variacion(vPos.xz, 1e4);
   float hondo = uNivel - h;
   vec3 fondo = mix(arena * vec3(0.6, 0.67, 0.63), vec3(0.03, 0.06, 0.07), smoothstep(0.5, 10.0, hondo));
   vec3 c = mix(mix(arena, fondo, smoothstep(0.0, 1.5, hondo)), orto, usarFoto);
@@ -140,9 +161,13 @@ void main() {
   c = mix(c, c * vec3(0.55, 0.5, 0.42), marca * restos * playa * (1.0 - muro) * step(uNivel + 0.3, uNivelMax) * (1.0 - smoothstep(150.0, 500.0, d)));
 
   // ---------- Luz ----------
-  vec2 e = vec2(0.08, 0.0);
-  float b0 = ruido(vPos.xz * 2.3 + 7.7), bx = ruido((vPos.xz + e.xy) * 2.3 + 7.7), bz = ruido((vPos.xz + e.yx) * 2.3 + 7.7);
-  vec3 n = normalize(vNor + vec3(b0 - bx, 0.0, b0 - bz) * 0.9 * (1.0 - smoothstep(10.0, 45.0, d)) * playa * (1.0 - lamina));
+  // Relieve fino de la arena (ondulaciones del viento y del agua) con los mapas de normales de
+  // las texturas; en lo mojado, el de la arena húmeda, más liso.
+  vec3 nA = muestraArena(uTexArenaN, vPos.xz, mezcla).xyz * 2.0 - 1.0;
+  vec3 nM = texture2D(uTexMojadaN, vPos.xz / 1.87).xyz * 2.0 - 1.0;
+  vec2 rel = mix(nA.xy, nM.xy * muyCerca, humedad * 0.7) * (1.0 - lamina * 0.8);
+  float fuerzaN = mix(0.9, 0.25, smoothstep(20.0, 250.0, d)) * playa * (1.0 - usarFoto * (1.0 - cerca)) * (1.0 - muro);
+  vec3 n = normalize(vNor + vec3(rel.x, 0.0, -rel.y) * fuerzaN);
   // La foto ya trae la luz del vuelo: relieve suave; la arena dibujada, igual, para que casen. El
   // muro, con su luz completa.
   c *= luz(n, mix(mix(0.55, 0.4, usarFoto), 1.0, muro));
@@ -152,7 +177,8 @@ void main() {
   float fres = pow(1.0 - max(dot(n, v), 0.0), 5.0);
   vec3 r = reflect(-v, n);
   vec3 cielo = mix(uCieloHorizonte, uCieloCenit, pow(clamp(r.y, 0.0, 1.0), 0.6));
-  float brillo = humedad * 0.3 + lamina * 0.7;
+  float aspereza = muestraArena(uTexArenaR, vPos.xz, mezcla).r;
+  float brillo = (humedad * 0.3 + lamina * 0.7) * mix(1.0, 1.0 - aspereza * 0.6, humedad);
   c = mix(c, cielo, brillo * (0.05 + 0.75 * fres));
   float sol = pow(max(dot(r, uDirBrillo), 0.0), mix(60.0, 700.0, lamina)) * step(0.0, uDirBrillo.y);
   c += uColorBrillo * sol * brillo * mix(0.3, 3.0, lamina);

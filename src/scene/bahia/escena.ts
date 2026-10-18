@@ -14,6 +14,7 @@ import { cargarFino, cargarRelieve } from './relieve';
 import { crearTeselas } from './teselas';
 import { cargarEdificios } from './edificios';
 import { crearAgua } from './agua';
+import { crearReflejo } from './reflejo';
 import { calcularCampo, PASO_CAMPO } from './campoOlas';
 import { crearCielo } from './cielo';
 import { siguienteCuadro } from '../../cuadro';
@@ -95,6 +96,37 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     uArenaSeca: { value: new THREE.Color().setRGB(ar / 255, ag / 255, ab / 255, THREE.SRGBColorSpace) },
   });
 
+  // ---------- Texturas fotográficas (Poly Haven, CC0; agua: three.js, MIT) ----------
+  // Llegan después; mientras, unas neutras (gris medio y normal plana).
+  const anisotropia = Math.min(8, render.capabilities.getMaxAnisotropy());
+  const neutra = (r: number, g: number, b: number) => {
+    const t = new THREE.DataTexture(new Uint8Array([r, g, b, 255]), 1, 1);
+    t.needsUpdate = true;
+    return t;
+  };
+  const cargadorTex = new THREE.TextureLoader();
+  function textura(nombre: string, color: boolean, uniforme: THREE.IUniform) {
+    cargadorTex.load(`${base}bahia/texturas/${nombre}`, (t) => {
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.colorSpace = color ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+      t.anisotropy = anisotropia;
+      uniforme.value = t;
+    });
+  }
+  const texturas = {
+    uTexArena: { value: neutra(128, 128, 128) as THREE.Texture },
+    uTexArenaN: { value: neutra(128, 128, 255) as THREE.Texture },
+    uTexArenaR: { value: neutra(200, 200, 200) as THREE.Texture },
+    uTexMojada: { value: neutra(128, 128, 128) as THREE.Texture },
+    uTexMojadaN: { value: neutra(128, 128, 255) as THREE.Texture },
+  };
+  Object.assign(comunes, texturas);
+  textura('aerial_beach_01_diff_1k.jpg', true, texturas.uTexArena);
+  textura('aerial_beach_01_nor_gl_1k.jpg', false, texturas.uTexArenaN);
+  textura('aerial_beach_01_rough_1k.jpg', false, texturas.uTexArenaR);
+  textura('damp_beach_sand_02_diff_1k.jpg', true, texturas.uTexMojada);
+  textura('damp_beach_sand_02_nor_gl_1k.jpg', false, texturas.uTexMojadaN);
+
   const teselas = crearTeselas({
     relieve, indiceOrto: metaOrto.indice as Record<string, string[]>, urlBase: base, escena, comunes, movil,
     anisotropia: Math.min(8, render.capabilities.getMaxAnisotropy()),
@@ -105,7 +137,12 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     relieve.ponerFino(metaFino, datos);
     teselas.rehacerFino();
   });
-  const agua = crearAgua({ escena, texRelieve, nRelieve: nRel, pasoRelieve: PASO_RELIEVE * 2, nCampo: Math.floor((relieve.n - 1) / PASO_CAMPO) + 1, comunes: comunesAgua, movil });
+  const agua = crearAgua({ escena, texRelieve, nRelieve: nRel, pasoRelieve: PASO_RELIEVE * 2, nCampo: Math.floor((relieve.n - 1) / PASO_CAMPO) + 1, comunes: comunesAgua, movil, normales: neutra(128, 128, 255) });
+  textura('waternormals.jpg', false, agua.uniformes.uNormAgua);
+  const reflejo = crearReflejo(render, movil ? 0.35 : 0.5);
+  agua.uniformes.uReflejo.value = reflejo.textura;
+  agua.uniformes.uMatReflejo.value = reflejo.matriz;
+  agua.uniformes.uConReflejo.value = 1;
   const cielo = crearCielo(escena, movil);
   // Tierra lejana al sur, fuera del área modelada: un anillo plano que la niebla funde con el cielo.
   const tierraLejana = new THREE.Mesh(
@@ -273,6 +310,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     cielo.seguir(camara.position, vLuna);
     teselas.actualizar(camara);
     agua.actualizar(teselas.visibles(), estado.nivel + estado.r2 + 1);
+    reflejo.actualizar(escena, camara, estado.nivel, [...agua.objetos, ...cielo.objetos]);
     render.render(escena, camara);
     siguienteCuadro(cuadro);
   }

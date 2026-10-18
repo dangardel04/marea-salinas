@@ -229,4 +229,5 @@ public/bahia/         relieve, teselas de ortofoto y edificios
 - IHM y Open‑Meteo: se usan citando su origen.
 - Sentinel‑2: contiene datos modificados de Copernicus Sentinel 2025–2026.
 - LiDAR PNOA 2024: © Instituto Geográfico Nacional (CNIG), CC BY 4.0.
+- Texturas de arena: Poly Haven (Aerial Beach 01, Damp Beach Sand 02), CC0. Rizado del agua: `waternormals.jpg` de three.js, MIT.
 - Polígono de la playa: © colaboradores de OpenStreetMap (ODbL).
