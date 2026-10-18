@@ -13,6 +13,10 @@ describe('run-up de Stockdon et al. (2006)', () => {
     expect(r.r2).toBeCloseTo(esperado, 10);
   });
 
+  it('reproduce el ejemplo publicado de py-wave-runup (Hs 4 m, Tp 11 s, β 0,1 → R2 ≈ 2,54 m)', () => {
+    expect(stockdon(4, 11, 0.1)!.r2).toBeCloseTo(2.54, 2);
+  });
+
   it('usa la expresión disipativa cuando ξ0 < 0,3', () => {
     const r = stockdon(3, 8, 0.01)!;
     expect(r.iribarren).toBeLessThan(0.3);

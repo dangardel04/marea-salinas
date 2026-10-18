@@ -79,3 +79,16 @@ Otras comprobaciones:
 | Fachadas | **Decorativas** (color neutro y bandas de plantas) | — |
 | Puntos de arena de las vistas | Polígono de la playa en OpenStreetMap (way 516073411), © colaboradores de OpenStreetMap, ODbL | `src/scene/bahia/escena.ts` |
 | Pendiente del frente de playa | **Medida**: 1:14 (mediana de 94 perfiles; cuartiles 0,068–0,077) entre +3,3 y +4,6 m sobre el CH. Por debajo de +3,1 m no hay LiDAR (el vuelo fue con marea media‑alta) | MDT05 IGN, `tools/pendiente-playa.ts` |
+
+## 6. Oleaje (consultado el 18/10/2026)
+
+| Dato | Valor | Fuente |
+|---|---|---|
+| Previsión de oleaje | Altura significante, periodo de pico, dirección, separados en mar de fondo y mar de viento, cada hora, de −2 a +8 días. Punto pedido 43,60 N −5,96 E; el modelo devuelve la celda marina 43,708 N −5,958 E (unos 14 km mar adentro) | Open‑Meteo Marine API, `marine-api.open-meteo.com/v1/marine` (CORS abierto). Modelo, no medida |
+| Oleaje medido | Hm0, Tp y dirección media cada hora, con control de calidad | Puertos del Estado, Boya de Gijón (REDCOS, id 1117, Triaxys, 43,615 N −5,664 E), `poem.puertos.es/portus/StationData?code=1117`. **Ojo:** su ficha de Portus dice «En tierra», aunque sigue dando datos horarios con QC = 1 |
+| Subida del agua por las olas | R2 = 1,1·(0,35·βf·√(H0·L0) + ½·√(H0·L0·(0,563·βf² + 0,004))); si ξ0 < 0,3, R2 = 0,043·√(H0·L0) | Stockdon, H.F., Holman, R.A., Howd, P.A., Sallenger, A.H. (2006). *Empirical parameterization of setup, swash, and runup*. Coastal Engineering 53, 573–588. Resumen: https://www.usgs.gov/publications/empirical-parameterization-setup-swash-and-runup |
+| Dispersión | L = L0·tanh^{2/3}((ω√(h/g))^{3/2}), error < 1,7 % (comprobado frente a la solución exacta en `tests/propagacion.test.ts`) | Fenton, J.D. y McKee, W.D. (1990). *On calculating the lengths of water waves*. Coastal Engineering 14, 499–513 |
+| Rotura | La ola rompe cuando H > 0,78·h (índice de rotura de McCowan, 1894) | Valor clásico de la teoría de la ola solitaria |
+| Refracción | Tiempo de llegada del frente con la ecuación eikonal \|∇T\| = 1/c, resuelta por fast marching | Sethian, J.A. (1996). *A fast marching level set method for monotonically advancing fronts*. PNAS 93, 1591–1595 |
+| Sombra tras espigón y cabos | **APROXIMADA**: se atenúan las olas que llegan girando mucho respecto al mar abierto. No es difracción rigurosa | `src/scene/bahia/agua.ts` |
+| Forma de las olas y del vaivén en la orilla | **Ilustrativa**: 4 componentes de Gerstner por sistema con la energía de Hs; la cota máxima del vaivén sí sale de R2 | `src/scene/bahia/agua.ts` |

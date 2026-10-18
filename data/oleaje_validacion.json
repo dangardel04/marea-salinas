@@ -1,0 +1,28 @@
+{
+ "metodo": "Open-Meteo Marine (modelo) en el punto de la boya frente a la boya de Gijón (Portus 1117), horas con dato válido en ambas. Ver tools/oleaje-validar.ts.",
+ "periodo": {
+  "desde": "2026-07-18T00:00:00.000Z",
+  "hasta": "2026-10-18T00:00:00.000Z"
+ },
+ "celdaModelo": {
+  "lat": 43.708336,
+  "lon": -5.6249847
+ },
+ "horas": 2106,
+ "hs": {
+  "sesgo_m": -0.019,
+  "rms_m": 0.169,
+  "correlacion": 0.955,
+  "mediaBoya_m": 1.256,
+  "errorRelativo": 0.134
+ },
+ "periodoMedio": {
+  "nota": "modelo: periodo medio (wave_period); boya: Tm02",
+  "sesgo_s": 2.48,
+  "rms_s": 2.693
+ },
+ "direccion": {
+  "sesgo_grados": -21.735,
+  "rms_grados": 27.138
+ }
+}

@@ -218,3 +218,18 @@ Se activa **E**:
 - Es el que mejor predice el año siguiente (§8.2).
 - Con la corrección en vivo es el mejor o empata en todos los plazos.
 - Además, frente a la tabla oficial del IHM, el porcentaje de extremos dentro de ±10 min y ±15 cm sube del 64,5 % (A) al 96,8 % (§3).
+
+## 9. Oleaje (`node tools/oleaje-validar.ts`)
+
+**Qué se compara.** La previsión de Open‑Meteo Marine (un modelo) frente a la boya de Gijón de Puertos del Estado (medida). La comparación se hace en el punto de la boya, cada hora del 18/07 al 18/10/2026, con dato válido en las dos fuentes: **2106 horas**. La celda del modelo cae unos 10 km al norte de la boya (43,708 N −5,625 E), porque el modelo tiene una rejilla gruesa.
+
+| Variable | Sesgo (modelo − boya) | Error RMS | Otros |
+|---|---|---|---|
+| Altura significante | −0,02 m | 0,17 m (13 % de la media, que es 1,26 m) | correlación 0,955 |
+| Dirección de procedencia | −22° (el modelo viene más del oeste) | 27° | — |
+| Periodo | +2,5 s | 2,7 s | **No comparable**: en el pasado el modelo solo da periodo medio y la boya, Tm02. Son definiciones distintas |
+
+**Qué no se ha podido validar:**
+- **Frente a Salinas**: el oleaje que usa la app es el de la celda del modelo frente a Salinas, a unos 14 km mar adentro. No hay boya allí.
+- **Propagación hasta la playa**: el asomeramiento, la rotura y la refracción por fast marching están comprobados con pruebas unitarias frente a la teoría lineal (`tests/propagacion.test.ts`), pero **no frente a medidas** dentro de la bahía.
+- **Subida del agua por las olas (R2)**: se calcula con la fórmula publicada de Stockdon et al. (2006) y la pendiente medida del frente de playa (1:14, por encima de +3,3 m). Cuando la marea está más baja usa la pendiente aproximada (1:50). **No hay medidas de run‑up en Salinas para validarla.** Según el resumen del artículo (USGS, https://www.usgs.gov/publications/empirical-parameterization-setup-swash-and-runup), en sus 10 campañas de campo el error RMS de la fórmula fue de 38 cm, con un sesgo de −17 cm, para una subida media observada de 144 cm. La implementación reproduce el ejemplo de la documentación de py-wave-runup (Hs = 4 m, Tp = 11 s, β = 0,1 → R2 ≈ 2,54 m; https://py-wave-runup.readthedocs.io/en/stable/models.html), comprobado en `tests/oleaje.test.ts`.
