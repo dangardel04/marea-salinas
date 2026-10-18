@@ -175,6 +175,11 @@ float ruidoV(vec2 p) {
   return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
 }
 float ruido(vec2 p) { return ruidoV(p) * 0.6 + ruidoV(p * 2.3 + 7.1) * 0.4; }
+float fbm(vec2 p) {
+  float t = 0.0, a = 0.5;
+  for (int i = 0; i < 4; i++) { t += a * ruidoV(p); p = p * 2.03 + vec2(1.7, 9.2); a *= 0.5; }
+  return t / 0.9375;
+}
 vec2 hash2(vec2 p) { return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453); }
 /** Ruido celular: distancia entre los dos puntos más cercanos (F2 − F1). Vale ~0 en los bordes
  *  entre celdas, que es donde se dibujan las paredes de las burbujas. */
@@ -233,30 +238,36 @@ void main() {
   cuerpo += vec3(0.02, 0.09, 0.08) * uLuzDia * smoothstep(0.2, 0.9, s) * (1.0 - vRotura) * smoothstep(1.0, 4.0, prof) * (1.0 - smoothstep(10.0, 25.0, prof));
 
   // ---------- Espuma ----------
-  // Encaje de burbujas (bordes de celdas) y vetas alargadas a lo largo de la cresta, que se
-  // mueven con el agua. De lejos el encaje no se resuelve: queda su promedio y las vetas.
-  vec2 ve = vec2(uTiempo * 0.18, uTiempo * 0.27);
-  float lejos = smoothstep(60.0, 260.0, d);
-  float encaje = 1.0 - smoothstep(0.0, 0.25, celdas(vPos.xz * 0.7 + ve));
-  float encajeFino = 1.0 - smoothstep(0.0, 0.2, celdas(vPos.xz * 2.1 - ve * 1.7 + 5.0));
-  encaje = mix(max(encaje, encajeFino * 0.8), 0.45, lejos);
-  vec2 perp = vec2(-vDir.y, vDir.x);
-  vec2 qa = vec2(dot(vPos.xz, vDir) * 0.35, dot(vPos.xz, perp) * 0.045);
-  float vetas = ruido(qa + vec2(0.0, uTiempo * 0.03)) * 0.65 + ruido(qa * 3.1 + 9.0) * 0.35;
-  // Rompiente: el frente de cada ola rota es una línea blanca; detrás queda la espuma que se
-  // abre en vetas y encaje y se va deshaciendo. Sigue la fase, así que avanza hacia la orilla.
-  float frenteOla = vRotura * smoothstep(0.86, 0.995, s);
-  float resto = vRotura * smoothstep(0.05, 0.86, s) * (1.0 - smoothstep(0.86, 0.995, s));
-  float espuma = frenteOla * (0.75 + 0.25 * encaje);
-  espuma = max(espuma, resto * smoothstep(0.5, 0.85, vetas * 0.6 + encaje * 0.5) * 0.85);
-  // Orilla, solo donde llega el oleaje: una línea fina en el borde del agua y burbujas sueltas
-  // en la lámina que sube y baja.
-  float frente = (1.0 - smoothstep(0.0, 0.05 + 0.06 * vetas, prof)) * vAlcance;
+  // La espuma real no es una cinta: el frente de la ola rota es una línea blanca rota en trozos,
+  // y detrás la espuma se abre en parches irregulares que se van deshaciendo hasta desaparecer
+  // antes de la ola siguiente. Formas con ruido fractal de dominio deformado (orgánicas), que
+  // derivan con el agua; de cerca, además, el encaje de las burbujas.
+  vec2 deriva = vDir * uTiempo * 0.7 + vec2(uTiempo * 0.05, -uTiempo * 0.03);
+  vec2 pe = vPos.xz - deriva;
+  vec2 w = vec2(fbm(pe * 0.05 + 1.3), fbm(pe * 0.05 + 7.9)) * 14.0;
+  float rotura = fbm((pe + w) * 0.09);            // trozos de ~10 m
+  float parches = fbm((pe + w * 0.6) * 0.32 + 4.0); // ~3 m
+  float cercaE = 1.0 - smoothstep(35.0, 140.0, d);
+  float encaje = 1.0 - smoothstep(0.0, 0.25, celdas(vPos.xz * 0.9 - deriva * 0.3));
+  // Edad de la espuma a lo largo de la ola: 0 en el frente que rompe, 1 justo antes del siguiente.
+  float edad = fract((vFase + 0.6) / 6.28318531 - 0.25);
+  edad = 1.0 - edad;
+  float frenteOla = vRotura * (1.0 - smoothstep(0.0, 0.035, edad)) * smoothstep(0.32, 0.55, rotura);
+  // Detrás: cuanta más edad, menos espuma (el umbral sube), así se deshace en parches.
+  float umbral = mix(0.38, 0.95, smoothstep(0.02, 0.6, edad));
+  float resto = vRotura * smoothstep(umbral, umbral + 0.12, parches * 0.55 + rotura * 0.45);
+  float espuma = max(frenteOla, resto * mix(0.55, 0.9, 1.0 - edad));
+  // Orilla, solo donde llega el oleaje: borde fino y roto, y alguna burbuja en la lámina.
+  float frente = (1.0 - smoothstep(0.0, 0.035 + 0.05 * parches, prof)) * vAlcance * smoothstep(0.3, 0.55, rotura + 0.1);
   float lavado = smoothstep(0.03, 0.35, vVaiven) * (1.0 - smoothstep(0.0, 0.5, prof)) * vAlcance;
-  espuma = max(espuma, frente * (0.55 + 0.45 * encaje));
-  espuma = max(espuma, lavado * smoothstep(0.55, 0.9, encaje * 0.6 + vetas * 0.5) * 0.7);
-  espuma = clamp(espuma, 0.0, 1.0) * (1.0 - smoothstep(300.0, 1200.0, d) * 0.5);
-  vec3 blanco = vec3(0.86, 0.9, 0.9) * (0.06 + 0.94 * uLuzDia) * (0.8 + 0.2 * max(dot(n, uDirBrillo), 0.0));
+  espuma = max(espuma, frente * 0.85);
+  espuma = max(espuma, lavado * smoothstep(0.62, 0.8, parches) * 0.6);
+  // De cerca el encaje la agujerea; de lejos queda su promedio.
+  espuma *= mix(1.0, 0.45 + 0.55 * encaje, cercaE * (1.0 - frenteOla * 0.6));
+  espuma = clamp(espuma, 0.0, 1.0) * (1.0 - smoothstep(300.0, 1400.0, d) * 0.5);
+  // Color: blanca al sol, algo azulada en los bordes finos (se ve el agua a través).
+  vec3 blanco = mix(vec3(0.62, 0.74, 0.76), vec3(0.9, 0.93, 0.93), smoothstep(0.2, 0.8, espuma));
+  blanco *= (0.06 + 0.94 * uLuzDia) * (0.82 + 0.18 * max(dot(n, uDirBrillo), 0.0));
 
   // ---------- Composición (mezcla alfa sobre el fondo ya dibujado) ----------
   float alfaCuerpo = 1.0 - atraviesa;

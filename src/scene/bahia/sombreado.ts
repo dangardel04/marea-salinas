@@ -67,69 +67,95 @@ float ruido(vec2 p) {
   vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
   return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
 }
-// Suma de octavas que se apagan con la distancia (lo que sería más fino que un píxel, fuera).
-float grano(vec2 p, float d) {
-  float s = (ruido(p * 0.045) - 0.5) * 0.10;                                  // manchas de ~20 m
-  s += (ruido(p * 0.4 + 3.1) - 0.5) * 0.07 * (1.0 - smoothstep(150.0, 400.0, d));  // ~2 m
-  s += (ruido(p * 2.3 + 7.7) - 0.5) * 0.08 * (1.0 - smoothstep(25.0, 90.0, d));    // ~40 cm
-  s += (ruido(p * 9.0 + 1.3) - 0.5) * 0.07 * (1.0 - smoothstep(6.0, 22.0, d));     // ~10 cm
-  return s;
+// Ruido fractal (0–1) y deformación del dominio: formas orgánicas, sin cuadrícula.
+float fbm(vec2 p) {
+  float s = 0.0, a = 0.5;
+  for (int i = 0; i < 4; i++) { s += a * ruido(p); p = p * 2.03 + vec2(1.7, 9.2); a *= 0.5; }
+  return s / 0.9375;
+}
+// Variación de la arena: de luz (poca) y de tono (algo más cálida o más gris), a varias escalas,
+// apagando lo que sería más fino que un píxel.
+vec3 variacion(vec2 p, float d) {
+  float grande = fbm(p * 0.02 + vec2(fbm(p * 0.01) * 3.0));                        // ~50 m
+  float medio = fbm(p * 0.25 + 3.1) * (1.0 - smoothstep(150.0, 400.0, d));          // ~4 m
+  float fino = (ruido(p * 2.3 + 7.7) - 0.5) * (1.0 - smoothstep(25.0, 90.0, d))
+             + (ruido(p * 9.0 + 1.3) - 0.5) * 0.8 * (1.0 - smoothstep(6.0, 22.0, d));
+  float luzV = (grande - 0.5) * 0.06 + (medio - 0.5) * 0.06 * (1.0 - smoothstep(150.0, 400.0, d)) + fino * 0.08;
+  vec3 calida = vec3(1.03, 1.0, 0.95), gris = vec3(0.97, 0.99, 1.02);
+  return mix(gris, calida, smoothstep(0.3, 0.7, grande)) * (1.0 + luzV);
 }
 
 void main() {
   float h = vPos.y;
   float d = length(vPos - cameraPosition);
   vec3 orto = uTieneOrto > 0.5 ? texture2D(uOrto, uUv.xy + vUv * uUv.zw).rgb : uArenaSeca * 0.7;
+  float pendiente = 1.0 - vNor.y; // 0 llano, 1 vertical
 
-  // ---------- Arena dibujada (donde la foto no sirve) ----------
-  // Donde el LiDAR no midió (la arena que cubre la marea) la ortofoto enseña el mar del día del
-  // vuelo; y en la playa medida, a veces la espuma o el agua de aquel momento. Ahí se dibuja la
-  // arena con el color medido en la propia ortofoto (tools/arena-color.py).
+  // ---------- Dónde no sirve la foto ----------
+  // La ortofoto enseña el mar y la espuma del día del vuelo donde el LiDAR no midió, y a veces
+  // también sobre la playa y al pie del muro del paseo. Ahí se dibuja.
   float playa = 1.0 - smoothstep(5.0, 6.5, h);
+  float costa = 1.0 - smoothstep(8.5, 10.5, h);  // playa + muro del paseo
+  float lumO = dot(orto, vec3(0.333));
+  float satO = max(orto.r, max(orto.g, orto.b)) - min(orto.r, min(orto.g, orto.b));
   float fotoAgua = smoothstep(0.012, 0.05, orto.b - orto.r);
-  float fotoEspuma = smoothstep(0.66, 0.82, min(orto.r, min(orto.g, orto.b)));
-  float usarFoto = smoothstep(0.3, 0.95, vMed) * (1.0 - playa * max(fotoAgua, fotoEspuma));
-  float g = grano(vPos.xz, d);
-  vec3 arena = uArenaSeca * (1.0 + g);
-  // Bajo el agua la arena se va apagando y verdeando con la profundidad (lo que se ve a través).
+  float fotoEspuma = smoothstep(0.62, 0.74, lumO) * (1.0 - smoothstep(0.06, 0.12, satO));
+  float usarFoto = smoothstep(0.3, 0.95, vMed) * (1.0 - costa * max(fotoAgua, fotoEspuma));
+  // Caras casi verticales junto al mar (el muro del paseo): la foto, que es cenital, se estiraría
+  // en rayas; se dibujan de piedra y hormigón.
+  float muro = smoothstep(0.45, 0.75, pendiente) * costa;
+
+  // ---------- Arena dibujada ----------
+  vec3 arena = uArenaSeca * variacion(vPos.xz, d);
   float hondo = uNivel - h;
-  vec3 fondo = mix(arena * vec3(0.62, 0.68, 0.64), vec3(0.03, 0.06, 0.07), smoothstep(0.5, 10.0, hondo));
+  vec3 fondo = mix(arena * vec3(0.6, 0.67, 0.63), vec3(0.03, 0.06, 0.07), smoothstep(0.5, 10.0, hondo));
   vec3 c = mix(mix(arena, fondo, smoothstep(0.0, 1.5, hondo)), orto, usarFoto);
   // De cerca la foto (0,4 m por píxel) se ve borrosa: en la arena pasa a la dibujada, con el tono
-  // local de la foto (más clara u oscura) para que no cambie el color al acercarse.
+  // local de la foto para que el color no cambie al acercarse.
   float cerca = (1.0 - smoothstep(18.0, 70.0, d)) * playa * usarFoto;
-  float tono = clamp(dot(orto, vec3(0.333)) / max(dot(uArenaSeca, vec3(0.333)), 1e-3), 0.55, 1.35);
+  float tono = clamp(lumO / max(dot(uArenaSeca, vec3(0.333)), 1e-3), 0.6, 1.3);
   c = mix(c, arena * mix(1.0, tono, 0.7), cerca * 0.85);
-  c *= 1.0 + usarFoto * playa * g * 0.6 * (1.0 - cerca);
+  // Muro: piedra gris con vetas verticales de agua y algas oscuras en la parte baja.
+  vec2 pm = vec2(vPos.x + vPos.z, vPos.y);
+  float bloques = fbm(pm * vec2(0.9, 1.6)) * 0.5 + fbm(pm * 4.0 + 2.0) * 0.5;
+  vec3 piedra = vec3(0.34, 0.33, 0.31) * (0.75 + 0.5 * bloques);
+  piedra = mix(piedra * vec3(0.55, 0.6, 0.5), piedra, smoothstep(uNivelMax - 0.3, uNivelMax + 1.2, h));
+  c = mix(c, piedra, muro);
 
   // ---------- Humedad ----------
-  // Lo que el agua ha cubierto en las últimas horas está mojado, más cuanto más reciente; justo
+  // Lo que el agua ha cubierto en las últimas horas sigue mojado, más cuanto más reciente; justo
   // por encima de la orilla queda una lámina de agua que brilla.
   float rango = max(uNivelMax - uNivel, 0.25);
   float humedad = clamp((uNivelMax + 0.12 - h) / rango, 0.0, 1.0);
   humedad = max(pow(humedad, 0.6) * 0.85, 1.0 - smoothstep(uNivel, uNivel + 0.35, h));
-  humedad *= playa;
-  float lamina = (1.0 - smoothstep(uNivel + 0.02, uNivel + 0.45, h)) * playa;
-  // La arena mojada oscurece a la mitad y se vuelve algo más fría y saturada.
-  c = mix(c, c * vec3(0.46, 0.49, 0.5), humedad);
+  // El borde de lo mojado no es una curva de nivel perfecta: lo rompe el vaivén.
+  humedad *= smoothstep(0.0, 0.25, humedad + (fbm(vPos.xz * 0.15) - 0.5) * 0.35);
+  humedad *= playa * (1.0 - muro);
+  float lamina = (1.0 - smoothstep(uNivel + 0.02, uNivel + 0.4 + 0.15 * fbm(vPos.xz * 0.3), h)) * playa * (1.0 - muro);
+  c = mix(c, c * vec3(0.44, 0.47, 0.49), humedad);
+  // Línea de pleamar: donde llegó el agua hace unas horas queda una franja más oscura con restos
+  // (algas, conchas), rota e irregular.
+  float marca = 1.0 - smoothstep(0.0, 0.07, abs(h - uNivelMax - 0.04 - (fbm(vPos.xz * 0.08) - 0.5) * 0.12));
+  float restos = smoothstep(0.55, 0.8, fbm(vPos.xz * vec2(0.6, 0.6) + 11.0));
+  c = mix(c, c * vec3(0.55, 0.5, 0.42), marca * restos * playa * (1.0 - muro) * step(uNivel + 0.3, uNivelMax) * (1.0 - smoothstep(150.0, 500.0, d)));
 
   // ---------- Luz ----------
-  // Relieve fino solo en la normal (de cerca): da textura a la luz rasante.
   vec2 e = vec2(0.08, 0.0);
   float b0 = ruido(vPos.xz * 2.3 + 7.7), bx = ruido((vPos.xz + e.xy) * 2.3 + 7.7), bz = ruido((vPos.xz + e.yx) * 2.3 + 7.7);
-  vec3 n = normalize(vNor + vec3(b0 - bx, 0.0, b0 - bz) * 0.9 * (1.0 - smoothstep(10.0, 45.0, d)) * playa);
-  // La foto ya trae la luz del vuelo: relieve suave. La arena dibujada, igual, para que casen.
-  c *= luz(n, mix(0.55, 0.4, usarFoto));
+  vec3 n = normalize(vNor + vec3(b0 - bx, 0.0, b0 - bz) * 0.9 * (1.0 - smoothstep(10.0, 45.0, d)) * playa * (1.0 - lamina));
+  // La foto ya trae la luz del vuelo: relieve suave; la arena dibujada, igual, para que casen. El
+  // muro, con su luz completa.
+  c *= luz(n, mix(mix(0.55, 0.4, usarFoto), 1.0, muro));
 
-  // Arena mojada: refleja el cielo y el sol (Fresnel), mucho más donde aún hay lámina de agua.
+  // Arena mojada: refleja el cielo y el sol (Fresnel); con lámina de agua, casi un espejo.
   vec3 v = normalize(cameraPosition - vPos);
   float fres = pow(1.0 - max(dot(n, v), 0.0), 5.0);
   vec3 r = reflect(-v, n);
-  vec3 cielo = mix(uCieloHorizonte, uCieloCenit, clamp(r.y * 1.6, 0.0, 1.0));
-  float brillo = humedad * 0.25 + lamina * 0.75;
-  c = mix(c, cielo, brillo * (0.04 + 0.6 * fres));
-  float sol = pow(max(dot(r, uDirBrillo), 0.0), mix(40.0, 400.0, lamina)) * step(0.0, uDirBrillo.y);
-  c += uColorBrillo * sol * brillo * mix(0.25, 2.0, lamina);
+  vec3 cielo = mix(uCieloHorizonte, uCieloCenit, pow(clamp(r.y, 0.0, 1.0), 0.6));
+  float brillo = humedad * 0.3 + lamina * 0.7;
+  c = mix(c, cielo, brillo * (0.05 + 0.75 * fres));
+  float sol = pow(max(dot(r, uDirBrillo), 0.0), mix(60.0, 700.0, lamina)) * step(0.0, uDirBrillo.y);
+  c += uColorBrillo * sol * brillo * mix(0.3, 3.0, lamina);
 
   gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
   #include <colorspace_fragment>
