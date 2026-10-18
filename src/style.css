@@ -15,7 +15,7 @@
   --borde: rgb(20 32 40 / 0.1);
   --texto: #121a20;
   --texto-2: #4a5862;
-  --texto-3: #6b7a84;
+  --texto-3: #5c6a74;
   --acento: #c4471b; /* naranja boya */
   --acento-texto: #ffffff;
   --curva: #2f5f7a;
@@ -61,6 +61,7 @@
 }
 
 /* ---------- Base ---------- */
+::selection { background: var(--acento); color: var(--acento-texto); }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
 body {
@@ -68,6 +69,7 @@ body {
   color: var(--texto);
   font-family: var(--fuente);
   font-size: 15px;
+  caret-color: var(--acento);
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
@@ -95,6 +97,7 @@ button, input, select { font: inherit; color: inherit; }
   box-shadow: var(--sombra);
   padding: 18px 18px 14px;
   display: grid; gap: 14px;
+  scrollbar-width: thin; scrollbar-color: var(--texto-3) transparent;
 }
 @media (prefers-reduced-transparency: reduce) {
   .panel, .barra { background: var(--superficie-solida); backdrop-filter: none; -webkit-backdrop-filter: none; }
@@ -146,6 +149,7 @@ button, input, select { font: inherit; color: inherit; }
 .leyenda i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
 .leyenda .l-pred { background: var(--curva); }
 .leyenda .l-ihm { border: 1.2px solid var(--texto-2); }
+.leyenda [hidden] { display: none; }
 
 .notas { margin: 0; font-size: 12px; color: var(--texto-3); }
 .notas summary { cursor: pointer; color: var(--texto-2); list-style: none; display: inline-flex; gap: 6px; align-items: center; }
@@ -172,6 +176,11 @@ button, input, select { font: inherit; color: inherit; }
   .boton[aria-pressed='true']:hover { background: var(--texto); }
 }
 :focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
+
+@media (pointer: coarse) {
+  .boton, .velocidad { height: 44px; }
+  .boton-icono { width: 44px; }
+}
 
 /* ---------- Barra de tiempo ---------- */
 .barra {

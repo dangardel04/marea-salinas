@@ -13,6 +13,12 @@ const MIN = 60_000, HORA = 3_600_000, DIA = 86_400_000;
 const REFRESCO_CORRECCION = 5 * MIN;
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+/** Escribe solo si cambia, para no rehacer el DOM 8 veces por segundo. */
+function poner(e: HTMLElement, valor: string, html = false) {
+  if (e.dataset.v === valor) return;
+  e.dataset.v = valor;
+  if (html) e.innerHTML = valor; else e.textContent = valor;
+}
 const metros = (h: number) => h.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export interface DestinoEscena { actualizar(e: { t: number; nivel: number; nivelMax6h: number }): void }
@@ -121,11 +127,15 @@ export function iniciarInterfaz() {
   // ---------- Tabla oficial (opcional) ----------
   let oficiales: ExtremoOficial[] = [];
   let claveOficiales = '';
+  const leyendaIhm = $('leyenda-ihm');
   function pedirOficiales(ini: number, fin: number) {
     const clave = `${ini}-${fin}`;
     if (clave === claveOficiales) return;
     claveOficiales = clave;
-    extremosOficiales(ini, fin).then((o) => { if (claveOficiales === clave) { oficiales = o; claveCurva = ''; } }).catch(() => { oficiales = []; });
+    extremosOficiales(ini, fin)
+      .then((o) => { if (claveOficiales === clave) { oficiales = o; claveCurva = ''; leyendaIhm.hidden = o.length === 0; } })
+      // Sin red o sin servicio: se quita la referencia oficial y se reintenta en el siguiente día pedido.
+      .catch(() => { oficiales = []; claveOficiales = ''; leyendaIhm.hidden = true; });
   }
 
   // ---------- Dibujo ----------
@@ -153,11 +163,11 @@ export function iniciarInterfaz() {
   }
 
   function pintarTextos(t: number, ahoraReal: number) {
-    el.momento.textContent = `${fechaLargaMadrid(t)}, ${horaMadrid(t)} ${zonaMadrid(t)}`;
-    el.altura.innerHTML = `${metros(nivel(t))}<small>m</small>`;
+    poner(el.momento, `${fechaLargaMadrid(t)}, ${horaMadrid(t)} ${zonaMadrid(t)}`);
+    poner(el.altura, `${metros(nivel(t))}<small>m</small>`, true);
     const d = motor.tendencia(t);
     const cmh = Math.abs(Math.round(d.cmPorHora));
-    el.tendencia.innerHTML = `${d.sentido === 'subiendo' ? ICONOS.flechaArriba : ICONOS.flechaAbajo}<span>${d.sentido === 'subiendo' ? 'Subiendo' : 'Bajando'} · <span class="num">${cmh}</span> cm/h</span>`;
+    poner(el.tendencia, `${d.sentido === 'subiendo' ? ICONOS.flechaArriba : ICONOS.flechaAbajo}<span>${d.sentido === 'subiendo' ? 'Subiendo' : 'Bajando'} · <span class="num">${cmh}</span> cm/h</span>`, true);
 
     const sig = motor.proximos(t);
     const pl = sig.pleamar && { ...sig.pleamar, altura: sig.pleamar.altura + correccionEn(correccion, sig.pleamar.t) };
@@ -183,13 +193,13 @@ export function iniciarInterfaz() {
       detalle = 'Sin datos recientes del mareógrafo de Avilés: solo marea astronómica (sin viento ni presión).';
     }
     if (el.modo.dataset.estado !== estado) el.modo.dataset.estado = estado;
-    el.modoEtiqueta.textContent = etiqueta;
-    el.modoDetalle.textContent = detalle;
+    poner(el.modoEtiqueta, etiqueta);
+    poner(el.modoDetalle, detalle);
 
     el.seleccion.textContent = modo === 'ahora' ? `Ahora · ${horaMadrid(t)}` : `${fechaMadrid(t)}, ${horaMadrid(t)}`;
     el.tiempo.value = String(Math.round((t - rango.ini) / MIN));
     el.tiempo.setAttribute('aria-valuetext', `${fechaLargaMadrid(t)}, ${horaMadrid(t)}`);
-    el.reproducir.innerHTML = reproduciendo ? ICONOS.pausa : ICONOS.play;
+    poner(el.reproducir, reproduciendo ? ICONOS.pausa : ICONOS.play, true);
     el.reproducir.setAttribute('aria-label', reproduciendo ? 'Pausar' : 'Reproducir');
     el.ahora.setAttribute('aria-pressed', String(modo === 'ahora'));
   }

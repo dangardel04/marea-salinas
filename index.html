@@ -30,7 +30,7 @@
         <p class="referencia">Sobre el cero hidrográfico del puerto de Avilés</p>
       </div>
 
-      <div class="modo" id="modo" data-estado="prediccion" aria-live="polite">
+      <div class="modo" id="modo" data-estado="prediccion">
         <span class="modo-punto" aria-hidden="true"></span>
         <span class="modo-etiqueta" id="modo-etiqueta">Predicción</span>
         <span class="modo-detalle" id="modo-detalle">Conectando con el mareógrafo de Avilés…</span>
@@ -54,7 +54,7 @@
       <figure class="curva" style="margin:0">
         <figcaption class="curva-titulo"><span id="curva-dia">Hoy</span><span>metros</span></figcaption>
         <svg id="curva" role="img" aria-label="Curva de marea del día"></svg>
-        <div class="leyenda"><span><i class="l-pred"></i>Esta predicción</span><span><i class="l-ihm"></i>Tabla oficial IHM</span></div>
+        <div class="leyenda"><span><i class="l-pred"></i>Esta predicción</span><span id="leyenda-ihm" hidden><i class="l-ihm"></i>Tabla oficial IHM</span></div>
       </figure>
 
       <details class="notas">
