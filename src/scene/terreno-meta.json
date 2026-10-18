@@ -1,0 +1,21 @@
+{
+ "fuente": "IGN, MDT05 (LiDAR PNOA) vía WCS INSPIRE: https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=Elevacion4258_5&SUBSET=Lat(43.565,43.600)&SUBSET=Long(-5.985,-5.925)&FORMAT=application/asc",
+ "consultado": "2026-10-18",
+ "referenciaVertical": "metros sobre el NMMA (nivel medio del mar en Alicante), como el MDT del IGN",
+ "unidades": "Int16 en centímetros, orden [u][v] (u a lo largo de la orilla, v hacia el mar)",
+ "centroU": 1000,
+ "u": {
+  "min": -600,
+  "max": 600
+ },
+ "v": {
+  "min": -420,
+  "max": 380
+ },
+ "paso": 5,
+ "nu": 241,
+ "nv": 161,
+ "pendienteGenericaBajoAgua": 0.02,
+ "medidoPorcentaje": 42.1,
+ "nota": "Celdas por debajo del último punto emergido del MDT: pendiente genérica 1:50 hasta −9 m. APROXIMADO."
+}

@@ -52,3 +52,14 @@ Otras comprobaciones:
 | Huso de Portus `StationData` | UTC (cabecera `"UTC"` y segundos UNIX). La correlación con la curva del IHM es máxima con desfase de minutos, no de horas | `tests/datos.test.ts` |
 
 **Referencia que usa la aplicación:** todas las alturas se expresan sobre el **cero hidrográfico de Avilés que usa el IHM** en sus predicciones, porque es la referencia de la tabla oficial con la que se valida y la que entiende cualquier usuario de tablas de marea. Cómo se enlaza con las observaciones se documenta en la fase 3 (`VALIDACION.md`).
+
+## 4. Escena 3D
+
+| Dato | Valor | Fuente |
+|---|---|---|
+| Relieve de dunas y arena seca | MDT de 5 m (LiDAR PNOA), alturas sobre el NMMA (Alicante) | IGN, servicio WCS INSPIRE `https://servicios.idee.es/wcs-inspire/mdt`, cobertura `Elevacion4258_5`, formato `application/asc` (el formato TIFF del servicio redondea a metros enteros). Procesado con `tools/mdt.ts` |
+| Franja intermareal y fondo | **APROXIMADOS**: el MDT pone 0 en el agua y no incluye la arena que estaba cubierta durante el vuelo. Desde el último punto emergido se prolonga una pendiente genérica de 1:50 hasta −9 m NMMA. No se ha medido | `tools/mdt.ts`, `src/scene/terreno-meta.json` |
+| NMMA sobre el CH de Avilés | 2,095 m, **APROXIMADO**: nivel medio sobre el CH en Avilés (2,4675 m, curva IHM 2026) menos el nivel medio local sobre el NMMA medido en Gijón (0,373 m, esquema datum oficial Gijón 2). Solo sirve para colocar el relieve; no interviene en el cálculo de la marea | `src/config.ts` |
+| Sol y luna | suncalc 2.1.1. La fase de la luna sale de iluminar la esfera lunar con la dirección real del sol | https://github.com/mourner/suncalc |
+| Oleaje | **Decorativo**: cuatro trenes de Gerstner con longitudes y alturas fijas, sin datos de oleaje real | `src/scene/escena.ts` |
+| Tamaño de la luna | Dibujada 3 veces mayor que su diámetro aparente real (0,52°) para que se aprecie la fase | `src/scene/escena.ts` |
