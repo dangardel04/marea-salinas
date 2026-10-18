@@ -1,0 +1,21 @@
+{
+ "centro": {
+  "lat": 43.589,
+  "lon": -5.955
+ },
+ "lado": 6400,
+ "paso": 5,
+ "n": 1281,
+ "formato": "Int16 little-endian, cm sobre el CH de Avilés; filas de norte a sur, columnas de oeste a este. Altura impar = medida por el MDT, par = estimada.",
+ "fuentes": {
+  "tierra": "IGN, MDT05 (LiDAR PNOA), WCS INSPIRE: https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=Elevacion4258_5&SUBSET=Lat(43.559658,43.618342)&SUBSET=Long(-5.995368,-5.914632)&FORMAT=application/asc",
+  "fondo": "EMODnet Bathymetry DTM 2024 (1/16′, referido a la LAT), WCS: https://ows.emodnet-bathymetry.eu/wcs?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=emodnet__mean&SUBSET=Lat(43.549658,43.628342)&SUBSET=Long(-6.005368,-5.904632)&FORMAT=image/tiff"
+ },
+ "consultado": "2026-10-18",
+ "nmmaSobreChAprox": 2.0945,
+ "pendienteGenerica": 0.02,
+ "porcentajeMedido": 45,
+ "porcentajeFondoEmodnet": 48.6,
+ "transicionMetros": 250,
+ "nota": "Tierra: medida. Fondo: EMODnet (115 m). Franja intermedia: transición suave de una pendiente 1:50 desde la última arena emergida a EMODnet en 250 m. APROXIMADA."
+}

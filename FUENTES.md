@@ -63,3 +63,19 @@ Otras comprobaciones:
 | Sol y luna | suncalc 2.1.1. La fase de la luna sale de iluminar la esfera lunar con la dirección real del sol | https://github.com/mourner/suncalc |
 | Oleaje | **Decorativo**: cuatro trenes de Gerstner con longitudes y alturas fijas, sin datos de oleaje real | `src/scene/escena.ts` |
 | Tamaño de la luna | Dibujada 3 veces mayor que su diámetro aparente real (0,52°) para que se aprecie la fase | `src/scene/escena.ts` |
+
+## 5. Bahía completa en 3D (consultado el 18/10/2026)
+
+| Dato | Valor | Fuente y licencia |
+|---|---|---|
+| Recuadro de la escena | Cuadrado de 6,4 km centrado en 43,589 N −5,955 E (de Arnao a la ría de Avilés) | `src/bahia.ts` |
+| Relieve en tierra | MDT de 5 m (LiDAR PNOA) sobre el NMMA, pasado al CH con el desnivel aproximado de §4 | IGN, WCS INSPIRE `servicios.idee.es/wcs-inspire/mdt`, cobertura `Elevacion4258_5`. © Instituto Geográfico Nacional, CC BY 4.0 |
+| Fondo marino | EMODnet Bathymetry DTM 2024, rejilla de 1/16′ (~115 m), referido a la LAT (*«published for viewing and downloading in LAT»*) | https://emodnet.ec.europa.eu/en/bathymetry, WCS `ows.emodnet-bathymetry.eu`, cobertura `emodnet__mean`. CC BY 4.0 |
+| Franja intermedia | **APROXIMADA**: transición en 250 m de una pendiente 1:50 desde la última arena medida a EMODnet | `tools/bahia-relieve.ts` |
+| Ortofoto | PNOA máxima actualidad, vuelo de **septiembre de 2023** en la playa, 0,25 m/píxel. Servida en teselas de 12,5 a 0,39 m/píxel | IGN, WMS `www.ign.es/wms-inspire/pnoa-ma`, capa `OI.OrthoimageCoverage`. Fecha consultada con `GetFeatureInfo` de la capa `OI.MosaicElement`. CC BY 4.0, © IGN |
+| Edificios | Huella y número de plantas sobre rasante de 12.905 partes de edificio | Dirección General del Catastro, INSPIRE Buildings, `ovc.catastro.meh.es/INSPIRE/wfsBU.aspx`, `BU:BuildingPart`. Reutilización libre citando la fuente |
+| Altura de los edificios | **SUPUESTO**: 3 m por planta. El Catastro no da alturas | `tools/bahia-edificios.ts` |
+| Color de tejados | Media de la ortofoto dentro de cada huella | — |
+| Fachadas | **Decorativas** (color neutro y bandas de plantas) | — |
+| Puntos de arena de las vistas | Polígono de la playa en OpenStreetMap (way 516073411), © colaboradores de OpenStreetMap, ODbL | `src/scene/bahia/escena.ts` |
+| Pendiente del frente de playa | **Medida**: 1:14 (mediana de 94 perfiles; cuartiles 0,068–0,077) entre +3,3 y +4,6 m sobre el CH. Por debajo de +3,1 m no hay LiDAR (el vuelo fue con marea media‑alta) | MDT05 IGN, `tools/pendiente-playa.ts` |

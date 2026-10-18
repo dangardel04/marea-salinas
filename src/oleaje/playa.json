@@ -1,0 +1,11 @@
+{
+ "fuente": "MDT05 IGN (LiDAR PNOA) sobre el CH de Avilés, ver tools/pendiente-playa.ts",
+ "cotas": [
+  3.3,
+  4.6
+ ],
+ "perfiles": 94,
+ "mediana": 0.0722,
+ "p25": 0.0684,
+ "p75": 0.0765
+}
