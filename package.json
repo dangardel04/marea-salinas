@@ -23,5 +23,8 @@
     "@phosphor-icons/core": "^2.1.1",
     "suncalc": "^2.1.1",
     "three": "^0.186.1"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

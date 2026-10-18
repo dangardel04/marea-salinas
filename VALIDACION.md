@@ -141,6 +141,8 @@ Error RMS frente a lo observado según el plazo L (cm):
 | B (TICON) sin corrección | 15,0 | 15,0 | 15,0 | 15,0 | 15,0 | 15,0 | 15,0 |
 | B + corrección (mejor τ = 24 h) | 6,8 | 10,2 | 13,1 | **16,0** | 11,6 | 7,9 | 10,6 |
 
+En la aplicación la corrección se aplica también hacia atrás desde el último dato, con la misma atenuación: exp(−|t − t0|/τ). Así la curva del día no da un salto en t0. Esa parte hacia el pasado **no está validada con backtest**; se apoya en que la autocorrelación es simétrica en el tiempo.
+
 Con B el residuo tiene **firma de marea**: la autocorrelación es 0,29 a 6 h y 0,89 a 12 h, señal de que es marea mal modelada y no meteorología. Por eso la corrección llega a empeorar el resultado a 6 h. Esta es la razón principal para usar A.
 
 ## 6. Cómo cambiar de juego de constantes

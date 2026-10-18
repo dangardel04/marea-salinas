@@ -38,3 +38,14 @@ describe(`validación frente al IHM, semana 18-25/10/2026 (constantes: ${constan
     }
   });
 });
+
+describe('valor conocido el día del cambio de hora (25/10/2026)', () => {
+  it('la pleamar oficial de las 02:26 UTC se muestra como 03:26 CET y la predicha cae a menos de 10 min', async () => {
+    const { horaMadrid, zonaMadrid } = await import('../src/tiempo');
+    const oficial = Date.parse('2026-10-25T02:26:00Z');
+    expect(horaMadrid(oficial)).toBe('03:26');
+    expect(zonaMadrid(oficial)).toMatch(/CET|GMT\+1/);
+    const pred = motor.extremos(oficial - 3 * 3_600_000, oficial + 3 * 3_600_000).find((e) => e.tipo === 'pleamar')!;
+    expect(Math.abs(pred.t - oficial) / 60_000).toBeLessThan(10);
+  });
+});

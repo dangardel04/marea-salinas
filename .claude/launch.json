@@ -1,6 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "salinas", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "--port", "5174", "--strictPort"], "port": 5174 }
+    { "name": "salinas", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "--port", "5174", "--strictPort"], "port": 5174 },
+    { "name": "salinas-build", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "preview", "--port", "4174", "--strictPort", "--base", "/salinas-marea/"], "port": 4174 }
   ]
 }
