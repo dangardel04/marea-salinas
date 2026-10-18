@@ -27,9 +27,13 @@ describe(`validación frente al IHM, semana 18-25/10/2026 (constantes: ${constan
     for (const p of pares) expect(Math.abs(p.dtMin)).toBeLessThanOrEqual(10);
   });
 
-  it('objetivo de alturas (±15 cm): con el ajuste a REDMAR NO se cumple en todas; se registra el peor caso', () => {
+  it('objetivo de alturas (±15 cm): se registra cuántos lo incumplen y el peor caso', () => {
     const peor = Math.max(...pares.map((p: { dhCm: number }) => Math.abs(p.dhCm)));
-    if (constantes.opcion === 'ajuste') {
+    if (constantes.opcion === 'hibrido') {
+      // Resultado medido el 18/10/2026: 1 de 31 fuera de ±15 cm (15,09 cm).
+      expect(pares.filter((p: { dhCm: number }) => Math.abs(p.dhCm) > 15).length).toBe(1);
+      expect(peor).toBeLessThan(15.2);
+    } else if (constantes.opcion === 'ajuste') {
       // Resultado medido el 18/10/2026: 11 de 31 fuera de ±15 cm, máximo 16,9 cm.
       expect(pares.filter((p: { dhCm: number }) => Math.abs(p.dhCm) > 15).length).toBe(11);
       expect(peor).toBeLessThan(17);

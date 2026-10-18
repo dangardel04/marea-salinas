@@ -1,0 +1,53 @@
+{
+ "metodo": "Ver cabecera de tools/generalizacion.ts. RMS en cm del residuo en el año siguiente; *_sinSesgo descuenta la media del residuo de ese año (nivel medio anual, no predecible).",
+ "anos": {
+  "2022": {
+   "uno": 13.43,
+   "uno_sinSesgo": 13.36,
+   "hibrido": 13.43,
+   "hibrido_sinSesgo": 13.36,
+   "todos": 13.43,
+   "todos_sinSesgo": 13.36
+  },
+  "2023": {
+   "uno": 14.22,
+   "uno_sinSesgo": 13.79,
+   "hibrido": 13.37,
+   "hibrido_sinSesgo": 12.88,
+   "todos": 13.48,
+   "todos_sinSesgo": 12.78
+  },
+  "2024": {
+   "uno": 12.31,
+   "uno_sinSesgo": 12.3,
+   "hibrido": 12.36,
+   "hibrido_sinSesgo": 12.36,
+   "todos": 12.65,
+   "todos_sinSesgo": 12.27
+  },
+  "2025": {
+   "uno": 11.43,
+   "uno_sinSesgo": 11.38,
+   "hibrido": 11.19,
+   "hibrido_sinSesgo": 11.15,
+   "todos": 11.67,
+   "todos_sinSesgo": 11.18
+  },
+  "2026": {
+   "uno": 12.37,
+   "uno_sinSesgo": 12.15,
+   "hibrido": 11.35,
+   "hibrido_sinSesgo": 11.34,
+   "todos": 11.43,
+   "todos_sinSesgo": 11.22
+  }
+ },
+ "medias": {
+  "uno": 12.75,
+  "hibrido": 12.34,
+  "todos": 12.53,
+  "uno_sinSesgo": 12.6,
+  "hibrido_sinSesgo": 12.22,
+  "todos_sinSesgo": 12.16
+ }
+}

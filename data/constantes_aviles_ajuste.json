@@ -2,7 +2,7 @@
  "estacion": "aviles",
  "fuenteDatos": "Puertos del Estado, REDMAR, mareógrafo Avilés 2 (3107), StationData minutal, QC=1, medias de 10 min",
  "referenciaAlturas": "cero REDMAR de la estación («Cero del Puerto»)",
- "metodo": "Mínimos cuadrados (ecuaciones normales + Cholesky), astronomía y correcciones nodales IHO de @neaps/tide-predictor 0.11.0, selección por Rayleigh R=1. Ver tools/ajuste.ts",
+ "metodo": "Mínimos cuadrados (ecuaciones normales + Cholesky), astronomía y correcciones nodales IHO de @neaps/tide-predictor 0.11.0, selección por Rayleigh R=1. Ver tools/lib/armonico.ts",
  "periodo": {
   "desde": "2025-10-01T00:10:00.000Z",
   "hasta": "2026-10-17T23:50:00.000Z",

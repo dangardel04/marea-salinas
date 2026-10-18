@@ -1,0 +1,66 @@
+{
+ "metodo": "Validación cruzada dejando un mes fuera sobre REDMAR Avilés (data/obs_aviles_10min.csv). Ver cabecera de tools/comparar-realidad.ts.",
+ "meses": 13,
+ "candidatos": {
+  "E": {
+   "residuoRmsCm": 12.17,
+   "residuoSesgoCm": 0.13,
+   "extremos": 1455,
+   "tiempoRmsMin": 6.54,
+   "tiempoMediaMin": 0.05,
+   "alturaRmsCm": 12.26,
+   "corregidoRmsCm": {
+    "1": 3.21,
+    "3": 3.78,
+    "6": 4.68,
+    "12": 5.18,
+    "24": 7.24
+   }
+  },
+  "A": {
+   "residuoRmsCm": 12.03,
+   "residuoSesgoCm": 0.41,
+   "extremos": 1455,
+   "tiempoRmsMin": 6.57,
+   "tiempoMediaMin": 0.08,
+   "alturaRmsCm": 12.07,
+   "corregidoRmsCm": {
+    "1": 3.22,
+    "3": 3.78,
+    "6": 4.69,
+    "12": 5.21,
+    "24": 7.28
+   }
+  },
+  "G": {
+   "residuoRmsCm": 12.35,
+   "residuoSesgoCm": 0.13,
+   "extremos": 1455,
+   "tiempoRmsMin": 6.49,
+   "tiempoMediaMin": -1.07,
+   "alturaRmsCm": 12.76,
+   "corregidoRmsCm": {
+    "1": 3.53,
+    "3": 4.88,
+    "6": 6.11,
+    "12": 5.25,
+    "24": 7.27
+   }
+  },
+  "B": {
+   "residuoRmsCm": 15.25,
+   "residuoSesgoCm": 0.01,
+   "extremos": 1454,
+   "tiempoRmsMin": 10.12,
+   "tiempoMediaMin": 7.21,
+   "alturaRmsCm": 15.77,
+   "corregidoRmsCm": {
+    "1": 6.87,
+    "3": 13.54,
+    "6": 17,
+    "12": 6.6,
+    "24": 7.93
+   }
+  }
+ }
+}

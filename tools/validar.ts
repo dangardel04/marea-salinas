@@ -136,6 +136,7 @@ const zAvi = z0SobreCh('aviles');
 const zGij = z0SobreCh('gijon');
 const ajAvi = ajuste('aviles');
 const ajGij = ajuste('gijon');
+const hibAvi = JSON.parse(readFileSync(join(RAIZ, 'data', 'constantes_aviles_hibrido.json'), 'utf8')) as { z0: number; constituyentes: Constituyente[] };
 const CH_GIJON_SOBRE_REDMAR = 0.35; // esquema datum oficial Gijón 2 (FUENTES.md §3)
 
 const juegos: Record<string, { puerto: string; obs: string; ch: ConjuntoArmonico; obsDatum: ConjuntoArmonico; nota: string }> = {
@@ -144,6 +145,12 @@ const juegos: Record<string, { puerto: string; obs: string; ch: ConjuntoArmonico
     ch: { z0: zAvi.z0, constituyentes: ajAvi.constituyentes },
     obsDatum: { z0: ajAvi.z0, constituyentes: ajAvi.constituyentes },
     nota: 'Constantes por mínimos cuadrados con 1 año de REDMAR Avilés; Z0 sobre el CH = media de la curva IHM 2026',
+  },
+  'E_hibrido_aviles': {
+    puerto: 'aviles', obs: 'aviles',
+    ch: { z0: zAvi.z0, constituyentes: hibAvi.constituyentes },
+    obsDatum: { z0: hibAvi.z0, constituyentes: hibAvi.constituyentes },
+    nota: 'Híbrido (activo): REDMAR Avilés para los constituyentes rápidos + periodo largo de 5,8 años de Gijón; Z0 sobre el CH = media de la curva IHM 2026',
   },
   'B_ticon_aviles': {
     puerto: 'aviles', obs: 'aviles',
@@ -175,7 +182,7 @@ const PERIODOS = {
 const resultado: Record<string, unknown> = {
   generado: new Date().toISOString(),
   z0SobreCh: { aviles: zAvi, gijon: zGij },
-  desfaseCeroPuertoAvilesSobreCh_estimado: +(ajAvi.z0 - zAvi.z0).toFixed(3),
+  desfaseCeroPuertoAvilesSobreCh_estimado: +(hibAvi.z0 - zAvi.z0).toFixed(3),
   juegos: {},
 };
 

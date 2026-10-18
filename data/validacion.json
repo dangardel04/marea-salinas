@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-18T13:37:52.326Z",
+ "generado": "2026-10-18T14:48:09.962Z",
  "z0SobreCh": {
   "aviles": {
    "z0": 2.467527694919478,
@@ -12,7 +12,7 @@
    "minimo": 0.295
   }
  },
- "desfaseCeroPuertoAvilesSobreCh_estimado": 0.295,
+ "desfaseCeroPuertoAvilesSobreCh_estimado": 0.292,
  "juegos": {
   "A_ajuste_aviles": {
    "nota": "Constantes por mínimos cuadrados con 1 año de REDMAR Avilés; Z0 sobre el CH = media de la curva IHM 2026",
@@ -653,6 +653,649 @@
       "rms": 10.31,
       "p95abs": 21.14,
       "maxAbs": 38.64
+     }
+    }
+   }
+  },
+  "E_hibrido_aviles": {
+   "nota": "Híbrido (activo): REDMAR Avilés para los constituyentes rápidos + periodo largo de 5,8 años de Gijón; Z0 sobre el CH = media de la curva IHM 2026",
+   "z0Ch": 2.4675,
+   "ihm": {
+    "semana_18_25_oct_2026": {
+     "extremosOficiales": 31,
+     "emparejados": 31,
+     "tiempoMin": {
+      "n": 31,
+      "media": -3.39,
+      "rms": 3.97,
+      "p95abs": 5.6,
+      "maxAbs": 5.85
+     },
+     "alturaCm": {
+      "n": 31,
+      "media": -2.05,
+      "rms": 9.21,
+      "p95abs": 13.7,
+      "maxAbs": 15.09
+     },
+     "pleamares": {
+      "tiempoMin": {
+       "n": 15,
+       "media": -3.5,
+       "rms": 3.8,
+       "p95abs": 5.59,
+       "maxAbs": 5.72
+      },
+      "alturaCm": {
+       "n": 15,
+       "media": -10.07,
+       "rms": 10.34,
+       "p95abs": 13,
+       "maxAbs": 13.7
+      }
+     },
+     "bajamares": {
+      "tiempoMin": {
+       "n": 16,
+       "media": -3.28,
+       "rms": 4.12,
+       "p95abs": 5.6,
+       "maxAbs": 5.85
+      },
+      "alturaCm": {
+       "n": 16,
+       "media": 5.46,
+       "rms": 8,
+       "p95abs": 14.62,
+       "maxAbs": 15.09
+      }
+     },
+     "curvaCada5minCm": {
+      "n": 2304,
+      "media": -1.69,
+      "rms": 7.37,
+      "p95abs": 13.84,
+      "maxAbs": 18.23
+     },
+     "porcentajeDentroObjetivo": 96.8,
+     "detalle": [
+      {
+       "ihm": {
+        "t": 1792287480000,
+        "altura": 1.963,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792287248144.5312,
+        "altura": 1.977665816883916,
+        "tipo": "bajamar"
+       },
+       "dtMin": -3.8642578125,
+       "dhCm": 1.4665816883915994
+      },
+      {
+       "ihm": {
+        "t": 1792310700000,
+        "altura": 3.339,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792310478808.5938,
+        "altura": 3.2651927090513504,
+        "tipo": "pleamar"
+       },
+       "dtMin": -3.6865234375,
+       "dhCm": -7.380729094864957
+      },
+      {
+       "ihm": {
+        "t": 1792333860000,
+        "altura": 1.942,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792333864160.1562,
+        "altura": 1.9549128293293956,
+        "tipo": "bajamar"
+       },
+       "dtMin": 0.0693359375,
+       "dhCm": 1.2912829329395636
+      },
+      {
+       "ihm": {
+        "t": 1792356960000,
+        "altura": 3.023,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792356888574.2188,
+        "altura": 2.963293740166673,
+        "tipo": "pleamar"
+       },
+       "dtMin": -1.1904296875,
+       "dhCm": -5.970625983332711
+      },
+      {
+       "ihm": {
+        "t": 1792378740000,
+        "altura": 2.105,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792378761621.0938,
+        "altura": 2.1031376990528883,
+        "tipo": "bajamar"
+       },
+       "dtMin": 0.3603515625,
+       "dhCm": -0.18623009471117058
+      },
+      {
+       "ihm": {
+        "t": 1792402260000,
+        "altura": 3.258,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792402117675.7812,
+        "altura": 3.179469392431985,
+        "tipo": "pleamar"
+       },
+       "dtMin": -2.3720703125,
+       "dhCm": -7.853060756801522
+      },
+      {
+       "ihm": {
+        "t": 1792425840000,
+        "altura": 1.971,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792425936621.0938,
+        "altura": 1.9655426199211254,
+        "tipo": "bajamar"
+       },
+       "dtMin": 1.6103515625,
+       "dhCm": -0.5457380078874641
+      },
+      {
+       "ihm": {
+        "t": 1792449420000,
+        "altura": 3.051,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792449314355.4688,
+        "altura": 2.987105858373404,
+        "tipo": "pleamar"
+       },
+       "dtMin": -1.7607421875,
+       "dhCm": -6.389414162659612
+      },
+      {
+       "ihm": {
+        "t": 1792470900000,
+        "altura": 2.06,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792470892089.8438,
+        "altura": 2.048585782182938,
+        "tipo": "bajamar"
+       },
+       "dtMin": -0.1318359375,
+       "dhCm": -1.1414217817061978
+      },
+      {
+       "ihm": {
+        "t": 1792493760000,
+        "altura": 3.339,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792493666308.5938,
+        "altura": 3.2507338342416534,
+        "tipo": "pleamar"
+       },
+       "dtMin": -1.5615234375,
+       "dhCm": -8.826616575834656
+      },
+      {
+       "ihm": {
+        "t": 1792517100000,
+        "altura": 1.814,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792517028222.6562,
+        "altura": 1.8110107337658101,
+        "tipo": "bajamar"
+       },
+       "dtMin": -1.1962890625,
+       "dhCm": -0.29892662341899356
+      },
+      {
+       "ihm": {
+        "t": 1792540140000,
+        "altura": 3.236,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792539983496.0938,
+        "altura": 3.1529686812139097,
+        "tipo": "pleamar"
+       },
+       "dtMin": -2.6083984375,
+       "dhCm": -8.303131878609049
+      },
+      {
+       "ihm": {
+        "t": 1792561560000,
+        "altura": 1.855,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792561401269.5312,
+        "altura": 1.8548259618774274,
+        "tipo": "bajamar"
+       },
+       "dtMin": -2.6455078125,
+       "dhCm": -0.01740381225725507
+      },
+      {
+       "ihm": {
+        "t": 1792583940000,
+        "altura": 3.534,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792583801660.1562,
+        "altura": 3.4316393308030197,
+        "tipo": "pleamar"
+       },
+       "dtMin": -2.3056640625,
+       "dhCm": -10.236066919698006
+      },
+      {
+       "ihm": {
+        "t": 1792606860000,
+        "altura": 1.56,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792606608691.4062,
+        "altura": 1.5825132795822223,
+        "tipo": "bajamar"
+       },
+       "dtMin": -4.1884765625,
+       "dhCm": 2.2513279582222268
+      },
+      {
+       "ihm": {
+        "t": 1792629420000,
+        "altura": 3.482,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792629245800.7812,
+        "altura": 3.3746085454501116,
+        "tipo": "pleamar"
+       },
+       "dtMin": -2.9033203125,
+       "dhCm": -10.739145454988863
+      },
+      {
+       "ihm": {
+        "t": 1792650960000,
+        "altura": 1.576,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792650719238.2812,
+        "altura": 1.6082911882977597,
+        "tipo": "bajamar"
+       },
+       "dtMin": -4.0126953125,
+       "dhCm": 3.2291188297759676
+      },
+      {
+       "ihm": {
+        "t": 1792673220000,
+        "altura": 3.773,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792672984863.2812,
+        "altura": 3.6592037272344915,
+        "tipo": "pleamar"
+       },
+       "dtMin": -3.9189453125,
+       "dhCm": -11.379627276550863
+      },
+      {
+       "ihm": {
+        "t": 1792695780000,
+        "altura": 1.269,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792695448535.1562,
+        "altura": 1.3380945005435785,
+        "tipo": "bajamar"
+       },
+       "dtMin": -5.5244140625,
+       "dhCm": 6.909450054357857
+      },
+      {
+       "ihm": {
+        "t": 1792718160000,
+        "altura": 3.733,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792717912207.0312,
+        "altura": 3.6139499988385513,
+        "tipo": "pleamar"
+       },
+       "dtMin": -4.1298828125,
+       "dhCm": -11.905000116144882
+      },
+      {
+       "ihm": {
+        "t": 1792739820000,
+        "altura": 1.272,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792739506933.5938,
+        "altura": 1.3511928584386084,
+        "tipo": "bajamar"
+       },
+       "dtMin": -5.2177734375,
+       "dhCm": 7.919285843860835
+      },
+      {
+       "ihm": {
+        "t": 1792762020000,
+        "altura": 4.012,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792761743847.6562,
+        "altura": 3.8988284083825744,
+        "tipo": "pleamar"
+       },
+       "dtMin": -4.6025390625,
+       "dhCm": -11.317159161742518
+      },
+      {
+       "ihm": {
+        "t": 1792784340000,
+        "altura": 0.988,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792784004199.2188,
+        "altura": 1.1044221091724078,
+        "tipo": "bajamar"
+       },
+       "dtMin": -5.5966796875,
+       "dhCm": 11.642210917240781
+      },
+      {
+       "ihm": {
+        "t": 1792806660000,
+        "altura": 3.977,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792806372949.2188,
+        "altura": 3.8524612265943574,
+        "tipo": "pleamar"
+       },
+       "dtMin": -4.7841796875,
+       "dhCm": -12.453877340564246
+      },
+      {
+       "ihm": {
+        "t": 1792828440000,
+        "altura": 0.987,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792828104785.1562,
+        "altura": 1.1051289130026396,
+        "tipo": "bajamar"
+       },
+       "dtMin": -5.5869140625,
+       "dhCm": 11.812891300263962
+      },
+      {
+       "ihm": {
+        "t": 1792850700000,
+        "altura": 4.239,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792850364550.7812,
+        "altura": 4.123668958924679,
+        "tipo": "pleamar"
+       },
+       "dtMin": -5.5908203125,
+       "dhCm": -11.533104107532122
+      },
+      {
+       "ihm": {
+        "t": 1792872840000,
+        "altura": 0.755,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792872488964.8438,
+        "altura": 0.901246737037936,
+        "tipo": "bajamar"
+       },
+       "dtMin": -5.8505859375,
+       "dhCm": 14.6246737037936
+      },
+      {
+       "ihm": {
+        "t": 1792895160000,
+        "altura": 4.208,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792894816699.2188,
+        "altura": 4.0710224048243395,
+        "tipo": "pleamar"
+       },
+       "dtMin": -5.7216796875,
+       "dhCm": -13.697759517566066
+      },
+      {
+       "ihm": {
+        "t": 1792917000000,
+        "altura": 0.757,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792916685644.5312,
+        "altura": 0.8899971416664766,
+        "tipo": "bajamar"
+       },
+       "dtMin": -5.2392578125,
+       "dhCm": 13.299714166647657
+      },
+      {
+       "ihm": {
+        "t": 1792939320000,
+        "altura": 4.434,
+        "tipo": "pleamar"
+       },
+       "pred": {
+        "t": 1792938994628.9062,
+        "altura": 4.303985513856369,
+        "tipo": "pleamar"
+       },
+       "dtMin": -5.4228515625,
+       "dhCm": -13.00144861436312
+      },
+      {
+       "ihm": {
+        "t": 1792961340000,
+        "altura": 0.599,
+        "tipo": "bajamar"
+       },
+       "pred": {
+        "t": 1792961011230.4688,
+        "altura": 0.7498691704544476,
+        "tipo": "bajamar"
+       },
+       "dtMin": -5.4794921875,
+       "dhCm": 15.086917045444759
+      }
+     ]
+    },
+    "futuro_18oct_31dic_2026": {
+     "extremosOficiales": 290,
+     "emparejados": 290,
+     "tiempoMin": {
+      "n": 290,
+      "media": -4.66,
+      "rms": 4.89,
+      "p95abs": 6.72,
+      "maxAbs": 8.76
+     },
+     "alturaCm": {
+      "n": 290,
+      "media": -0.62,
+      "rms": 10.03,
+      "p95abs": 15.8,
+      "maxAbs": 19.58
+     },
+     "pleamares": {
+      "tiempoMin": {
+       "n": 145,
+       "media": -4.69,
+       "rms": 4.91,
+       "p95abs": 6.77,
+       "maxAbs": 8.76
+      },
+      "alturaCm": {
+       "n": 145,
+       "media": -9.03,
+       "rms": 10.57,
+       "p95abs": 15.54,
+       "maxAbs": 18.94
+      }
+     },
+     "bajamares": {
+      "tiempoMin": {
+       "n": 145,
+       "media": -4.63,
+       "rms": 4.88,
+       "p95abs": 6.42,
+       "maxAbs": 7.17
+      },
+      "alturaCm": {
+       "n": 145,
+       "media": 7.8,
+       "rms": 9.45,
+       "p95abs": 15.8,
+       "maxAbs": 19.58
+      }
+     },
+     "curvaCada5minCm": {
+      "n": 21433,
+      "media": 0.61,
+      "rms": 8.76,
+      "p95abs": 15.77,
+      "maxAbs": 22.91
+     },
+     "porcentajeDentroObjetivo": 90.3
+    },
+    "completo_oct2025_dic2026": {
+     "extremosOficiales": 1766,
+     "emparejados": 1766,
+     "tiempoMin": {
+      "n": 1766,
+      "media": -3.93,
+      "rms": 4.38,
+      "p95abs": 6.92,
+      "maxAbs": 10.75
+     },
+     "alturaCm": {
+      "n": 1766,
+      "media": -1.1,
+      "rms": 9.7,
+      "p95abs": 16.43,
+      "maxAbs": 21.29
+     },
+     "pleamares": {
+      "tiempoMin": {
+       "n": 883,
+       "media": -3.91,
+       "rms": 4.38,
+       "p95abs": 6.96,
+       "maxAbs": 10.75
+      },
+      "alturaCm": {
+       "n": 883,
+       "media": -9.46,
+       "rms": 10.78,
+       "p95abs": 17.37,
+       "maxAbs": 21.29
+      }
+     },
+     "bajamares": {
+      "tiempoMin": {
+       "n": 883,
+       "media": -3.96,
+       "rms": 4.38,
+       "p95abs": 6.81,
+       "maxAbs": 9.31
+      },
+      "alturaCm": {
+       "n": 883,
+       "media": 7.27,
+       "rms": 8.48,
+       "p95abs": 14.88,
+       "maxAbs": 20.22
+      }
+     },
+     "curvaCada5minCm": {
+      "n": 130504,
+      "media": 0.14,
+      "rms": 8.05,
+      "p95abs": 15.19,
+      "maxAbs": 22.91
+     },
+     "porcentajeDentroObjetivo": 89.7
+    }
+   },
+   "observado": {
+    "oct2025_oct2026": {
+     "valores": 54954,
+     "residuoCm": {
+      "n": 54954,
+      "media": 0,
+      "rms": 11.59,
+      "p95abs": 24.38,
+      "maxAbs": 60.84
+     },
+     "extremosObservados": 1455,
+     "tiempoMin": {
+      "n": 1455,
+      "media": 0.06,
+      "rms": 5.8,
+      "p95abs": 11.8,
+      "maxAbs": 32.11
+     },
+     "alturaCm": {
+      "n": 1455,
+      "media": -0.04,
+      "rms": 11.67,
+      "p95abs": 24.96,
+      "maxAbs": 49.04
      }
     }
    }

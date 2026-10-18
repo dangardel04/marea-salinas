@@ -36,7 +36,7 @@ Detalle completo, con URL y fecha de consulta, en [FUENTES.md](FUENTES.md).
 
 | Qué | Fuente |
 |---|---|
-| Constantes armónicas (activas) | Ajuste propio por mínimos cuadrados con un año (01/10/2025–17/10/2026) del mareógrafo REDMAR Avilés 2 de Puertos del Estado. 55 constituyentes |
+| Constantes armónicas (activas) | Híbrido por mínimos cuadrados: constituyentes rápidas con un año (01/10/2025–17/10/2026) del mareógrafo REDMAR Avilés 2 y periodo largo (SA, SSA, MM…) con 5,8 años del mareógrafo REDMAR Gijón 2, ambos de Puertos del Estado. 55 constituyentes. Elegido por ser el más fiel a lo medido (VALIDACION.md §8) |
 | Alternativa | TICON‑4 «Aviles» (Hart‑Davis et al., 2025, CC BY‑NC 4.0), vía `@neaps/tide-database` |
 | Astronomía de la marea | `@neaps/tide-predictor` 0.11.0 (MIT): argumentos y correcciones nodales IHO |
 | Nivel medio sobre el cero hidrográfico | Media de la predicción oficial del IHM (Avilés) en 2026 |
@@ -52,7 +52,11 @@ node tools/descargar.ts
 ```
 
 ```bash
-node tools/ajuste.ts aviles
+node tools/ajuste.ts gijon
+```
+
+```bash
+node tools/ajuste.ts aviles-hibrido
 ```
 
 ```bash
@@ -60,7 +64,7 @@ node tools/validar.ts
 ```
 
 ```bash
-node tools/generar-constantes.ts ajuste
+node tools/generar-constantes.ts hibrido
 ```
 
 ```bash
@@ -73,23 +77,33 @@ node tools/mdt.ts
 
 ## Precisión medida
 
-Números completos en [VALIDACION.md](VALIDACION.md). Error = predicción − tabla oficial del IHM (Avilés).
+Números completos en [VALIDACION.md](VALIDACION.md).
+
+**Frente a la realidad** (mareógrafo de Avilés, cada mes evaluado con constantes que no lo vieron):
+
+- Marea astronómica sola: 12,2 cm RMS. Es sobre todo el efecto del viento y la presión, que una predicción astronómica no puede conocer.
+- Con la corrección en vivo: 3,2 cm a 1 h, 4,7 cm a 6 h y 7,2 cm a 24 h.
+- Pleamares y bajamares observadas: 6,5 min y 12,3 cm RMS.
+
+Se compararon 4 juegos de constantes (VALIDACION.md §8) y el activo es el más fiel a lo medido. TICON‑4, que coincide con la tabla oficial, queda 3 cm peor y con él la corrección en vivo empeora el resultado.
+
+**Frente a la tabla oficial del IHM** (Avilés). Error = predicción − tabla oficial:
 
 | Periodo | Horas, RMS (máx) | Alturas, RMS (máx) | Dentro de ±10 min y ±15 cm |
 |---|---|---|---|
-| 18–25/10/2026 (31 extremos) | 3,9 min (5,8) | 12,3 cm (16,9) | 64,5 % |
-| 18/10–31/12/2026 (290 extremos) | 4,9 min (8,8) | 12,0 cm (23,8) | 74,5 % |
+| 18–25/10/2026 (31 extremos) | 4,0 min (5,9) | 9,2 cm (15,1) | 96,8 % |
+| 18/10–31/12/2026 (290 extremos) | 4,9 min (8,8) | 10,0 cm (19,6) | 90,3 % |
 
-- **Horas**: cumplen el objetivo de ±10 min.
-- **Alturas**: **no** cumplen el objetivo de ±15 cm. Las pleamares salen unos 16 cm más bajas que en la tabla oficial. No es un fallo del método: en Gijón, el mismo método con el datum oficial cumple el 100 %. Es que la tabla oficial de Avilés y el mareógrafo actual de Avilés discrepan: un 4 % más de rango y 6 min de retraso respecto a Gijón según el IHM, frente a un 2 % menos y 0 min según los dos radares REDMAR.
-- **Frente a lo medido**: con el mareógrafo de Avilés, el residuo es de 10 cm RMS (9,5 cm fuera de muestra). Con la corrección en vivo baja a 3–6 cm en las 24 horas siguientes.
-- Si se prefiere coincidir con la tabla oficial, `node tools/generar-constantes.ts ticon` usa TICON‑4 (98,6 % dentro del objetivo frente al IHM). Con ese juego la corrección en vivo empeora el resultado (VALIDACION.md §5).
+- **Horas**: cumplen ±10 min siempre.
+- **Alturas**: cumplen ±15 cm casi siempre, pero no siempre. Las pleamares salen de media unos 9 cm por debajo de la tabla. La causa es que la tabla oficial de Avilés y el mareógrafo actual de Avilés discrepan: un 4 % más de rango que Gijón según el IHM, frente a un 2 % menos según los dos radares REDMAR. En Gijón, donde las fuentes son coherentes, el mismo método cumple el 100 %.
+- Si se prefiere coincidir con la tabla oficial: `node tools/generar-constantes.ts ticon` (98,6 % dentro frente al IHM, pero peor frente a lo medido).
 
 ## Qué es real y qué es aproximado
 
 | Real (medido u oficial) | Aproximado o decorativo |
 |---|---|
-| Marea: constantes de observaciones reales, horas UTC verificadas | Desnivel entre el cero del puerto de Avilés y el cero hidrográfico (0,295 m, estimado; no hay datum oficial publicado) |
+| Marea: constantes de observaciones reales, horas UTC verificadas | Desnivel entre el cero del puerto de Avilés y el cero hidrográfico (0,292 m, estimado; no hay datum oficial publicado) |
+| Elección de constantes por validación fuera de muestra frente al mareógrafo | Ciclo estacional (SA, SSA…) de Gijón aplicado a Avilés: supuesto igual en los dos puertos |
 | Corrección con el mareógrafo en vivo | Corrección hacia el pasado (misma atenuación, sin backtest propio) |
 | Dunas y arena seca del MDT del IGN | Franja intermareal baja y fondo (pendiente 1:50) |
 | Posición del sol y de la luna, fase lunar | NMMA → CH del relieve (2,095 m, tomado de la relación de Gijón) |
