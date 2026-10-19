@@ -127,6 +127,10 @@ python tools/playa-mascara.py
 ```
 
 ```bash
+python tools/paseo-muro.py
+```
+
+```bash
 node tools/pendiente-playa.ts
 ```
 

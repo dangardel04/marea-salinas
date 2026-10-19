@@ -320,3 +320,21 @@ input[type='range']::-moz-range-thumb {
   .vistas { left: 392px; overflow-x: auto; scrollbar-width: none; }
   .vistas::-webkit-scrollbar { display: none; }
 }
+
+/* ---------- Ancho de arena y rótulos de lugares ---------- */
+.arena-ancho { margin: 8px 0 0; font-size: 13px; line-height: 1.4; color: var(--texto-2); }
+.arena-ancho strong { color: var(--texto); font-weight: 600; }
+.arena-ancho:empty { display: none; }
+.etiquetas { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+.etiqueta {
+  position: absolute; left: 0; top: 0; padding: 3px 9px 4px; white-space: nowrap;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.01em; color: #1d2a31;
+  background: rgb(255 255 255 / 0.88); border-radius: 999px;
+  box-shadow: 0 2px 8px rgb(16 32 40 / 0.18);
+  transition: opacity 200ms ease;
+}
+/* un pequeño trazo hacia el punto que señala */
+.etiqueta::after {
+  content: ''; position: absolute; left: 50%; top: 100%; width: 1.5px; height: 10px;
+  margin-left: -0.75px; background: rgb(255 255 255 / 0.88);
+}

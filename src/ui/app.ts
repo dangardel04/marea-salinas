@@ -27,6 +27,8 @@ const metros = (h: number) => h.toLocaleString('es-ES', { minimumFractionDigits:
 export interface DestinoEscena {
   actualizar(e: { t: number; nivel: number; nivelMax6h: number; mar: EstadoMar | null; setup: number; r2: number }): void;
   volarA?(id: string): void;
+  anchoArena?(nivel: number): number | null;
+  lugarArena?: string;
 }
 
 /** «1,1 m, 11 s, NNE»: altura significante, periodo de pico y rumbo de procedencia. */
@@ -58,7 +60,7 @@ export function iniciarInterfaz() {
 
   // ---------- Elementos ----------
   const el = {
-    momento: $('momento'), altura: $('altura'), tendencia: $('tendencia'),
+    momento: $('momento'), altura: $('altura'), tendencia: $('tendencia'), arena: $('arena-ancho'),
     modo: $('modo'), modoEtiqueta: $('modo-etiqueta'), modoDetalle: $('modo-detalle'),
     plHora: $('pleamar-hora'), plAlt: $('pleamar-altura'), plOf: $('pleamar-oficial'),
     bjHora: $('bajamar-hora'), bjAlt: $('bajamar-altura'), bjOf: $('bajamar-oficial'),
@@ -200,6 +202,12 @@ export function iniciarInterfaz() {
   function pintarTextos(t: number, ahoraReal: number) {
     poner(el.momento, `${fechaLargaMadrid(t)}, ${horaMadrid(t)} ${zonaMadrid(t)}`);
     poner(el.altura, `${metros(nivel(t))}<small>m</small>`, true);
+    // Cuánta arena hay ahora entre el muro del paseo y el agua (sin contar el vaivén de las olas).
+    const ancho = escena?.anchoArena?.(nivel(t));
+    const lugar = escena?.lugarArena ?? '';
+    poner(el.arena, ancho == null ? '' : ancho < 2
+      ? `El agua llega al muro del paseo ${lugar}`
+      : `<strong><span class="num">${Math.round(ancho)}</span> m</strong> de arena entre el muro y el agua, ${lugar}`, true);
     const d = motor.tendencia(t);
     const cmh = Math.abs(Math.round(d.cmPorHora));
     poner(el.tendencia, `${d.sentido === 'subiendo' ? ICONOS.flechaArriba : ICONOS.flechaAbajo}<span>${d.sentido === 'subiendo' ? 'Subiendo' : 'Bajando'} · <span class="num">${cmh}</span> cm/h</span>`, true);

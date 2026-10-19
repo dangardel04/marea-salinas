@@ -11,6 +11,8 @@ import metaEdificios from '../bahia-edificios.json';
 import metaEdificiosLidar from '../bahia-edificios-lidar.json';
 import metaFino from '../bahia-fino.json';
 import metaArena from '../bahia-arena.json';
+import metaPaseo from '../bahia-paseo.json';
+import { crearPaseo, type PuntoMuro } from './paseo';
 import { cargarFino, cargarRelieve } from './relieve';
 import { crearTeselas } from './teselas';
 import { cargarEdificios, cargarEdificiosLidar } from './edificios';
@@ -156,6 +158,36 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   // Estilo de animación: sin reflejo de la escena (colores planos); la cámara espejo no se dibuja.
   agua.uniformes.uConReflejo.value = 0;
   const cielo = crearCielo(escena, movil);
+  // Muro, barandilla y suelo del paseo (tools/paseo-muro.py)
+  escena.add(crearPaseo(metaPaseo.tramos as PuntoMuro[][], comunes));
+
+  // ---------- Etiquetas de lugares (OpenStreetMap) ----------
+  // Rótulos HTML sobre el lienzo, colocados cada cuadro en su punto 3D; se ocultan detrás de la
+  // cámara y se desvanecen con la distancia. No capturan el ratón.
+  const capa = document.createElement('div');
+  capa.className = 'etiquetas';
+  lienzo.insertAdjacentElement('afterend', capa); // justo encima del lienzo, debajo de los paneles
+  const etiquetas = metaPaseo.lugares.map((l) => {
+    const e = document.createElement('span');
+    e.className = 'etiqueta';
+    e.textContent = l.nombre;
+    capa.appendChild(e);
+    const y = (l.y ?? relieve.altura(l.x, l.z)) + 14;
+    return { e, p: new THREE.Vector3(l.x, y, l.z) };
+  });
+  const proy = new THREE.Vector3();
+  function colocarEtiquetas() {
+    const w = lienzo.clientWidth, h = lienzo.clientHeight;
+    for (const { e, p } of etiquetas) {
+      const dist = camara.position.distanceTo(p);
+      proy.copy(p).project(camara);
+      const visible = proy.z < 1 && Math.abs(proy.x) < 1.1 && Math.abs(proy.y) < 1.1 && dist < 4500;
+      if (!visible) { e.style.opacity = '0'; continue; }
+      e.style.opacity = String(1 - THREE.MathUtils.smoothstep(dist, 2200, 4500));
+      e.style.transform = `translate(${((proy.x + 1) / 2) * w}px, ${((1 - proy.y) / 2) * h}px) translate(-50%, -100%)`;
+    }
+  }
+
   // Tierra lejana al sur, fuera del área modelada: un anillo plano que la niebla funde con el cielo.
   const tierraLejana = new THREE.Mesh(
     new THREE.RingGeometry(LADO * 0.5, 40000, 64, 1, THREE.MathUtils.degToRad(192), THREE.MathUtils.degToRad(156)),
@@ -324,6 +356,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     comunes.uNivelMax.value = estado.nivelMax6h;
     if (Math.abs(estado.t - ultimoCielo) > 60_000) { vLuna = actualizarLuz(estado.t); ultimoCielo = estado.t; }
     cielo.seguir(camara.position, vLuna);
+    colocarEtiquetas();
     teselas.actualizar(camara);
     agua.actualizar(teselas.visibles(), estado.nivel + estado.r2 + 1);
     if (agua.uniformes.uConReflejo.value > 0) reflejo.actualizar(escena, camara, estado.nivel, [...agua.objetos, ...cielo.objetos]);
@@ -340,7 +373,18 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     pendientes: () => teselas.pendientes(),
     relieve,
     meta: metaRelieve,
+    /** Metros de arena descubierta entre el pie del muro y el agua, en el perfil de referencia
+     *  (frente al Balneario), con el mar a `nivel` m sobre el CH. 0 si el agua llega al muro. */
+    anchoArena(nivel: number) {
+      const { pie, haciaMar } = metaPaseo.perfilArena;
+      for (let d = 0; d < 600; d += 0.5) {
+        if (relieve.altura(pie[0] + haciaMar[0] * d, pie[2] + haciaMar[1] * d) < nivel) return d;
+      }
+      return null;
+    },
+    lugarArena: metaPaseo.perfilArena.nombre,
     destruir() {
+      capa.remove();
       activo = false;
       observador.disconnect();
       controles.dispose();
