@@ -1,6 +1,7 @@
 // Postprocesado de la escena y calidad automática.
 //
 // Cadena (EffectComposer, en coma flotante de 16 bits):
+//   0. (antes) la escena sin agua, para la refracción (refraccion.ts);
 //   1. la escena;
 //   2. GTAO: oclusión ambiental en pantalla (sombra de contacto entre edificios, muro y terreno);
 //      para su pasada de profundidad y normales se ocultan el agua (su malla se monta en el
@@ -30,12 +31,12 @@ class GTAOSelectivo extends GTAOPass {
   }
 }
 
-interface Nivel { pr: number; ao: boolean; bloom: boolean; sombra: number }
+interface Nivel { pr: number; ao: boolean; bloom: boolean; sombra: number; refraccion: number }
 export const NIVELES: Nivel[] = [
-  { pr: 0.75, ao: false, bloom: false, sombra: 1024 },
-  { pr: 1.0, ao: false, bloom: true, sombra: 2048 },
-  { pr: 1.5, ao: true, bloom: true, sombra: 2048 },
-  { pr: 2.0, ao: true, bloom: true, sombra: 4096 },
+  { pr: 0.75, ao: false, bloom: false, sombra: 1024, refraccion: 0 },
+  { pr: 1.0, ao: false, bloom: true, sombra: 2048, refraccion: 0.5 },
+  { pr: 1.5, ao: true, bloom: true, sombra: 2048, refraccion: 0.75 },
+  { pr: 2.0, ao: true, bloom: true, sombra: 4096, refraccion: 1 },
 ];
 
 export function crearPostproceso(o: {
@@ -47,6 +48,8 @@ export function crearPostproceso(o: {
   ocultarEnAO: () => THREE.Object3D[];
   /** Cambia la resolución del mapa de sombras. */
   tamanoSombras: (t: number) => void;
+  /** Resolución de la pasada de refracción (fracción de la de pantalla; 0 la apaga). */
+  escalaRefraccion: (e: number) => void;
 }) {
   const { render, escena, camara } = o;
   render.toneMapping = THREE.ACESFilmicToneMapping;
@@ -81,6 +84,7 @@ export function crearPostproceso(o: {
     ao.enabled = n.ao;
     bloom.enabled = n.bloom;
     o.tamanoSombras(n.sombra);
+    o.escalaRefraccion(n.refraccion);
   }
 
   // Medida del ritmo: ventanas de 2 s.

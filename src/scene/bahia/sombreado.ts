@@ -97,6 +97,8 @@ uniform sampler2D uTexMojada;  // arena húmeda (Poly Haven «Damp Beach Sand 02
 uniform sampler2D uTexMojadaN;
 uniform sampler2D uPlaya;       // máscara de playa (OpenStreetMap)
 uniform sampler2D uFondoAgua;   // G: cota de rebose, hasta dónde llega el mar (ver campoOlas.ts)
+uniform float uR2;             // subida del agua por las olas (Stockdon), m
+uniform float uSetup;
 varying vec2 vUv;
 varying vec3 vPos;
 varying vec3 vNor;
@@ -177,10 +179,12 @@ void main() {
   float rango = max(uNivelMax - uNivel, 0.25);
   float aa = fwidth(h) * 1.5 + 0.05;
   float mojada = 1.0 - smoothstep(rango + 0.08 - aa, rango + 0.08 + aa, h - uNivel);
-  // Empapada: solo la franja que moja el mar; con la cota de rebose (no la altura), así las
-  // hondonadas detrás de un caballón no salen como manchas oscuras.
+  // Empapada: la franja que lava el vaivén de las olas ahora (hasta el nivel + setup + R2) y un
+  // poco más; transición suave. Con la cota de rebose (no la altura), así las hondonadas detrás de
+  // un caballón no salen como manchas oscuras.
   float cotaMar = max(h, texture2D(uFondoAgua, uvP).g);
-  float empapada = 1.0 - smoothstep(0.3 - aa, 0.3 + aa, cotaMar - uNivel);
+  float lavado = uSetup + uR2 + 0.08;
+  float empapada = 1.0 - smoothstep(lavado - 0.06, lavado + 0.14, cotaMar - uNivel);
   vec3 arena = mix(arenaSeca, arenaHumeda, mojada);
   arena = mix(arena, arenaEmpapada, empapada);
   // Bajo el mar (se ve a través del agua somera), algo más oscura; en los charcos aislados de
@@ -205,8 +209,9 @@ void main() {
   float sSol = sombra(vPos, n);
   // Oclusión de contacto (al pie del muro, en los pliegues), suave.
   float ao = 1.0 - smoothstep(0.12, 0.75, vOcl) * 0.5;
-  // Arena: seca, mate (rugosidad 0,92); empapada, la película de agua la hace lisa (0,25) y refleja.
-  float rug = mix(mix(0.92, 0.6, mojada * 0.5), 0.25, empapada) ;
+  // Arena: seca, mate (rugosidad 0,9); húmeda de la marea, 0,6; empapada por el vaivén, la
+  // película de agua la hace lisa (0,2): brilla y refleja el cielo.
+  float rug = mix(mix(0.9, 0.6, mojada), 0.2, empapada);
   rug = mix(rug, 0.88, muro);
   float f0 = mix(0.03, 0.02, empapada);
   vec3 dibujado = iluminar(c, n, v, rug, f0, sSol, ao);

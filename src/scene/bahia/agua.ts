@@ -28,6 +28,7 @@
 import * as THREE from 'three';
 import { LADO, PASO_RELIEVE } from '../../bahia';
 import { PASO_CAMPO } from './campoOlas';
+import { SOMBRA_GLSL } from './sombras';
 
 /**
  * Forma de la ola cerca de la costa (Abreu et al., 2010, ec. de la velocidad orbital; en aguas
@@ -310,6 +311,18 @@ uniform float uConReflejo;
 uniform vec4 uSisA;
 uniform sampler2D uCampoA;
 uniform vec2 uCampo;
+// Refracción (refraccion.ts): la escena sin el agua, color y profundidad.
+uniform sampler2D uRefraccion;
+uniform sampler2D uProfEscena;
+uniform vec2 uTamDibujo;
+uniform vec2 uCercaLejos;
+uniform float uConRefraccion;
+${SOMBRA_GLSL}
+/** Distancia a lo largo del eje de la cámara de una profundidad del búfer (perspectiva). */
+float vistaZ(float prof) {
+  float z = prof * 2.0 - 1.0;
+  return 2.0 * uCercaLejos.x * uCercaLejos.y / (uCercaLejos.y + uCercaLejos.x - z * (uCercaLejos.y - uCercaLejos.x));
+}
 
 const float MEDIO = ${(LADO / 2).toFixed(1)};
 vec2 uvNodo(vec2 xz, vec2 rej) { return ((xz + MEDIO) / rej.y + 0.5) / rej.x; }
@@ -411,9 +424,19 @@ void main() {
   vec4 escenaR = texture2D(uReflejo, uvR);
   float dentroR = step(0.001, uvR.x) * step(uvR.x, 0.999) * step(0.001, uvR.y) * step(uvR.y, 0.999);
   vec3 reflejo = mix(cielo, escenaR.rgb / max(escenaR.a, 1e-3), clamp(escenaR.a, 0.0, 1.0) * dentroR * uConReflejo);
-  // Destello del sol: un núcleo muy fino y brillante (los rizos lo rompen en chispas) y un halo.
+  // Destello del sol (o de la luna): especular GGX de una superficie lisa (rugosidad 0,06–0,12;
+  // los rizos de la normal lo rompen en chispas, doradas con el sol bajo) y un halo ancho. Se
+  // apaga a la sombra (de los acantilados al atardecer, de los edificios).
+  float sombraAgua = sombra(vPos, vec3(0.0, 1.0, 0.0));
+  vec3 hv = normalize(uDirBrillo + v);
+  float ndh = max(dot(n, hv), 0.0), ndl = max(dot(n, uDirBrillo), 0.0);
+  float rugA = mix(0.06, 0.12, smoothstep(40.0, 600.0, d));
+  float a2 = rugA * rugA * rugA * rugA;
+  float dd = ndh * ndh * (a2 - 1.0) + 1.0;
+  float Fs = 0.02 + 0.98 * pow(1.0 - max(dot(v, hv), 0.0), 5.0);
+  float ggx = min(a2 / (3.14159265 * dd * dd) * Fs / (4.0 * max(ndv, 0.05)) * ndl, 60.0);
   float rs = max(dot(r, uDirBrillo), 0.0);
-  vec3 sol = uColorBrillo * (pow(rs, 1400.0) * 30.0 + pow(rs, 180.0) * 1.1 + pow(rs, 14.0) * 0.05) * step(0.0, uDirBrillo.y);
+  vec3 sol = uColorBrillo * (ggx * 0.6 + pow(rs, 14.0) * 0.05) * step(0.0, uDirBrillo.y) * sombraAgua;
 
   // ---------- Cuerpo del agua ----------
   // Color según la profundidad, sin franjas: azul marino en lo hondo; sobre la arena, verde
@@ -428,10 +451,33 @@ void main() {
   float contraluz = pow(clamp(dot(v, -normalize(dirLuz + n * 0.55)), 0.0, 1.0), 3.0);
   float dispersa = (contraluz * 1.2 + 0.35) * cara * smoothstep(0.3, 1.5, prof);
   cuerpo = mix(cuerpo, turquesa * (0.7 + 0.3 * uLuzDia), clamp(dispersa, 0.0, 0.85));
-  cuerpo *= dia;
+  cuerpo *= dia * mix(0.8, 1.0, sombraAgua);
   // Transparencia: el agua somera deja ver la arena (absorción con la profundidad).
   // (con un mínimo, para que el agua somera se lea como agua y no como una sombra en la arena)
   float opaco = mix(0.3, 1.0, 1.0 - exp(-max(prof, 0.0) * 0.9)) * smoothstep(0.0, 0.04, prof);
+
+  // ---------- Refracción y absorción (si hay pasada de refracción) ----------
+  // Espesor de agua que atraviesa la mirada hasta el fondo: profundidad de la escena sin agua
+  // menos la de la superficie, a lo largo del rayo. El fondo se ve desplazado por las olas (más
+  // cuanto más agua hay) y atenuado según Beer–Lambert: el rojo se apaga antes que el verde y el
+  // azul, así que la arena se ve turquesa con poca agua y el mar, azul marino donde es hondo.
+  // Coeficientes ESTÉTICOS (agua costera del Cantábrico, menos clara que la del trópico), no medidos.
+  vec3 cuerpoRefr = cuerpo;
+  if (uConRefraccion > 0.5) {
+    vec2 uvP = gl_FragCoord.xy / uTamDibujo;
+    float zAgua = vistaZ(gl_FragCoord.z);
+    float rayo = d / max(zAgua, 1e-3);
+    float espesor = max(vistaZ(texture2D(uProfEscena, uvP).r) - zAgua, 0.0) * rayo;
+    vec2 uvRf = uvP + n.xz * 0.03 * clamp(espesor, 0.0, 4.0) / (1.0 + d * 0.004);
+    float zF2 = vistaZ(texture2D(uProfEscena, uvRf).r);
+    if (zF2 < zAgua) uvRf = uvP; else espesor = max(zF2 - zAgua, 0.0) * rayo;
+    vec3 fondo = texture2D(uRefraccion, uvRf).rgb;
+    vec3 T = exp(-vec3(0.55, 0.19, 0.16) * espesor);
+    // luz que el agua devuelve por dispersión: turquesa en los primeros metros, azul marino al fondo
+    vec3 difunde = mix(vec3(0.02, 0.17, 0.18), hondo, 1.0 - exp(-espesor / 3.5)) * dia * mix(0.8, 1.0, sombraAgua);
+    cuerpoRefr = fondo * T + difunde * (1.0 - T);
+    cuerpoRefr = mix(cuerpoRefr, turquesa * dia * (0.7 + 0.3 * uLuzDia), clamp(dispersa, 0.0, 0.7));
+  }
 
   // ---------- Espuma ----------
   // Un patrón (ruido fractal con el dominio deformado: manchas y hebras orgánicas) y una
@@ -482,12 +528,21 @@ void main() {
   vec3 blanco = mix(vec3(0.72, 0.82, 0.86), vec3(0.96, 0.98, 0.98), densa) * luzE * dia;
 
   // ---------- Composición ----------
-  // Mezcla física sencilla: reflejo (Fresnel) + cuerpo del agua (con su opacidad) + fondo.
-  float a = fres + (1.0 - fres) * opaco;
-  vec3 c = (reflejo * fres + cuerpo * (1.0 - fres) * opaco) / max(a, 1e-3);
-  float lumSol = clamp(dot(sol, vec3(0.33)), 0.0, 1.0) * (1.0 - espuma);
-  c += sol * (1.0 - espuma) / max(a, 0.05);
-  a = max(a, lumSol);
+  vec3 c;
+  float a;
+  if (uConRefraccion > 0.5) {
+    // Con refracción el agua es opaca (ya lleva dentro lo que se ve a través): reflejo según
+    // Fresnel sobre el cuerpo refractado, y el destello del sol encima.
+    c = mix(cuerpoRefr, reflejo, fres) + sol * (1.0 - espuma);
+    a = 1.0;
+  } else {
+    // Sin ella (calidad mínima): mezcla con transparencia, como antes.
+    a = fres + (1.0 - fres) * opaco;
+    c = (reflejo * fres + cuerpo * (1.0 - fres) * opaco) / max(a, 1e-3);
+    float lumSol = clamp(dot(sol, vec3(0.33)), 0.0, 1.0) * (1.0 - espuma);
+    c += sol * (1.0 - espuma) / max(a, 0.05);
+    a = max(a, lumSol);
+  }
   c = mix(c, blanco, espuma);
   a = max(a, espuma);
   a *= mar;

@@ -16,6 +16,7 @@ import { crearPaseo, type PuntoMuro } from './paseo';
 import { crearMedidaArena } from './arena';
 import { crearSombras } from './sombras';
 import { crearPostproceso } from './postproceso';
+import { crearRefraccion } from './refraccion';
 import { cargarFino, cargarRelieve } from './relieve';
 import { crearTeselas } from './teselas';
 import { cargarEdificios, cargarEdificiosLidar } from './edificios';
@@ -131,6 +132,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   const sombras = crearSombras(render, escena, movil ? 1024 : 2048);
   Object.assign(comunes, sombras.uniformes);
   let fuerzaSombra = 0;
+  // Lo que se ve a través del agua (refraccion.ts).
+  const refraccion = crearRefraccion(render, escena, camara);
   // Máscara de playa (OpenStreetMap, tools/playa-mascara.py): sin repetir, sin mipmaps.
   const uPlaya = { value: neutra(0, 0, 0) as THREE.Texture };
   Object.assign(comunes, { uPlaya, uFondoAgua: { value: fondoAgua.textura } });
@@ -159,8 +162,10 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     fondoAgua.actualizar();
     arena.rehacer();
   });
-  const agua = crearAgua({ escena, texRelieve: fondoAgua.textura, nRelieve: fondoAgua.n, pasoRelieve: PASO_RELIEVE, nCampo: Math.floor((relieve.n - 1) / PASO_CAMPO) + 1, comunes: comunesAgua, movil, normales: neutra(128, 128, 255) });
+  const agua = crearAgua({ escena, texRelieve: fondoAgua.textura, nRelieve: fondoAgua.n, pasoRelieve: PASO_RELIEVE, nCampo: Math.floor((relieve.n - 1) / PASO_CAMPO) + 1, comunes: { ...comunesAgua, ...sombras.uniformes, ...refraccion.uniformes }, movil, normales: neutra(128, 128, 255) });
   textura('waternormals.jpg', false, agua.uniformes.uNormAgua);
+  // La arena mojada llega hasta donde sube el agua con las olas: el terreno usa los mismos R2 y setup.
+  Object.assign(comunes, { uR2: agua.uniformes.uR2, uSetup: agua.uniformes.uSetup });
   const reflejo = crearReflejo(render, movil ? 0.35 : 0.5);
   agua.uniformes.uReflejo.value = reflejo.textura;
   agua.uniformes.uMatReflejo.value = reflejo.matriz;
@@ -335,6 +340,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     render, escena, camara, movil,
     ocultarEnAO: () => [...agua.objetos, ...cielo.objetos, tierraLejana],
     tamanoSombras: (t) => sombras.tamano(t),
+    escalaRefraccion: (e) => refraccion.escala(e),
   });
   function ajustarTamano() {
     const w = lienzo.clientWidth, h = lienzo.clientHeight;
@@ -390,6 +396,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     // Sombras alrededor de lo que se mira: más terreno cuanto más lejos está la cámara.
     const semilado = THREE.MathUtils.clamp(camara.position.distanceTo(controles.target) * 0.9, 120, 2200);
     sombras.actualizar(controles.target, semilado, comunes.uDirSol.value, fuerzaSombra);
+    refraccion.dibujar(agua.objetos);
     post.dibujar(ahora);
     siguienteCuadro(cuadro);
   }
