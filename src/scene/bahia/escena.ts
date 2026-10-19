@@ -366,7 +366,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     cielo.seguir(camara.position, vLuna);
     colocarEtiquetas();
     teselas.actualizar(camara);
-    agua.actualizar(teselas.visibles(), estado.nivel + estado.r2 + 1);
+    agua.actualizar(teselas.visibles(), estado.nivel + estado.r2 + 1, camara.position);
     if (agua.uniformes.uConReflejo.value > 0) reflejo.actualizar(escena, camara, estado.nivel, [...agua.objetos, ...cielo.objetos]);
     render.render(escena, camara);
     siguienteCuadro(cuadro);
