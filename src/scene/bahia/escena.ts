@@ -14,6 +14,8 @@ import metaArena from '../bahia-arena.json';
 import metaPaseo from '../bahia-paseo.json';
 import { crearPaseo, type PuntoMuro } from './paseo';
 import { crearMedidaArena } from './arena';
+import { crearSombras } from './sombras';
+import { crearPostproceso } from './postproceso';
 import { cargarFino, cargarRelieve } from './relieve';
 import { crearTeselas } from './teselas';
 import { cargarEdificios, cargarEdificiosLidar } from './edificios';
@@ -54,8 +56,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   const movil = movilDetectado();
   const reducirMovimiento = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const render = new THREE.WebGLRenderer({ canvas: lienzo, antialias: !movil, powerPreference: 'high-performance' });
-  render.setPixelRatio(Math.min(devicePixelRatio, movil ? 1.25 : 1.75));
-  render.toneMapping = THREE.NeutralToneMapping; // conserva el tono y la saturación (estilo de animación)
+  // Resolución y tono los pone el postprocesado (crearPostproceso): ACES, como mucho 2× la de CSS.
+  render.setPixelRatio(Math.min(devicePixelRatio, 2));
   render.outputColorSpace = THREE.SRGBColorSpace;
 
   const escena = new THREE.Scene();
@@ -125,6 +127,10 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     uTexMojadaN: { value: neutra(128, 128, 255) as THREE.Texture },
   };
   Object.assign(comunes, texturas);
+  // Sombras del sol y de la luna (sombras.ts): sus uniformes van con los comunes.
+  const sombras = crearSombras(render, escena, movil ? 1024 : 2048);
+  Object.assign(comunes, sombras.uniformes);
+  let fuerzaSombra = 0;
   // Máscara de playa (OpenStreetMap, tools/playa-mascara.py): sin repetir, sin mipmaps.
   const uPlaya = { value: neutra(0, 0, 0) as THREE.Texture };
   Object.assign(comunes, { uPlaya, uFondoAgua: { value: fondoAgua.textura } });
@@ -234,7 +240,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   // ---------- Cámara ----------
   const controles = new MapControls(camara, lienzo);
   controles.enableDamping = true;
-  controles.dampingFactor = 0.08;
+  controles.dampingFactor = 0.05;
   controles.screenSpacePanning = false;
   controles.zoomToCursor = true;
   controles.minDistance = 6;
@@ -273,9 +279,11 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   function actualizarLuz(t: number) {
     const c = cielo.actualizar(t);
     const p = c.paleta;
-    render.toneMappingExposure = THREE.MathUtils.lerp(0.32, 0.68, p.luzDia);
+    render.toneMappingExposure = THREE.MathUtils.lerp(0.62, 0.78, p.luzDia);
     const solArriba = THREE.MathUtils.smoothstep(c.estado.sol.altura, -2, 8);
     const brilloLuna = 0.3 * c.noche * c.lunaArriba * c.estado.luna.fraccion;
+    // Sombras: plenas con el sol (también las largas del amanecer y el atardecer) y suaves con luna.
+    fuerzaSombra = solArriba > 0.02 ? THREE.MathUtils.smoothstep(c.estado.sol.altura, -1, 4) * 0.92 : Math.min(1, brilloLuna * 4) * 0.5;
     if (solArriba > 0.02 || brilloLuna < 0.01) {
       comunes.uDirSol.value.copy(c.vSol.y > 0 ? c.vSol : new THREE.Vector3(c.vSol.x, 0.05, c.vSol.z).normalize());
       comunes.uColorSol.value.copy(p.luzSol);
@@ -323,10 +331,15 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     }, 0);
   }
 
+  const post = crearPostproceso({
+    render, escena, camara, movil,
+    ocultarEnAO: () => [...agua.objetos, ...cielo.objetos, tierraLejana],
+    tamanoSombras: (t) => sombras.tamano(t),
+  });
   function ajustarTamano() {
     const w = lienzo.clientWidth, h = lienzo.clientHeight;
     if (!w || !h) return;
-    render.setSize(w, h, false);
+    post.ajustar(w, h);
     camara.aspect = w / h;
     camara.updateProjectionMatrix();
   }
@@ -374,12 +387,15 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     teselas.actualizar(camara);
     agua.actualizar(teselas.visibles(), estado.nivel + estado.r2 + 1, camara.position);
     if (agua.uniformes.uConReflejo.value > 0) reflejo.actualizar(escena, camara, estado.nivel, [...agua.objetos, ...cielo.objetos]);
-    render.render(escena, camara);
+    // Sombras alrededor de lo que se mira: más terreno cuanto más lejos está la cámara.
+    const semilado = THREE.MathUtils.clamp(camara.position.distanceTo(controles.target) * 0.9, 120, 2200);
+    sombras.actualizar(controles.target, semilado, comunes.uDirSol.value, fuerzaSombra);
+    post.dibujar(ahora);
     siguienteCuadro(cuadro);
   }
   siguienteCuadro(cuadro);
 
-  if (import.meta.env.DEV) Object.assign(globalThis, { __bahia: { escena, camara, controles, relieve, teselas, agua, comunes, volarA, render, arena, fondoAgua } });
+  if (import.meta.env.DEV) Object.assign(globalThis, { __bahia: { escena, camara, controles, relieve, teselas, agua, comunes, volarA, render, arena, fondoAgua, post, sombras } });
 
   return {
     actualizar(e: EstadoEscena) { estado = e; revisarCampos(); },

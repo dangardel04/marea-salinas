@@ -9,6 +9,7 @@
 // (teselas de 100 y 50 m, ~1 m entre vértices); la ortofoto es la del nivel 5, recortada.
 
 import * as THREE from 'three';
+import { CAPA_SOMBRA } from './sombras';
 import { LADO, NIVEL_MAX_ORTO, recuadroTesela } from '../../bahia';
 import type { Relieve } from './relieve';
 import { TERRENO_FRAG, TERRENO_VERT } from './sombreado';
@@ -230,6 +231,7 @@ export function crearTeselas(opciones: {
       t.usada = reloj;
       if (!t.malla) {
         t.malla = new THREE.Mesh(geometria(t.nivel, t.i, t.j), material());
+        t.malla.layers.enable(CAPA_SOMBRA);
         t.malla.frustumCulled = false;
         grupo.add(t.malla);
       }

@@ -39,6 +39,12 @@ export function crearCielo(escena: THREE.Scene, movil: boolean) {
   uc.rayleigh.value = 1.4;
   uc.mieCoefficient.value = 0.004;
   uc.mieDirectionalG.value = 0.85;
+  // El cielo de Preetham es de alto rango: con el tono ACES y la exposición de la escena se
+  // quemaba a blanco y su brillo (≈3 en luz lineal) velaba la imagen con el bloom. Se atenúa solo
+  // él, hasta ≈1,2 a mediodía (factor elegido a ojo, ESTÉTICO).
+  cielo.material.onBeforeCompile = (s) => {
+    s.fragmentShader = s.fragmentShader.replace('gl_FragColor = vec4( texColor, 1.0 );', 'gl_FragColor = vec4( texColor * 0.16, 1.0 );');
+  };
 
   const uCupula = {
     uHorizonte: { value: new THREE.Color() }, uCenit: { value: new THREE.Color() },

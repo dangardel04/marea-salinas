@@ -7,9 +7,15 @@
 //   uColorNiebla, uDensidadNiebla niebla exponencial al cuadrado (igual que FogExp2)
 //
 // La ortofoto ya lleva las sombras y la luz del día en que se voló, así que no se ilumina con
-// un modelo físico completo: solo se escala con la luz del momento y algo con el relieve.
+// un modelo físico completo: solo se escala con la luz del momento, algo con el relieve y con las
+// sombras de ahora (a medias). Lo dibujado (arena, muro, edificios) sí: luz física sencilla.
+
+import { SOMBRA_GLSL } from './sombras';
 
 const COMUNES = /* glsl */ `
+uniform vec3 uCieloHorizonte;
+uniform vec3 uCieloCenit;
+uniform float uLuzDia;
 uniform vec3 uDirSol;
 uniform vec3 uColorSol;
 uniform float uLuzSol;
@@ -24,11 +30,38 @@ vec3 conNiebla(vec3 c, vec3 pos) {
   float f = 1.0 - exp(-uDensidadNiebla * uDensidadNiebla * d * d);
   return mix(c, uColorNiebla, f);
 }
-vec3 luz(vec3 n, float relieve) {
+vec3 luz(vec3 n, float relieve, float s) {
   float ndl = max(dot(normalize(n), uDirSol), 0.0);
-  return uAmbiente + uColorSol * uLuzSol * mix(1.0, 0.45 + 0.75 * ndl, relieve);
+  return uAmbiente + uColorSol * uLuzSol * mix(1.0, 0.45 + 0.75 * ndl, relieve) * s;
+}
+${SOMBRA_GLSL}
+vec3 cieloEn(vec3 r) { return mix(uCieloHorizonte, uCieloCenit, pow(clamp(r.y, 0.0, 1.0), 0.45)); }
+/** Luz física sencilla: difusa de Lambert, especular GGX (Smith, Fresnel de Schlick), ambiente
+ *  del cielo (arriba) y del rebote en el suelo (abajo), y reflejo del cielo según la rugosidad.
+ *  s = sombra del sol (0–1); ao = oclusión ambiental (0–1). */
+vec3 iluminar(vec3 albedo, vec3 n, vec3 v, float rugosidad, float f0, float s, float ao) {
+  vec3 l = uDirSol;
+  vec3 hv = normalize(l + v);
+  float ndl = max(dot(n, l), 0.0), ndv = max(dot(n, v), 1e-3), ndh = max(dot(n, hv), 0.0), vdh = max(dot(v, hv), 0.0);
+  float a = rugosidad * rugosidad, a2 = a * a;
+  float dd = ndh * ndh * (a2 - 1.0) + 1.0;
+  float D = a2 / (3.14159265 * dd * dd);
+  float k = (rugosidad + 1.0) * (rugosidad + 1.0) / 8.0;
+  float G = (ndv / (ndv * (1.0 - k) + k)) * (ndl / (ndl * (1.0 - k) + k));
+  float F = f0 + (1.0 - f0) * pow(1.0 - vdh, 5.0);
+  vec3 sol = uColorSol * uLuzSol * 1.5 * s;
+  vec3 difusa = albedo * (1.0 - F) * ndl * sol;
+  vec3 especular = sol * D * G * F / (4.0 * ndv + 1e-3);
+  vec3 cielo = uAmbiente * 1.15, suelo = uAmbiente * 0.42 * vec3(1.0, 0.95, 0.86);
+  vec3 ambiente = albedo * mix(suelo, cielo, n.y * 0.5 + 0.5) * ao;
+  float Fv = f0 + (1.0 - f0) * pow(1.0 - ndv, 5.0);
+  vec3 reflejo = cieloEn(reflect(-v, n)) * (0.15 + 0.85 * uLuzDia) * Fv * (1.0 - rugosidad) * (1.0 - rugosidad) * ao;
+  return difusa + especular + ambiente + reflejo;
 }
 `;
+
+/** Lo mismo para otros sombreadores de la escena (el muro del paseo). */
+export const LUZ_GLSL = COMUNES;
 
 export const TERRENO_VERT = /* glsl */ `
 attribute float medido;
@@ -55,11 +88,8 @@ uniform sampler2D uOrto;
 uniform vec4 uUv;
 uniform float uTieneOrto;
 uniform vec3 uArenaSeca;       // color de la arena seca medido en la ortofoto (lineal)
-uniform vec3 uCieloHorizonte;
-uniform vec3 uCieloCenit;
 uniform vec3 uDirBrillo;
 uniform vec3 uColorBrillo;
-uniform float uLuzDia;
 uniform sampler2D uTexArena;   // arena (Poly Haven «Aerial Beach 01», 30 × 30 m, CC0)
 uniform sampler2D uTexArenaN;
 uniform sampler2D uTexArenaR;
@@ -137,16 +167,15 @@ void main() {
   muro = max(muro, pieMuro * empinado);
   usarFoto *= (1.0 - espumaFoto) * (1.0 - pieMuro);
 
-  // ---------- Estilo de animación (playa y muro) ----------
-  // Colores planos y saturados, luz por bandas (luz / media sombra / sombra) y bordes nítidos.
-  // ESTILIZADO a propósito: no es el color medido.
+  // ---------- Playa y muro dibujados ----------
+  // Colores elegidos (no el medido en la foto), con luz física: la arena seca es mate; la mojada,
+  // más oscura, lisa y con reflejo; transiciones suaves entre ellas.
   vec3 arenaSeca = vec3(0.86, 0.66, 0.38);     // sRGB ≈ (239, 213, 166)
   vec3 arenaHumeda = vec3(0.64, 0.5, 0.3);     // sRGB ≈ (209, 189, 149)
   vec3 arenaEmpapada = vec3(0.48, 0.38, 0.25); // ≈ (184, 166, 137), justo encima de la orilla
-  // Franja mojada con bordes nítidos (antialias con fwidth, no degradados).
+  // Franja mojada (lo que cubrió la marea en las últimas horas) y empapada (junto al agua).
   float rango = max(uNivelMax - uNivel, 0.25);
-  float altoRel = (h - uNivel) / rango;                // 0 en la orilla, 1 en lo alto de la marea
-  float aa = fwidth(h) * 1.5 + 0.004;
+  float aa = fwidth(h) * 1.5 + 0.05;
   float mojada = 1.0 - smoothstep(rango + 0.08 - aa, rango + 0.08 + aa, h - uNivel);
   // Empapada: solo la franja que moja el mar; con la cota de rebose (no la altura), así las
   // hondonadas detrás de un caballón no salen como manchas oscuras.
@@ -171,27 +200,20 @@ void main() {
 
   // ---------- Luz ----------
   vec3 n = normalize(vNor);
-  float estilo = max(playa, muro);
-  float ndl = dot(n, uDirSol);
-  // Dos bandas: al sol y a la sombra. La sombra es el mismo color algo más apagado y frío (no gris);
-  // solo cae en sombra lo que de verdad da la espalda al sol (caras del muro, no la arena en pendiente).
-  float alSol = smoothstep(-0.12, -0.06, ndl);
-  vec3 luzLlena = uAmbiente * 1.2 + uColorSol * uLuzSol * 1.05;
-  vec3 luzBandas = luzLlena * mix(vec3(0.66, 0.66, 0.74), vec3(1.0), alSol);
-  c *= mix(luz(n, mix(0.55, 0.45, usarFoto)), luzBandas, estilo);
-  // Sombra de contacto al pie del muro, como una mancha de borde nítido.
-  float sombra = smoothstep(0.28, 0.34, vOcl) * 0.32 + smoothstep(0.6, 0.66, vOcl) * 0.18;
-  c *= 1.0 - sombra * estilo;
-  // Contornos dibujados en los pliegues bruscos del terreno (borde superior y pie del muro,
-  // escalones): donde la normal cambia mucho de un píxel al siguiente.
-  float pliegue = length(fwidth(n));
-  float contorno = smoothstep(0.22, 0.42, pliegue) * (1.0 - smoothstep(9.5, 12.0, h)) * (1.0 - smoothstep(250.0, 700.0, d));
-  c = mix(c, vec3(0.16, 0.12, 0.1) * (0.3 + 0.7 * uLuzSol + uAmbiente), contorno * 0.85);
-  // Arena empapada: un brillo del sol en bandas (no un degradado).
   vec3 v = normalize(cameraPosition - vPos);
-  vec3 r = reflect(-v, n);
-  float brilloSol = smoothstep(0.93, 0.96, dot(r, uDirBrillo)) * step(0.0, uDirBrillo.y);
-  c = mix(c, uColorBrillo * 1.2 + 0.2, brilloSol * empapada * playa * 0.6);
+  float estilo = max(playa, muro);
+  float sSol = sombra(vPos, n);
+  // Oclusión de contacto (al pie del muro, en los pliegues), suave.
+  float ao = 1.0 - smoothstep(0.12, 0.75, vOcl) * 0.5;
+  // Arena: seca, mate (rugosidad 0,92); empapada, la película de agua la hace lisa (0,25) y refleja.
+  float rug = mix(mix(0.92, 0.6, mojada * 0.5), 0.25, empapada) ;
+  rug = mix(rug, 0.88, muro);
+  float f0 = mix(0.03, 0.02, empapada);
+  vec3 dibujado = iluminar(c, n, v, rug, f0, sSol, ao);
+  // La foto ya trae su luz: se escala con la de ahora y con las sombras (a medias, que la foto
+  // tiene las suyas del día del vuelo, más cortas o largas según la hora).
+  vec3 foto = c * luz(n, mix(0.55, 0.45, usarFoto), mix(1.0, sSol, 0.85)) * mix(1.0, ao, 0.5);
+  c = mix(foto, dibujado, estilo);
 
   gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
   #include <colorspace_fragment>
@@ -219,18 +241,23 @@ varying vec3 vPos;
 varying vec3 vNor;
 void main() {
   vec3 n = normalize(vNor) * (gl_FrontFacing ? 1.0 : -1.0);
-  // Las fachadas reciben la luz con más contraste que los tejados (que ya traen la de la foto).
+  vec3 v = normalize(cameraPosition - vPos);
   float fachada = 1.0 - abs(n.y);
   // Bandas de plantas (cada 3 m, la misma altura por planta supuesta en el modelo) y huecos de
   // ventana: DECORATIVO, solo para dar escala; el Catastro no da fachadas.
   float planta = fract(vPos.y / 3.0);
-  float hueco = step(0.35, planta) * step(planta, 0.8) * step(0.45, fract((vPos.x + vPos.z) / 2.6));
-  vec3 base = mix(vColor, vColor * vec3(0.55, 0.6, 0.66), hueco * fachada * 0.8);
-  vec3 c = base * luz(n, mix(0.5, 1.0, fachada));
+  float hueco = step(0.35, planta) * step(planta, 0.8) * step(0.45, fract((vPos.x + vPos.z) / 2.6)) * step(0.5, fachada);
+  // Materiales (PBR sencillo): tejado algo rugoso, enfoscado de fachada mate, vidrio liso que
+  // refleja el cielo. Albedo: el color de cada edificio (del LiDAR en Salinas) y el vidrio, oscuro.
+  vec3 albedo = mix(vColor, vColor * vec3(0.22, 0.26, 0.3), hueco);
+  float rug = mix(mix(0.72, 0.9, fachada), 0.1, hueco);
+  float f0 = mix(0.04, 0.05, hueco);
+  // Los tejados del LiDAR traen ya la luz de la foto aérea: menos contraste de sol en ellos.
+  vec3 c = iluminar(albedo, n, v, rug, f0, sombra(vPos, n), mix(0.8, 1.0, fachada));
   // De noche, algunas ventanas encendidas al azar (DECORATIVO).
   vec2 celda = floor(vec2((vPos.x + vPos.z) / 2.6, vPos.y / 3.0));
   float encendida = step(0.72, fract(sin(dot(celda, vec2(12.9898, 78.233))) * 43758.5453));
-  c += vec3(1.0, 0.72, 0.38) * 0.55 * hueco * fachada * encendida * smoothstep(0.5, 0.9, uNoche);
+  c += vec3(1.0, 0.72, 0.38) * 2.6 * hueco * encendida * smoothstep(0.5, 0.9, uNoche);
   gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
   #include <colorspace_fragment>
 }

@@ -1,6 +1,7 @@
 // Edificios del Catastro (ver tools/bahia-edificios.ts): una sola malla con color por vértice.
 
 import * as THREE from 'three';
+import { CAPA_SOMBRA } from './sombras';
 import { EDIFICIOS_FRAG, EDIFICIOS_VERT } from './sombreado';
 
 export async function cargarEdificios(url: string, nVertices: number, comunes: Record<string, THREE.IUniform>) {
@@ -25,6 +26,7 @@ export async function cargarEdificios(url: string, nVertices: number, comunes: R
   geo.computeBoundingSphere();
   const mat = new THREE.ShaderMaterial({ vertexShader: EDIFICIOS_VERT, fragmentShader: EDIFICIOS_FRAG, uniforms: comunes, side: THREE.DoubleSide }); // fachadas de una cara, vistas por los dos lados
   const malla = new THREE.Mesh(geo, mat);
+  malla.layers.enable(CAPA_SOMBRA);
   malla.name = 'edificios';
   return malla;
 }
@@ -54,6 +56,7 @@ export async function cargarEdificiosLidar(url: string, nVertices: number, nIndi
   geo.computeBoundingSphere();
   const mat = new THREE.ShaderMaterial({ vertexShader: EDIFICIOS_VERT, fragmentShader: EDIFICIOS_FRAG, uniforms: comunes, side: THREE.DoubleSide });
   const malla = new THREE.Mesh(geo, mat);
+  malla.layers.enable(CAPA_SOMBRA);
   malla.name = 'edificios-lidar';
   return malla;
 }

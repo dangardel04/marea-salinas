@@ -2,29 +2,15 @@
 // (tools/paseo-muro.py: eje del «Paseo del Cantábrico» de OpenStreetMap; borde y pie del muro del
 // LiDAR de 2024). Estilo de animación, a juego con la playa: luz por bandas y contornos.
 // La sillería, el color y la barandilla (1 m, postes cada 2 m) son DECORATIVOS; la línea y la
-// altura del muro, medidas.
+// altura del muro, medidas. Luz física sencilla y sombras, como el terreno (sombreado.ts).
 
 import * as THREE from 'three';
+import { LUZ_GLSL } from './sombreado';
+import { CAPA_SOMBRA } from './sombras';
 
 export interface PuntoMuro { arriba: [number, number, number]; pie: [number, number, number]; eje: [number, number, number] }
 
-const COMUN = /* glsl */ `
-uniform vec3 uDirSol;
-uniform vec3 uColorSol;
-uniform float uLuzSol;
-uniform vec3 uAmbiente;
-uniform vec3 uColorNiebla;
-uniform float uDensidadNiebla;
-vec3 bandas(vec3 n) {
-  float ndl = dot(normalize(n), uDirSol);
-  vec3 llena = uAmbiente * 1.2 + uColorSol * uLuzSol * 1.05;
-  return llena * mix(vec3(0.66, 0.66, 0.74), vec3(1.0), smoothstep(-0.05, 0.02, ndl));
-}
-vec3 niebla(vec3 c, vec3 p) {
-  float d = length(p - cameraPosition);
-  return mix(c, uColorNiebla, 1.0 - exp(-uDensidadNiebla * uDensidadNiebla * d * d));
-}
-`;
+
 
 const VERT = /* glsl */ `
 attribute float tipo;   // 0 cara del muro, 1 albardilla, 2 suelo del paseo, 3 barandilla
@@ -41,8 +27,7 @@ void main() {
 `;
 
 const FRAG = /* glsl */ `
-${COMUN}
-uniform float uNivelMax;
+${LUZ_GLSL}
 varying vec2 vUv;    // cara: u = metros a lo largo, v = metros desde el pie; suelo: metros (x, z)
 varying vec3 vPos;
 varying vec3 vNor;
@@ -79,8 +64,11 @@ void main() {
   } else {
     c = vec3(0.92, 0.95, 0.96);                   // barandilla blanca
   }
-  c *= bandas(n);
-  gl_FragColor = vec4(niebla(c, vPos), 1.0);
+  // piedra y baldosa mates; la barandilla, pintura algo satinada
+  float rug = vTipo > 2.5 ? 0.45 : 0.88;
+  vec3 v = normalize(cameraPosition - vPos);
+  c = iluminar(c, n, v, rug, 0.04, sombra(vPos, n), 1.0);
+  gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
   #include <colorspace_fragment>
 }
 `;
@@ -153,5 +141,6 @@ export function crearPaseo(tramos: PuntoMuro[][], comunes: Record<string, THREE.
   const mat = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, uniforms: comunes, side: THREE.DoubleSide });
   const malla = new THREE.Mesh(geo, mat);
   malla.name = 'paseo';
+  malla.layers.enable(CAPA_SOMBRA);
   return malla;
 }
