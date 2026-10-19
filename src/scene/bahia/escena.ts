@@ -13,6 +13,7 @@ import metaFino from '../bahia-fino.json';
 import metaArena from '../bahia-arena.json';
 import metaPaseo from '../bahia-paseo.json';
 import { crearPaseo, type PuntoMuro } from './paseo';
+import { crearMedidaArena } from './arena';
 import { cargarFino, cargarRelieve } from './relieve';
 import { crearTeselas } from './teselas';
 import { cargarEdificios, cargarEdificiosLidar } from './edificios';
@@ -150,6 +151,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     relieve.ponerFino(metaFino, datos);
     teselas.rehacerFino();
     fondoAgua.actualizar();
+    arena.rehacer();
   });
   const agua = crearAgua({ escena, texRelieve: fondoAgua.textura, nRelieve: fondoAgua.n, pasoRelieve: PASO_RELIEVE, nCampo: Math.floor((relieve.n - 1) / PASO_CAMPO) + 1, comunes: comunesAgua, movil, normales: neutra(128, 128, 255) });
   textura('waternormals.jpg', false, agua.uniformes.uNormAgua);
@@ -176,6 +178,9 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     const y = (l.y ?? relieve.altura(l.x, l.z)) + 14;
     return { e, p: new THREE.Vector3(l.x, y, l.z) };
   });
+  // Cuánta arena hay entre el muro y el agua en el punto elegido (tocando la playa o de la lista).
+  const arena = crearMedidaArena({ escena, camara, lienzo, capa, relieve, cotaMar: fondoAgua.cota });
+  etiquetas.push(arena.etiqueta);
   const proy = new THREE.Vector3();
   // Los paneles son translúcidos: un rótulo debajo de uno se leería a través y ensuciaría el texto.
   const paneles = ['.panel', '.vistas', '.ayuda-controles', '.barra'];
@@ -364,6 +369,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     comunes.uNivelMax.value = estado.nivelMax6h;
     if (Math.abs(estado.t - ultimoCielo) > 60_000) { vLuna = actualizarLuz(estado.t); ultimoCielo = estado.t; }
     cielo.seguir(camara.position, vLuna);
+    arena.actualizar(estado.nivel);
     colocarEtiquetas();
     teselas.actualizar(camara);
     agua.actualizar(teselas.visibles(), estado.nivel + estado.r2 + 1, camara.position);
@@ -373,7 +379,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   }
   siguienteCuadro(cuadro);
 
-  if (import.meta.env.DEV) Object.assign(globalThis, { __bahia: { escena, camara, controles, relieve, teselas, agua, comunes, volarA, render } });
+  if (import.meta.env.DEV) Object.assign(globalThis, { __bahia: { escena, camara, controles, relieve, teselas, agua, comunes, volarA, render, arena, fondoAgua } });
 
   return {
     actualizar(e: EstadoEscena) { estado = e; revisarCampos(); },
@@ -381,16 +387,11 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     pendientes: () => teselas.pendientes(),
     relieve,
     meta: metaRelieve,
-    /** Metros de arena descubierta entre el pie del muro y el agua, en el perfil de referencia
-     *  (frente al Balneario), con el mar a `nivel` m sobre el CH. 0 si el agua llega al muro. */
-    anchoArena(nivel: number) {
-      const { pie, haciaMar } = metaPaseo.perfilArena;
-      for (let d = 0; d < 600; d += 0.5) {
-        if (relieve.altura(pie[0] + haciaMar[0] * d, pie[2] + haciaMar[1] * d) < nivel) return d;
-      }
-      return null;
+    /** Arena entre el muro y el agua en el punto elegido (ver arena.ts). */
+    arena: {
+      medir: arena.medir, margen: arena.margen, puntos: arena.puntos,
+      elegido: arena.elegido, elegir: arena.elegir, alCambiar: arena.alCambiar,
     },
-    lugarArena: metaPaseo.perfilArena.nombre,
     destruir() {
       capa.remove();
       activo = false;

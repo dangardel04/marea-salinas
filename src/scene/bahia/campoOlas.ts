@@ -168,6 +168,15 @@ export function crearFondoAgua(relieve: Relieve) {
     tex.needsUpdate = true;
   }
 
+  /** Cota de rebose en (x, z), interpolada: el mar llega ahí si su nivel la supera. */
+  function cota(x: number, z: number): number {
+    const c = Math.min(n - 1.001, Math.max(0, (x + LADO / 2) / PASO_RELIEVE));
+    const f = Math.min(n - 1.001, Math.max(0, (z + LADO / 2) / PASO_RELIEVE));
+    const c0 = Math.floor(c), f0 = Math.floor(f), fx = c - c0, fy = f - f0;
+    const g = (ff: number, cc: number) => datos[(ff * n + cc) * 2 + 1];
+    return (g(f0, c0) * (1 - fx) + g(f0, c0 + 1) * fx) * (1 - fy) + (g(f0 + 1, c0) * (1 - fx) + g(f0 + 1, c0 + 1) * fx) * fy;
+  }
+
   actualizar();
-  return { textura: tex, n, actualizar };
+  return { textura: tex, n, actualizar, cota };
 }

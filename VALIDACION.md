@@ -274,3 +274,52 @@ Ahora la nube de 2024 forma parte del relieve y del ajuste (es la arena «medida
 
 - **Uniones**: en los últimos 8 m antes de un hueco del LiDAR, el relieve de 1 m pasa poco a poco al de 5 m. En 75 cortes a lo largo de la playa, el mayor salto entre puntos separados 0,5 m es de 3,5 cm de mediana (p90 6 cm).
 - **Franja del satélite bajo el borde del LiDAR**: no se deja que supere la cota del borde medido más cercano. Sin ese límite había escalones de hasta 0,5 m, por el cambio de la playa entre 2024 y 2025‑26.
+
+## 11. Arena entre el muro del paseo y el agua (`python tools/validar-ancho.py`, `tools/ancho-correccion.py`, `tools/validar-puntos.py`)
+
+Cálculo del 19/10/2026. Referencia: la línea de agua de cada imagen Sentinel‑2 (2025‑2026) en los perfiles de playa de §10, medida desde el pie del muro, frente al ancho que da la web con el nivel medido en Avilés a la hora de la imagen.
+
+### 11.1 Hasta dónde llega el agua
+
+El agua no se queda en el nivel en calma: las olas la suben por la arena. La subida se mide en cada caso como la cota del suelo donde el satélite ve la orilla menos el nivel medido. Depende de la marea (en pleamar la orilla queda más baja, sobre la arena más empinada):
+
+| Nivel del mar (mediana del tramo) | 0,84 m | 1,31 m | 1,57 m | 2,19 m | 2,61 m | 3,28 m |
+|---|---|---|---|---|---|---|
+| Subida de la orilla | 0,46 m | 1,05 m | 0,83 m | 0,43 m | 0,17 m | -0,03 m |
+| Casos | 436 | 237 | 155 | 166 | 246 | 396 |
+
+Con una subida fija de 0,50 m, el ancho tenía sesgos de +5 a +8 m en marea baja y media y de −10 m en pleamar. Con la subida según la marea, dejando fuera cada imagen (1636 casos): sesgo -1,8 → **-0,4 m**. La dispersión es grande (MAD 34,9 m): es lo que varía de verdad la orilla con las olas de cada momento, más el píxel del satélite.
+
+### 11.2 Corrección local (la playa ha cambiado desde el LiDAR de 2024)
+
+En pleamar el ancho depende sobre todo de la arena alta, que es la del LiDAR de agosto de 2024. En 2025‑2026 el satélite ve más arena al oeste (Balneario, Club Náutico) y menos en el centro. Para cada perfil y tramo de nivel se suma a la web la mediana de (observado − web) de los perfiles vecinos (±3, 175 m de playa; al menos 15 casos; encogida hacia 0 con pocos datos y limitada a ±40 m). Validación dejando fuera cada imagen:
+
+| Zona | Sin corrección: sesgo / MAD | Con corrección local: sesgo / MAD |
+|---|---|---|
+| todas (1400 casos) | +3,1 m / 30,1 m | **-0,2 m** / 25,1 m |
+| Salinas oeste (x < −700) (210 casos) | -20,4 m / 34,5 m | **-7,1 m** / 28,7 m |
+| centro (−700 a −200) (651 casos) | +10,5 m / 24,7 m | **+3,5 m** / 17,9 m |
+| este (x > −200) (539 casos) | -2,1 m / 33,7 m | **-1,9 m** / 35,3 m |
+
+(Se probó también pasar la corrección al relieve, subiendo o bajando la arena: con las barras y canales de bajamar la orilla salta y no fue robusto. La cinta de la medida, por eso, puede pasar por encima del agua dibujada, que sigue siendo la del relieve de 2024.)
+
+### 11.3 En los puntos de la lista
+
+Medianas por tramo de nivel, web (con todo lo anterior) frente a lo observado (dentro de muestra: la corrección se calculó con estas mismas imágenes):
+
+| Punto | Marea 1,5–2,5 m: web / satélite | Marea 3,0–3,6 m: web / satélite |
+|---|---|---|
+| extremo oeste | 59 / 62 m | 38 / 44 m |
+| Balneario | 59 / 62 m | 38 / 44 m |
+| Club Náutico | 53 / 66 m | 34 / 35 m |
+| Paseo del Cantábrico | 75 / 66 m | 46 / 40 m |
+| Edificio Miramar | 68 / 65 m | 44 / 43 m |
+| Torres Gauzón | 84 / 74 m | 51 / 43 m |
+| extremo este | 82 / 82 m | 51 / 46 m |
+
+### 11.4 Conclusiones
+
+- **Margen que se muestra en la web: ±25 m** (MAD del error dejando fuera cada imagen). En marea baja la dispersión es mayor (la arena es casi llana: unos centímetros de ola mueven la orilla decenas de metros).
+- **Antes de este cálculo, el panel daba demasiada arena**: medía hasta el agua en calma, sin la subida de las olas (en la arena de 1:85, cada 0,5 m de subida son unos 40 m) y, en el oeste, desde un «pie del muro» que caía encima del paseo en las bajadas y escaleras.
+- **Limitaciones**: no hay medidas de campo; las imágenes son de hacia las 11:30 UTC; la playa cambia con los temporales y la corrección es la media de un año.
+

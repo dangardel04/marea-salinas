@@ -171,6 +171,11 @@ Error = predicción − tabla oficial.
 - Frente al LiDAR de 2024, sin usarlo en el ajuste: 0,46 m RMS el perfil del satélite y 0,68 m la pendiente genérica.
 - En bajamar se descubre más arena de la que mostraba la escena: la cota +1,5 m queda unos 25 m más hacia el mar.
 
+### Arena entre el muro y el agua
+
+- Comparada con la orilla de 1.636 imágenes de satélite (2025‑2026), dejando fuera cada imagen: sesgo de −7 a +4 m según la zona de la playa y **margen típico de ±25 m**, que es lo que mueven la orilla las olas de cada momento.
+- Cuenta lo que suben las olas por la arena (medido) y lo que ha cambiado la playa desde el LiDAR de 2024 (corrección local).
+
 ### Olas
 
 - **Altura en mar abierto**: comparando el modelo con la boya de Gijón en su mismo punto (2106 horas, jul–oct 2026), sesgo de −2 cm, error RMS de 17 cm (13 %) y correlación de 0,955.

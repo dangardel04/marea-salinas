@@ -27,8 +27,15 @@ const metros = (h: number) => h.toLocaleString('es-ES', { minimumFractionDigits:
 export interface DestinoEscena {
   actualizar(e: { t: number; nivel: number; nivelMax6h: number; mar: EstadoMar | null; setup: number; r2: number }): void;
   volarA?(id: string): void;
-  anchoArena?(nivel: number): number | null;
-  lugarArena?: string;
+  /** Arena entre el muro y el agua en el punto elegido (src/scene/bahia/arena.ts). */
+  arena?: {
+    medir(nivel: number): number | null;
+    margen: number;
+    puntos: { id: string; nombre: string }[];
+    elegido(): { id: string; nombre: string };
+    elegir(id: string): void;
+    alCambiar(f: () => void): void;
+  };
 }
 
 /** «1,1 m, 11 s, NNE»: altura significante, periodo de pico y rumbo de procedencia. */
@@ -61,6 +68,7 @@ export function iniciarInterfaz() {
   // ---------- Elementos ----------
   const el = {
     momento: $('momento'), altura: $('altura'), tendencia: $('tendencia'), arena: $('arena-ancho'),
+    arenaNota: $('arena-nota'), arenaBloque: $('arena'), lugarArena: $<HTMLSelectElement>('lugar-arena'),
     modo: $('modo'), modoEtiqueta: $('modo-etiqueta'), modoDetalle: $('modo-detalle'),
     plHora: $('pleamar-hora'), plAlt: $('pleamar-altura'), plOf: $('pleamar-oficial'),
     bjHora: $('bajamar-hora'), bjAlt: $('bajamar-altura'), bjOf: $('bajamar-oficial'),
@@ -202,19 +210,14 @@ export function iniciarInterfaz() {
   function pintarTextos(t: number, ahoraReal: number) {
     poner(el.momento, `${fechaLargaMadrid(t)}, ${horaMadrid(t)} ${zonaMadrid(t)}`);
     poner(el.altura, `${metros(nivel(t))}<small>m</small>`, true);
-    // Cuánta arena hay ahora entre el muro del paseo y el agua (sin contar el vaivén de las olas).
-    const ancho = escena?.anchoArena?.(nivel(t));
-    const lugar = escena?.lugarArena ?? '';
-    poner(el.arena, ancho == null ? '' : ancho < 2
-      ? `El agua llega al muro del paseo ${lugar}`
-      : `<strong><span class="num">${Math.round(ancho)}</span> m</strong> de arena entre el muro y el agua, ${lugar}`, true);
+    const sig = motor.proximos(t);
+    const pl = sig.pleamar && { ...sig.pleamar, altura: sig.pleamar.altura + correccionEn(correccion, sig.pleamar.t) };
+    const bj = sig.bajamar && { ...sig.bajamar, altura: sig.bajamar.altura + correccionEn(correccion, sig.bajamar.t) };
+    pintarArena(t, pl);
     const d = motor.tendencia(t);
     const cmh = Math.abs(Math.round(d.cmPorHora));
     poner(el.tendencia, `${d.sentido === 'subiendo' ? ICONOS.flechaArriba : ICONOS.flechaAbajo}<span>${d.sentido === 'subiendo' ? 'Subiendo' : 'Bajando'} · <span class="num">${cmh}</span> cm/h</span>`, true);
 
-    const sig = motor.proximos(t);
-    const pl = sig.pleamar && { ...sig.pleamar, altura: sig.pleamar.altura + correccionEn(correccion, sig.pleamar.t) };
-    const bj = sig.bajamar && { ...sig.bajamar, altura: sig.bajamar.altura + correccionEn(correccion, sig.bajamar.t) };
     const diaDe = (x: number) => (inicioDiaMadrid(x) === inicioDiaMadrid(t) ? '' : `${fechaMadrid(x)}, `);
     el.plHora.textContent = pl ? horaMadrid(pl.t) : '--:--';
     el.plAlt.textContent = pl ? `${diaDe(pl.t)}${metros(pl.altura)} m` : '';
@@ -246,6 +249,49 @@ export function iniciarInterfaz() {
     el.reproducir.setAttribute('aria-label', reproduciendo ? 'Pausar' : 'Reproducir');
     el.ahora.setAttribute('aria-pressed', String(modo === 'ahora'));
     pintarOleaje(t, ahoraReal);
+  }
+
+  /** Arena hasta el agua en el punto elegido, ahora y en la próxima pleamar. El agua llega más
+   *  arriba que el nivel en calma por las olas; esa subida está medida (ver arena.ts). */
+  const tactil = matchMedia('(pointer: coarse)').matches;
+  function pintarArena(t: number, pl: Extremo | null | undefined) {
+    const ar = escena?.arena;
+    if (!ar) return;
+    const m = ar.medir(nivel(t));
+    poner(el.arena, m == null ? 'No se puede medir en este punto.' : m < 2
+      ? '<strong>El agua llega al muro</strong>'
+      : `<strong><span class="num">${Math.round(m)}</span> m</strong> de arena`, true);
+    let nota = '';
+    if (pl && m != null) {
+      const mp = ar.medir(pl.altura);
+      const cinco = (x: number) => Math.max(5, Math.round(x / 5) * 5);
+      nota = mp == null ? '' : mp < 2 ? `En la pleamar de las ${horaMadrid(pl.t)} el agua llegará al muro. `
+        : `En la pleamar de las ${horaMadrid(pl.t)} quedarán unos ${cinco(mp)} m. `;
+    }
+    nota += `Margen de ±${ar.margen} m según las olas. ${tactil ? 'Toca' : 'Haz clic en'} la playa en la vista para medir en otro sitio.`;
+    poner(el.arenaNota, nota);
+  }
+
+  function prepararArena() {
+    const ar = escena?.arena;
+    if (!ar) return;
+    const opciones = () => {
+      const elegido = ar.elegido();
+      const lista = [...ar.puntos];
+      if (!lista.some((p) => p.id === elegido.id)) lista.push(elegido); // punto tocado en el mapa
+      el.lugarArena.replaceChildren(...lista.map((p) => {
+        const o = document.createElement('option');
+        o.value = p.id;
+        o.textContent = p.nombre.charAt(0).toUpperCase() + p.nombre.slice(1);
+        return o;
+      }));
+      el.lugarArena.value = elegido.id;
+      ultimoTexto = 0; // repintar ya
+    };
+    el.lugarArena.addEventListener('change', () => ar.elegir(el.lugarArena.value));
+    ar.alCambiar(opciones);
+    opciones();
+    el.arenaBloque.hidden = false;
   }
 
   function pintarOleaje(t: number, ahoraReal: number) {
@@ -310,7 +356,7 @@ export function iniciarInterfaz() {
   siguienteCuadro(cuadro);
 
   return {
-    conectarEscena(e: DestinoEscena) { escena = e; },
+    conectarEscena(e: DestinoEscena) { escena = e; prepararArena(); },
     /** Último estado de oleaje calculado (para el panel y las pruebas). */
     oleaje: () => ultimoOleaje,
   };

@@ -1,0 +1,173 @@
+{
+ "nota": "metros de arena del pie del muro al agua: web (con la subida medida y la corrección local; en muestra) frente a lo visto en Sentinel-2 a la misma marea; mediana por tramos de nivel",
+ "puntos": {
+  "extremo oeste": {
+   "perfilSentinel": 40,
+   "distanciaPerfil_m": 23,
+   "tramos": {
+    "0-1.5": {
+     "casos": 9,
+     "observado_m": 188,
+     "web_m": 188,
+     "diferencia_m": -55
+    },
+    "1.5-2.5": {
+     "casos": 4,
+     "observado_m": 62,
+     "web_m": 59,
+     "diferencia_m": -4
+    },
+    "3.0-3.6": {
+     "casos": 5,
+     "observado_m": 44,
+     "web_m": 38,
+     "diferencia_m": -6
+    }
+   }
+  },
+  "Balneario": {
+   "perfilSentinel": 40,
+   "distanciaPerfil_m": 23,
+   "tramos": {
+    "0-1.5": {
+     "casos": 9,
+     "observado_m": 188,
+     "web_m": 188,
+     "diferencia_m": -56
+    },
+    "1.5-2.5": {
+     "casos": 4,
+     "observado_m": 62,
+     "web_m": 59,
+     "diferencia_m": -5
+    },
+    "3.0-3.6": {
+     "casos": 5,
+     "observado_m": 44,
+     "web_m": 38,
+     "diferencia_m": -6
+    }
+   }
+  },
+  "Club Náutico": {
+   "perfilSentinel": 43,
+   "distanciaPerfil_m": 27,
+   "tramos": {
+    "0-1.5": {
+     "casos": 9,
+     "observado_m": 169,
+     "web_m": 165,
+     "diferencia_m": -39
+    },
+    "1.5-2.5": {
+     "casos": 4,
+     "observado_m": 66,
+     "web_m": 53,
+     "diferencia_m": -12
+    },
+    "3.0-3.6": {
+     "casos": 5,
+     "observado_m": 35,
+     "web_m": 34,
+     "diferencia_m": -2
+    }
+   }
+  },
+  "Paseo del Cantábrico": {
+   "perfilSentinel": 69,
+   "distanciaPerfil_m": 51,
+   "tramos": {
+    "0-1.5": {
+     "casos": 9,
+     "observado_m": 180,
+     "web_m": 155,
+     "diferencia_m": -6
+    },
+    "1.5-2.5": {
+     "casos": 4,
+     "observado_m": 66,
+     "web_m": 75,
+     "diferencia_m": 8
+    },
+    "3.0-3.6": {
+     "casos": 4,
+     "observado_m": 40,
+     "web_m": 46,
+     "diferencia_m": 5
+    }
+   }
+  },
+  "Edificio Miramar": {
+   "perfilSentinel": 80,
+   "distanciaPerfil_m": 39,
+   "tramos": {
+    "0-1.5": {
+     "casos": 9,
+     "observado_m": 172,
+     "web_m": 171,
+     "diferencia_m": -11
+    },
+    "1.5-2.5": {
+     "casos": 4,
+     "observado_m": 65,
+     "web_m": 68,
+     "diferencia_m": 1
+    },
+    "3.0-3.6": {
+     "casos": 5,
+     "observado_m": 43,
+     "web_m": 44,
+     "diferencia_m": -4
+    }
+   }
+  },
+  "Torres Gauzón": {
+   "perfilSentinel": 89,
+   "distanciaPerfil_m": 51,
+   "tramos": {
+    "0-1.5": {
+     "casos": 8,
+     "observado_m": 140,
+     "web_m": 146,
+     "diferencia_m": 6
+    },
+    "1.5-2.5": {
+     "casos": 4,
+     "observado_m": 74,
+     "web_m": 84,
+     "diferencia_m": 6
+    },
+    "3.0-3.6": {
+     "casos": 5,
+     "observado_m": 43,
+     "web_m": 51,
+     "diferencia_m": 9
+    }
+   }
+  },
+  "extremo este": {
+   "perfilSentinel": 102,
+   "distanciaPerfil_m": 47,
+   "tramos": {
+    "0-1.5": {
+     "casos": 9,
+     "observado_m": 123,
+     "web_m": 105,
+     "diferencia_m": 1
+    },
+    "1.5-2.5": {
+     "casos": 4,
+     "observado_m": 82,
+     "web_m": 82,
+     "diferencia_m": -2
+    },
+    "3.0-3.6": {
+     "casos": 5,
+     "observado_m": 46,
+     "web_m": 51,
+     "diferencia_m": 3
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,120 @@
+{
+ "nota": "error = ancho de arena del modelo − ancho observado en Sentinel-2, del pie del muro a la orilla (m). Positivo: el modelo da más arena.",
+ "todas": {
+  "casos": 1636,
+  "sesgo_m": -1.8,
+  "mad_m": 31.5,
+  "p90abs_m": 90.1,
+  "anchoObservadoMediano_m": 75.4
+ },
+ "usadasEnElAjuste": {
+  "casos": 530,
+  "sesgo_m": -1.7,
+  "mad_m": 30.7,
+  "p90abs_m": 90.1,
+  "anchoObservadoMediano_m": 136.9
+ },
+ "independientes": {
+  "casos": 1106,
+  "sesgo_m": -1.8,
+  "mad_m": 31.8,
+  "p90abs_m": 89.6,
+  "anchoObservadoMediano_m": 60.9
+ },
+ "independientesMarGrueso": {
+  "casos": 785,
+  "sesgo_m": 4.2,
+  "mad_m": 43.3,
+  "p90abs_m": 107.0,
+  "anchoObservadoMediano_m": 73.1
+ },
+ "independientesPleamar": {
+  "casos": 558,
+  "sesgo_m": -8.9,
+  "mad_m": 23.6,
+  "p90abs_m": 57.4,
+  "anchoObservadoMediano_m": 45.1
+ },
+ "nivel_0_1.5": {
+  "casos": 673,
+  "sesgo_m": 5.2,
+  "mad_m": 53.9,
+  "p90abs_m": 96.2,
+  "anchoObservadoMediano_m": 156.8
+ },
+ "nivel_1.5_2.5": {
+  "casos": 321,
+  "sesgo_m": 8.2,
+  "mad_m": 30.6,
+  "p90abs_m": 64.0,
+  "anchoObservadoMediano_m": 73.9
+ },
+ "nivel_2.5_3.5": {
+  "casos": 642,
+  "sesgo_m": -10.5,
+  "mad_m": 23.6,
+  "p90abs_m": 102.9,
+  "anchoObservadoMediano_m": 47.8
+ },
+ "nivel_3.5_6": null,
+ "Salinas (oeste, x < −500)": {
+  "casos": 735,
+  "sesgo_m": -1.7,
+  "mad_m": 38.8,
+  "p90abs_m": 109.2,
+  "anchoObservadoMediano_m": 72.7
+ },
+ "centro (−500 a 0)": {
+  "casos": 650,
+  "sesgo_m": -1.0,
+  "mad_m": 24.6,
+  "p90abs_m": 65.9,
+  "anchoObservadoMediano_m": 75.5
+ },
+ "El Espartal (x > 0)": {
+  "casos": 251,
+  "sesgo_m": -6.2,
+  "mad_m": 35.2,
+  "p90abs_m": 95.6,
+  "anchoObservadoMediano_m": 77.3
+ },
+ "subidaOrilla": {
+  "nota": "cota del suelo en la orilla vista por Sentinel-2 menos el nivel medido en Avilés (m), mediana por tramos de nivel; la web la suma al nivel para saber hasta dónde llega el agua con las olas",
+  "nivel": [
+   0.84,
+   1.31,
+   1.57,
+   2.19,
+   2.61,
+   3.28
+  ],
+  "subida": [
+   0.46,
+   1.05,
+   0.83,
+   0.43,
+   0.17,
+   -0.03
+  ],
+  "casos": [
+   436,
+   237,
+   155,
+   166,
+   246,
+   396
+  ],
+  "validacionDejandoFueraCadaImagen": {
+   "antes (subida fija de la herramienta intermareal)": {
+    "casos": 1636,
+    "sesgo_m": -1.8,
+    "mad_m": 31.5
+   },
+   "con la subida según la marea": {
+    "casos": 1636,
+    "sesgo_m": -0.4,
+    "mad_m": 34.9
+   }
+  }
+ }
+}

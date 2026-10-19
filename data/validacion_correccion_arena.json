@@ -1,0 +1,59 @@
+{
+ "nota": "error = ancho de la web − observado (m), dejando fuera cada imagen",
+ "todas": {
+  "sin corrección": {
+   "casos": 1400,
+   "sesgo_m": 3.1,
+   "mad_m": 30.1,
+   "p75abs_m": 41.7
+  },
+  "con corrección local": {
+   "casos": 1400,
+   "sesgo_m": -0.2,
+   "mad_m": 25.1,
+   "p75abs_m": 43.5
+  }
+ },
+ "Salinas oeste (x < −700)": {
+  "sin corrección": {
+   "casos": 210,
+   "sesgo_m": -20.4,
+   "mad_m": 34.5,
+   "p75abs_m": 55.7
+  },
+  "con corrección local": {
+   "casos": 210,
+   "sesgo_m": -7.1,
+   "mad_m": 28.7,
+   "p75abs_m": 54.6
+  }
+ },
+ "centro (−700 a −200)": {
+  "sin corrección": {
+   "casos": 651,
+   "sesgo_m": 10.5,
+   "mad_m": 24.7,
+   "p75abs_m": 34.0
+  },
+  "con corrección local": {
+   "casos": 651,
+   "sesgo_m": 3.5,
+   "mad_m": 17.9,
+   "p75abs_m": 35.1
+  }
+ },
+ "este (x > −200)": {
+  "sin corrección": {
+   "casos": 539,
+   "sesgo_m": -2.1,
+   "mad_m": 33.7,
+   "p75abs_m": 51.6
+  },
+  "con corrección local": {
+   "casos": 539,
+   "sesgo_m": -1.9,
+   "mad_m": 35.3,
+   "p75abs_m": 54.2
+  }
+ }
+}
