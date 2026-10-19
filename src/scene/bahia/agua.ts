@@ -319,9 +319,12 @@ export function crearAgua(opciones: {
     uMatReflejo: { value: new THREE.Matrix4() },
     uConReflejo: { value: 0 },
   };
-  const base = new THREE.ShaderMaterial({
-    vertexShader: crearAguaVert(SEG), fragmentShader: AGUA_FRAG,
-    uniforms: { ...u, uTesela: { value: new THREE.Vector3() }, uLejos: { value: 0 } },
+  // Material nuevo con los uniformes comunes compartidos por referencia (clonarlo copiaría la
+  // textura del reflejo, que three.js no puede clonar); solo uTesela y uLejos son propios.
+  const vert = crearAguaVert(SEG);
+  const materialAgua = (tesela: THREE.Vector3, lejos: number) => new THREE.ShaderMaterial({
+    vertexShader: vert, fragmentShader: AGUA_FRAG,
+    uniforms: { ...u, uTesela: { value: tesela }, uLejos: { value: lejos } },
     transparent: true, depthWrite: false,
   });
   const grupo = new THREE.Group();
@@ -333,10 +336,7 @@ export function crearAgua(opciones: {
   function parche(clave: string, x0: number, z0: number, lado: number) {
     let m = parches.get(clave);
     if (!m) {
-      const mat = base.clone();
-      // Los uniformes comunes se comparten por referencia; solo uTesela es propio.
-      for (const [k, v] of Object.entries(u)) mat.uniforms[k] = v;
-      mat.uniforms.uTesela = { value: new THREE.Vector3(x0, z0, lado) };
+      const mat = materialAgua(new THREE.Vector3(x0, z0, lado), 0);
       mat.uniforms.uLejos = { value: 0 };
       m = new THREE.Mesh(geo, mat);
       m.frustumCulled = false;
@@ -351,10 +351,7 @@ export function crearAgua(opciones: {
   // hay tierra). Sin oleaje: a esa distancia no se distingue.
   const anillo = new THREE.RingGeometry(LADO * 0.5, 40000, 96, 1, THREE.MathUtils.degToRad(-12), THREE.MathUtils.degToRad(204));
   anillo.rotateX(-Math.PI / 2);
-  const matLejos = base.clone();
-  for (const [k, v] of Object.entries(u)) matLejos.uniforms[k] = v;
-  matLejos.uniforms.uLejos = { value: 1 };
-  matLejos.uniforms.uTesela = { value: new THREE.Vector3() };
+  const matLejos = materialAgua(new THREE.Vector3(), 1);
   const lejos = new THREE.Mesh(anillo, matLejos);
   lejos.renderOrder = 1;
   opciones.escena.add(lejos);

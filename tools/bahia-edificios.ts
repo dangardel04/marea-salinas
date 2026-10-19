@@ -102,6 +102,11 @@ for (const [x, y] of celdas) {
   }
 }
 console.log(`${partes.size} partes de edificio con plantas sobre rasante`);
+// Las partes que ya dibuja tools/edificios-lidar.py (altura y tejado del LiDAR 2024) no van aquí.
+const rutaLidar = join(RAIZ, 'data', 'edificios_lidar_ids.json');
+const conLidar = new Set<string>(existsSync(rutaLidar) ? JSON.parse(readFileSync(rutaLidar, 'utf8')) : []);
+for (const id of conLidar) partes.delete(id);
+console.log(`${conLidar.size} partes con tejado LiDAR (aparte), ${partes.size} como cajas`);
 
 // ---------- Ortofoto decodificada (nivel 4) para el color de los tejados ----------
 const NIVEL_COLOR = 4;

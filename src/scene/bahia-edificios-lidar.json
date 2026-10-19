@@ -1,0 +1,15 @@
+{
+ "fuente": "Huellas: Catastro (INSPIRE BuildingPart). Alturas, tejados y color de los tejados: LiDAR PNOA 2024 (CNIG, CC BY 4.0), clases 6 (edificio) y 2 (suelo). Ver tools/edificios-lidar.py",
+ "zonaUtm": [
+  260400.0,
+  4828000.0,
+  262400.0,
+  4829900.0
+ ],
+ "partes": 2396,
+ "sinNubeSuficiente": 245,
+ "vertices": 335929,
+ "indices": 254577,
+ "formato": "Int16 x,y,z (dm, local) por vértice; Uint8 r,g,b por vértice; relleno a múltiplo de 4 bytes; Uint32 índices de triángulos",
+ "fachadas": "Color DECORATIVO (paleta clara); la nube no da el de las fachadas"
+}

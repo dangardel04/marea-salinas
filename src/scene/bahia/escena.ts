@@ -8,11 +8,12 @@ import { LADO, PASO_RELIEVE } from '../../bahia';
 import metaRelieve from '../bahia-meta.json';
 import metaOrto from '../bahia-orto.json';
 import metaEdificios from '../bahia-edificios.json';
+import metaEdificiosLidar from '../bahia-edificios-lidar.json';
 import metaFino from '../bahia-fino.json';
 import metaArena from '../bahia-arena.json';
 import { cargarFino, cargarRelieve } from './relieve';
 import { crearTeselas } from './teselas';
-import { cargarEdificios } from './edificios';
+import { cargarEdificios, cargarEdificiosLidar } from './edificios';
 import { crearAgua } from './agua';
 import { crearReflejo } from './reflejo';
 import { calcularCampo, PASO_CAMPO } from './campoOlas';
@@ -173,7 +174,11 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
 
   alProgreso?.('Levantando los edificios…');
   try {
-    escena.add(await cargarEdificios(`${base}bahia/edificios.bin`, metaEdificios.vertices, comunes));
+    const [cajas, lidar] = await Promise.all([
+      cargarEdificios(`${base}bahia/edificios.bin`, metaEdificios.vertices, comunes),
+      cargarEdificiosLidar(`${base}bahia/edificios-lidar.bin`, metaEdificiosLidar.vertices, metaEdificiosLidar.indices, comunes),
+    ]);
+    escena.add(cajas, lidar);
   } catch (e) {
     console.warn(e); // sin edificios la escena sigue siendo útil
   }

@@ -115,7 +115,15 @@ python tools/arena-color.py
 ```
 
 ```bash
+python tools/edificios-lidar.py
+```
+
+```bash
 node tools/bahia-edificios.ts
+```
+
+```bash
+python tools/playa-mascara.py
 ```
 
 ```bash
@@ -174,7 +182,7 @@ Error = predicción − tabla oficial.
 | Elección de constantes por validación fuera de muestra | Ciclo estacional (SA, SSA…) de Gijón aplicado a Avilés |
 | Corrección con el mareógrafo en vivo | Corrección hacia el pasado (misma atenuación, sin backtest propio) |
 | Relieve LiDAR de tierra, dunas y arena (1 m en la playa, vuelo de 2024); arena intermareal hasta +1,15 m desde satélite (±0,45 m); fondo marino EMODnet | Arena por debajo de +1,15 m y tramos sin perfil válido (los huecos de hasta 150 m, interpolados): pendiente 1:50 que pasa a EMODnet en 250 m |
-| Ortofoto PNOA 2023, huellas y plantas del Catastro, color de los tejados | Altura de los edificios (3 m por planta, supuesta); fachadas y ventanas encendidas (decorativas) |
+| Ortofoto PNOA 2023, huellas y plantas del Catastro; en Salinas, altura y tejado de cada edificio del LiDAR 2024 con su color | Fuera de Salinas, altura de los edificios (3 m por planta, supuesta); fachadas y ventanas encendidas (decorativas); arena y mar de la playa estilizados |
 | Altura, periodo y dirección de las olas (previsión), pendiente de la arena alta (1:22) | Forma de cada ola y del vaivén, espuma, transparencia y reflejos del agua; grano y brillo de la arena mojada (el color de la arena sí es el medido en la foto); sombra tras espigón y cabos |
 | Posición del sol y de la luna, fase lunar | NMMA → CH del relieve (2,095 m, tomado de la relación de Gijón); tamaño de la luna (×3); colores del cielo |
 
