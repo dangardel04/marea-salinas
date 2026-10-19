@@ -1,0 +1,17 @@
+{
+ "fuente": "OpenStreetMap, natural=beach (Overpass), © colaboradores de OpenStreetMap, ODbL 1.0",
+ "consultado": "2026-10-19",
+ "playas": [
+  "Playa de Xagó",
+  "Playa de Arnao",
+  "Playa de El Puerto",
+  "Playa del Cuerno",
+  "Playa de El Dólar",
+  "Samalandrán",
+  "Playa de El Espartal",
+  "Playa del Arañón",
+  "Playa de San Balandrán",
+  "Playa de El Embayo"
+ ],
+ "formato": "PNG gris 1281 × 1281 en la rejilla del relieve (5 m), filas de norte a sur; 255 = playa"
+}

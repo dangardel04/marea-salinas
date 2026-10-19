@@ -119,6 +119,7 @@ export function crearTeselas(opciones: {
     const nor = new Float32Array((nPrin + nFald) * 3);
     const uv = new Float32Array((nPrin + nFald) * 2);
     const med = new Float32Array(nPrin + nFald);
+    const ocl = new Float32Array(nPrin + nFald);
     const poner = (k: number, x: number, z: number, y: number, a: number, b: number) => {
       pos[k * 3] = x; pos[k * 3 + 1] = y; pos[k * 3 + 2] = z;
       const e = relieve.pasoEn(x, z);
@@ -128,6 +129,16 @@ export function crearTeselas(opciones: {
       nor[k * 3] = nx / l; nor[k * 3 + 1] = (2 * e) / l; nor[k * 3 + 2] = nz / l;
       uv[k * 2] = a / SEG; uv[k * 2 + 1] = 1 - b / SEG;
       med[k] = relieve.medidoEn(x, z);
+      // Oclusión de contacto: cuánto se alza el terreno alrededor (a 1,5 y 4 m). Oscurece la arena
+      // al pie del muro del paseo y el fondo de los canales, y marca bien dónde acaba la playa.
+      if (r.lado <= 400) {
+        let alza = 0;
+        for (const dist of [1.5, 4]) for (let q = 0; q < 8; q++) {
+          const ang = (q * Math.PI) / 4;
+          alza = Math.max(alza, (relieve.altura(x + Math.cos(ang) * dist, z + Math.sin(ang) * dist) - y) * (dist === 1.5 ? 1 : 0.35));
+        }
+        ocl[k] = Math.min(1, Math.max(0, (alza - 0.5) / 2.0));
+      }
     };
     for (let b = 0; b < v; b++) for (let a = 0; a < v; a++) {
       const x = r.x0 + (a / SEG) * r.lado, z = r.z0 + (b / SEG) * r.lado;
@@ -160,6 +171,7 @@ export function crearTeselas(opciones: {
     g.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
     g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     g.setAttribute('medido', new THREE.BufferAttribute(med, 1));
+    g.setAttribute('oclusion', new THREE.BufferAttribute(ocl, 1));
     g.setIndex(idx);
     g.boundingBox = cajaDe(nivel, i, j);
     g.boundingSphere = g.boundingBox.getBoundingSphere(new THREE.Sphere());

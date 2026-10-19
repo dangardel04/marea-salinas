@@ -122,6 +122,9 @@ void main() {
     float tA, tB, alcA, alcB;
     sistema(uSisA, uCampoA, p.xz, h, desp, nrm, rotura, fase, tA, alcA);
     sistema(uSisB, uCampoB, p.xz, h, desp, nrm, rotura, fase, tB, alcB);
+    // Fase de la ola principal (para la espuma): siempre la misma componente, sin saltos entre
+    // vértices vecinos aunque alguna componente se apague por el nivel de detalle.
+    if (uSisA.x >= 0.02) fase = PI2 / max(uSisA.y, 1.0) * (tA - uTiempo);
     // Orilla: setup y vaivén hasta R2 (solo en la franja de lavado).
     float franja = (1.0 - smoothstep(0.0, 1.6, prof)) * step(-uR2 - 0.3, prof) * alcA;
     float pulso = 0.5 + 0.5 * sin(PI2 / max(uSisA.y, 1.0) * (tA - uTiempo) + 0.8);
@@ -234,60 +237,48 @@ void main() {
   float sol = pow(max(dot(r, uDirBrillo), 0.0), 900.0) * 6.0 + pow(max(dot(r, uDirBrillo), 0.0), 90.0) * 0.25;
   sol *= step(0.0, uDirBrillo.y);
 
-  // ---------- Cuerpo del agua ----------
-  // Transparente según la profundidad (luz que atraviesa ida y vuelta hasta el fondo): en poca
-  // agua se ve la arena, verdosa; mar adentro, azul oscuro. Con la espuma en suspensión de la
-  // rompiente el agua se enturbia (más clara y menos transparente).
-  float turbia = clamp(vRotura * 0.8 + (1.0 - smoothstep(0.0, 2.5, prof)) * 0.25, 0.0, 1.0);
-  float atraviesa = exp(-max(prof, 0.0) * mix(0.55, 1.6, turbia));
-  vec3 profundo = vec3(0.006, 0.035, 0.055) * (0.12 + 0.88 * uLuzDia);
-  vec3 verde = vec3(0.05, 0.16, 0.15) * (0.1 + 0.9 * uLuzDia);
-  vec3 cuerpo = mix(profundo, verde, exp(-max(prof, 0.0) * 0.18));
-  cuerpo = mix(cuerpo, vec3(0.32, 0.4, 0.38) * (0.12 + 0.88 * uLuzDia), turbia * 0.35);
-  // Luz que pasa por la cresta delgada antes de romper: un verde más vivo en la cara de la ola.
+  // ---------- Cuerpo del agua (estilizado) ----------
+  // Colores por profundidad, para que el mar se distinga de un vistazo de la arena: turquesa
+  // claro en la orilla, verde azulado a media profundidad y azul hondo mar adentro.
+  float dia = 0.1 + 0.9 * uLuzDia;
+  vec3 orilla = vec3(0.16, 0.48, 0.46) * dia;
+  vec3 medio = vec3(0.03, 0.2, 0.24) * dia;
+  vec3 hondo = vec3(0.008, 0.05, 0.11) * dia;
+  vec3 cuerpo = mix(orilla, medio, smoothstep(0.3, 3.0, prof));
+  cuerpo = mix(cuerpo, hondo, smoothstep(3.0, 14.0, prof));
+  // En la rompiente el agua revuelta se aclara un poco.
+  cuerpo = mix(cuerpo, vec3(0.3, 0.52, 0.5) * dia, vRotura * 0.25 * (1.0 - smoothstep(3.0, 6.0, prof)));
+  // Cara de la ola antes de romper: algo más clara (la luz la atraviesa).
   float s = sin(vFase + 0.6);
-  cuerpo += vec3(0.02, 0.09, 0.08) * uLuzDia * smoothstep(0.2, 0.9, s) * (1.0 - vRotura) * smoothstep(1.0, 4.0, prof) * (1.0 - smoothstep(10.0, 25.0, prof));
+  cuerpo += vec3(0.03, 0.1, 0.09) * dia * smoothstep(0.3, 0.95, s) * (1.0 - vRotura) * smoothstep(1.0, 4.0, prof) * (1.0 - smoothstep(12.0, 30.0, prof));
 
-  // ---------- Espuma ----------
-  // La espuma real no es una cinta: el frente de la ola rota es una línea blanca rota en trozos,
-  // y detrás la espuma se abre en parches irregulares que se van deshaciendo hasta desaparecer
-  // antes de la ola siguiente. Formas con ruido fractal de dominio deformado (orgánicas), que
-  // derivan con el agua; de cerca, además, el encaje de las burbujas.
-  vec2 deriva = vDir * uTiempo * 0.7 + vec2(uTiempo * 0.05, -uTiempo * 0.03);
+  // ---------- Olas que llegan y espuma (limpias) ----------
+  // Cada ola rota es una línea blanca nítida en su frente, con una estela suave detrás que se
+  // desvanece antes de la siguiente; la línea se rompe en tramos largos (no en motitas).
+  vec2 deriva = vDir * uTiempo * 0.7;
   vec2 pe = vPos.xz - deriva;
-  vec2 w = vec2(fbm(pe * 0.05 + 1.3), fbm(pe * 0.05 + 7.9)) * 14.0;
-  float rotura = fbm((pe + w) * 0.09);            // trozos de ~10 m
-  float parches = fbm((pe + w * 0.6) * 0.32 + 4.0); // ~3 m
-  float cercaE = 1.0 - smoothstep(35.0, 140.0, d);
-  float encaje = 1.0 - smoothstep(0.0, 0.25, celdas(vPos.xz * 0.9 - deriva * 0.3));
-  // Edad de la espuma a lo largo de la ola: 0 en el frente que rompe, 1 justo antes del siguiente.
-  float edad = fract((vFase + 0.6) / 6.28318531 - 0.25);
-  edad = 1.0 - edad;
-  float frenteOla = vRotura * (1.0 - smoothstep(0.0, 0.035, edad)) * smoothstep(0.32, 0.55, rotura);
-  // Detrás: cuanta más edad, menos espuma (el umbral sube), así se deshace en parches.
-  float umbral = mix(0.38, 0.95, smoothstep(0.02, 0.6, edad));
-  float resto = vRotura * smoothstep(umbral, umbral + 0.12, parches * 0.55 + rotura * 0.45);
-  float espuma = max(frenteOla, resto * mix(0.55, 0.9, 1.0 - edad));
-  // Orilla, solo donde llega el oleaje: borde fino y roto, y alguna burbuja en la lámina.
-  float frente = (1.0 - smoothstep(0.0, 0.035 + 0.05 * parches, prof)) * vAlcance * smoothstep(0.3, 0.55, rotura + 0.1);
-  float lavado = smoothstep(0.03, 0.35, vVaiven) * (1.0 - smoothstep(0.0, 0.5, prof)) * vAlcance;
-  espuma = max(espuma, frente * 0.85);
-  espuma = max(espuma, lavado * smoothstep(0.62, 0.8, parches) * 0.6);
-  // De cerca el encaje la agujerea; de lejos queda su promedio.
-  espuma *= mix(1.0, 0.45 + 0.55 * encaje, cercaE * (1.0 - frenteOla * 0.6));
-  espuma = clamp(espuma, 0.0, 1.0) * (1.0 - smoothstep(300.0, 1400.0, d) * 0.5);
-  // Color: blanca al sol, algo azulada en los bordes finos (se ve el agua a través).
-  vec3 blanco = mix(vec3(0.62, 0.74, 0.76), vec3(0.9, 0.93, 0.93), smoothstep(0.2, 0.8, espuma));
-  blanco *= (0.06 + 0.94 * uLuzDia) * (0.82 + 0.18 * max(dot(n, uDirBrillo), 0.0));
+  float tramos = fbm(pe * 0.035 + vec2(fbm(pe * 0.02) * 2.0));
+  float edad = 1.0 - fract((vFase + 0.6) / 6.28318531 - 0.25); // 0 en el frente, 1 antes de la siguiente
+  float linea = vRotura * (1.0 - smoothstep(0.0, 0.045, edad)) * smoothstep(0.3, 0.45, tramos);
+  float estela = vRotura * (1.0 - smoothstep(0.0, 0.45, edad)) * smoothstep(0.25, 0.5, tramos);
+  float rizos = fbm(pe * 0.18 + 3.0);
+  float espuma = max(linea, estela * smoothstep(0.35, 0.7, rizos + (1.0 - edad) * 0.25) * 0.7);
+  // Orilla: el agua que sube y baja por la arena lleva un borde blanco nítido y una lámina clara.
+  float frente = (1.0 - smoothstep(0.0, 0.05, prof)) * vAlcance;
+  float lavado = smoothstep(0.03, 0.3, vVaiven) * (1.0 - smoothstep(0.0, 0.35, prof)) * vAlcance;
+  espuma = max(espuma, frente * 0.95);
+  espuma = max(espuma, lavado * smoothstep(0.45, 0.75, rizos) * 0.5);
+  espuma = clamp(espuma, 0.0, 1.0);
+  vec3 blanco = vec3(0.93, 0.96, 0.96) * dia * (0.85 + 0.15 * max(dot(n, uDirBrillo), 0.0));
 
-  // ---------- Composición (mezcla alfa sobre el fondo ya dibujado) ----------
-  float alfaCuerpo = 1.0 - atraviesa;
-  vec3 c = mix(cuerpo, reflejo, fres) + uColorBrillo * sol * (1.0 - espuma);
-  float alfa = clamp(alfaCuerpo + fres * (1.0 - alfaCuerpo) + sol, 0.0, 1.0);
+  // ---------- Composición ----------
+  // El agua es casi opaca (color propio), salvo la lámina finísima de la orilla, que deja ver la
+  // arena mojada. Encima, el reflejo (acantilados, cielo) con Fresnel, algo contenido.
+  float alfaCuerpo = mix(0.35, 0.97, smoothstep(0.0, 0.5, prof));
+  vec3 c = mix(cuerpo, reflejo, fres * 0.75) + uColorBrillo * sol * (1.0 - espuma);
+  float alfa = clamp(alfaCuerpo + fres * (1.0 - alfaCuerpo) * 0.6 + sol, 0.0, 1.0);
   c = mix(c, blanco, espuma);
-  alfa = max(alfa, espuma * 0.95);
-  // La lámina del vaivén apenas tapa: casi solo reflejo.
-  alfa *= mix(1.0, 0.85, smoothstep(0.0, 0.3, vVaiven) * (1.0 - smoothstep(0.0, 0.4, prof)));
+  alfa = max(alfa, espuma);
   c = mix(c, uColorNiebla, 1.0 - exp(-uDensidadNiebla * uDensidadNiebla * d * d));
   gl_FragColor = vec4(c, alfa);
   #include <colorspace_fragment>

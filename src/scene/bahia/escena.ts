@@ -121,6 +121,14 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     uTexMojadaN: { value: neutra(128, 128, 255) as THREE.Texture },
   };
   Object.assign(comunes, texturas);
+  // Máscara de playa (OpenStreetMap, tools/playa-mascara.py): sin repetir, sin mipmaps.
+  const uPlaya = { value: neutra(0, 0, 0) as THREE.Texture };
+  Object.assign(comunes, { uPlaya });
+  cargadorTex.load(`${base}bahia/playa.png`, (t) => {
+    t.colorSpace = THREE.NoColorSpace; t.generateMipmaps = false;
+    t.minFilter = t.magFilter = THREE.LinearFilter;
+    uPlaya.value = t;
+  });
   textura('aerial_beach_01_diff_1k.jpg', true, texturas.uTexArena);
   textura('aerial_beach_01_nor_gl_1k.jpg', false, texturas.uTexArenaN);
   textura('aerial_beach_01_rough_1k.jpg', false, texturas.uTexArenaR);
