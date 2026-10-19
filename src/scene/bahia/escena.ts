@@ -52,7 +52,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   const reducirMovimiento = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const render = new THREE.WebGLRenderer({ canvas: lienzo, antialias: !movil, powerPreference: 'high-performance' });
   render.setPixelRatio(Math.min(devicePixelRatio, movil ? 1.25 : 1.75));
-  render.toneMapping = THREE.ACESFilmicToneMapping;
+  render.toneMapping = THREE.NeutralToneMapping; // conserva el tono y la saturación (estilo de animación)
   render.outputColorSpace = THREE.SRGBColorSpace;
 
   const escena = new THREE.Scene();
@@ -73,7 +73,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     uNivel: { value: 2.5 },
     uNivelMax: { value: 2.5 },
     uColorNiebla: { value: new THREE.Color() },
-    uDensidadNiebla: { value: movil ? 0.00011 : 0.00008 },
+    uDensidadNiebla: { value: movil ? 0.00008 : 0.00006 },
     /** 0 de día, 1 de noche cerrada. */
     uNoche: { value: 0 },
   };
@@ -127,6 +127,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   Object.assign(comunes, { uPlaya });
   cargadorTex.load(`${base}bahia/playa.png`, (t) => {
     t.colorSpace = THREE.NoColorSpace; t.generateMipmaps = false;
+    t.flipY = false; // filas de norte a sur, como la rejilla del relieve
+    t.needsUpdate = true;
     t.minFilter = t.magFilter = THREE.LinearFilter;
     uPlaya.value = t;
   });
@@ -151,7 +153,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   const reflejo = crearReflejo(render, movil ? 0.35 : 0.5);
   agua.uniformes.uReflejo.value = reflejo.textura;
   agua.uniformes.uMatReflejo.value = reflejo.matriz;
-  agua.uniformes.uConReflejo.value = 1;
+  // Estilo de animación: sin reflejo de la escena (colores planos); la cámara espejo no se dibuja.
+  agua.uniformes.uConReflejo.value = 0;
   const cielo = crearCielo(escena, movil);
   // Tierra lejana al sur, fuera del área modelada: un anillo plano que la niebla funde con el cielo.
   const tierraLejana = new THREE.Mesh(
@@ -323,7 +326,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     cielo.seguir(camara.position, vLuna);
     teselas.actualizar(camara);
     agua.actualizar(teselas.visibles(), estado.nivel + estado.r2 + 1);
-    reflejo.actualizar(escena, camara, estado.nivel, [...agua.objetos, ...cielo.objetos]);
+    if (agua.uniformes.uConReflejo.value > 0) reflejo.actualizar(escena, camara, estado.nivel, [...agua.objetos, ...cielo.objetos]);
     render.render(escena, camara);
     siguienteCuadro(cuadro);
   }
