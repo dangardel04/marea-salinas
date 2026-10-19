@@ -18,7 +18,7 @@ import { crearTeselas } from './teselas';
 import { cargarEdificios, cargarEdificiosLidar } from './edificios';
 import { crearAgua } from './agua';
 import { crearReflejo } from './reflejo';
-import { calcularCampo, PASO_CAMPO } from './campoOlas';
+import { calcularCampo, crearFondoAgua, PASO_CAMPO } from './campoOlas';
 import { crearCielo } from './cielo';
 import { siguienteCuadro } from '../../cuadro';
 import type { EstadoMar } from '../../oleaje/datos';
@@ -63,8 +63,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
 
   alProgreso?.('Cargando el relieve…');
   const relieve = await cargarRelieve(`${base}bahia/relieve.bin`);
-  const texRelieve = relieve.textura(2);
-  const nRel = texRelieve.image.width;
+  // Fondo del agua (rejilla de 5 m, con el relieve fino) y cota de rebose (hasta dónde llega el mar).
+  const fondoAgua = crearFondoAgua(relieve);
 
   // ---------- Uniformes comunes ----------
   const comunes = {
@@ -126,7 +126,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   Object.assign(comunes, texturas);
   // Máscara de playa (OpenStreetMap, tools/playa-mascara.py): sin repetir, sin mipmaps.
   const uPlaya = { value: neutra(0, 0, 0) as THREE.Texture };
-  Object.assign(comunes, { uPlaya });
+  Object.assign(comunes, { uPlaya, uFondoAgua: { value: fondoAgua.textura } });
   cargadorTex.load(`${base}bahia/playa.png`, (t) => {
     t.colorSpace = THREE.NoColorSpace; t.generateMipmaps = false;
     t.flipY = false; // filas de norte a sur, como la rejilla del relieve
@@ -149,8 +149,9 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     if (!datos) return;
     relieve.ponerFino(metaFino, datos);
     teselas.rehacerFino();
+    fondoAgua.actualizar();
   });
-  const agua = crearAgua({ escena, texRelieve, nRelieve: nRel, pasoRelieve: PASO_RELIEVE * 2, nCampo: Math.floor((relieve.n - 1) / PASO_CAMPO) + 1, comunes: comunesAgua, movil, normales: neutra(128, 128, 255) });
+  const agua = crearAgua({ escena, texRelieve: fondoAgua.textura, nRelieve: fondoAgua.n, pasoRelieve: PASO_RELIEVE, nCampo: Math.floor((relieve.n - 1) / PASO_CAMPO) + 1, comunes: comunesAgua, movil, normales: neutra(128, 128, 255) });
   textura('waternormals.jpg', false, agua.uniformes.uNormAgua);
   const reflejo = crearReflejo(render, movil ? 0.35 : 0.5);
   agua.uniformes.uReflejo.value = reflejo.textura;
@@ -176,12 +177,19 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     return { e, p: new THREE.Vector3(l.x, y, l.z) };
   });
   const proy = new THREE.Vector3();
+  // Los paneles son translúcidos: un rótulo debajo de uno se leería a través y ensuciaría el texto.
+  const paneles = ['.panel', '.vistas', '.ayuda-controles', '.barra'];
   function colocarEtiquetas() {
     const w = lienzo.clientWidth, h = lienzo.clientHeight;
+    const lr = lienzo.getBoundingClientRect();
+    const tapan = paneles.flatMap((s) => [...document.querySelectorAll<HTMLElement>(s)])
+      .filter((el) => el.getClientRects().length > 0).map((el) => el.getBoundingClientRect()); // (fixed: sin offsetParent)
     for (const { e, p } of etiquetas) {
       const dist = camara.position.distanceTo(p);
       proy.copy(p).project(camara);
-      const visible = proy.z < 1 && Math.abs(proy.x) < 1.1 && Math.abs(proy.y) < 1.1 && dist < 4500;
+      const sx = lr.left + ((proy.x + 1) / 2) * w, sy = lr.top + ((1 - proy.y) / 2) * h;
+      const tapada = tapan.some((r) => sx > r.left - 40 && sx < r.right + 40 && sy > r.top && sy < r.bottom + 30);
+      const visible = proy.z < 1 && Math.abs(proy.x) < 1.1 && Math.abs(proy.y) < 1.1 && dist < 4500 && !tapada;
       if (!visible) { e.style.opacity = '0'; continue; }
       e.style.opacity = String(1 - THREE.MathUtils.smoothstep(dist, 2200, 4500));
       e.style.transform = `translate(${((proy.x + 1) / 2) * w}px, ${((1 - proy.y) / 2) * h}px) translate(-50%, -100%)`;

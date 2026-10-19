@@ -66,6 +66,7 @@ uniform sampler2D uTexArenaR;
 uniform sampler2D uTexMojada;  // arena húmeda (Poly Haven «Damp Beach Sand 02», 1,87 m, CC0)
 uniform sampler2D uTexMojadaN;
 uniform sampler2D uPlaya;       // máscara de playa (OpenStreetMap)
+uniform sampler2D uFondoAgua;   // G: cota de rebose, hasta dónde llega el mar (ver campoOlas.ts)
 varying vec2 vUv;
 varying vec3 vPos;
 varying vec3 vNor;
@@ -147,11 +148,16 @@ void main() {
   float altoRel = (h - uNivel) / rango;                // 0 en la orilla, 1 en lo alto de la marea
   float aa = fwidth(h) * 1.5 + 0.004;
   float mojada = 1.0 - smoothstep(rango + 0.08 - aa, rango + 0.08 + aa, h - uNivel);
-  float empapada = 1.0 - smoothstep(0.3 - aa, 0.3 + aa, h - uNivel);
+  // Empapada: solo la franja que moja el mar; con la cota de rebose (no la altura), así las
+  // hondonadas detrás de un caballón no salen como manchas oscuras.
+  float cotaMar = max(h, texture2D(uFondoAgua, uvP).g);
+  float empapada = 1.0 - smoothstep(0.3 - aa, 0.3 + aa, cotaMar - uNivel);
   vec3 arena = mix(arenaSeca, arenaHumeda, mojada);
   arena = mix(arena, arenaEmpapada, empapada);
-  // Bajo el agua (se ve a través del agua más clara), algo más oscura.
-  arena = mix(arena, arenaEmpapada * 0.7, smoothstep(-0.05, 0.05, uNivel - h));
+  // Bajo el mar (se ve a través del agua somera), algo más oscura; en los charcos aislados de
+  // bajamar, que no se dibujan como mar, se queda en arena empapada.
+  float esMar = smoothstep(-0.03, 0.03, uNivel - cotaMar);
+  arena = mix(arena, arenaHumeda * 0.85, smoothstep(-0.05, 0.05, uNivel - h) * esMar);
 
   // Muro del paseo: piedra clara, con la franja que moja el mar más oscura y verdosa (borde nítido).
   vec3 piedra = vec3(0.74, 0.7, 0.62);

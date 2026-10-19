@@ -13,6 +13,13 @@
 //   - Orilla: sobreelevación media (setup) y vaivén hasta la cota R2 de Stockdon (2006), al ritmo
 //     del periodo de pico y con la fase del agua contigua. El dibujo del vaivén es ilustrativo;
 //     la cota máxima sale de la fórmula.
+//
+// Aspecto (sombreador de fragmentos), realista: azul marino en lo hondo y turquesa sobre la
+// arena, transparencia según la profundidad, reflejo del cielo con Fresnel, destello del sol,
+// luz que atraviesa las crestas y espuma con forma (manchas y hebras que se deshilachan). El
+// rizado fino del viento y el dibujo de la espuma son DECORATIVOS.
+// Dónde hay mar: donde la superficie supera la cota de rebose (campoOlas.ts, crearFondoAgua);
+// los charcos aislados y las hondonadas de la arena no se dibujan como mar.
 
 import * as THREE from 'three';
 import { LADO, PASO_RELIEVE } from '../../bahia';
@@ -37,11 +44,10 @@ varying vec3 vPos;
 varying vec3 vNormal;
 varying float vRotura;
 varying float vFase;
-varying float vVaiven;
-varying float vCiclo;
 varying vec2 vDir;
 varying float vAlcance;
 varying vec4 vRefl;
+varying float vAlto;      // elevación de la ola respecto a su altura típica (−1 seno, +1 cresta)
 uniform mat4 uMatReflejo;
 
 const float G = 9.81;
@@ -78,7 +84,9 @@ void componente(float a, float T, float psi, float abanico, vec2 d, vec2 p, floa
   if (uLejos < 0.5) a *= smoothstep(2.5 * esp, 5.0 * esp, L);
   if (a < 0.002) return;
   float th = w * (tLlegada - uTiempo) + psi + k * abanico * dot(p, xz);
-  float s = min(0.42, k * a * 1.6);           // pendiente efectiva de la cresta
+  // Pendiente de la cresta por componente. Con 4 componentes por sistema y dos sistemas, la suma
+  // debe quedar por debajo de 1 o la malla se pliega sobre sí misma en la cresta (dientes de sierra).
+  float s = min(0.13, k * a * 1.6);
   float Q = s / max(k * a, 1e-4);
   float sn = sin(th), cs = cos(th);
   desp.xz += Q * a * d * cs;
@@ -116,7 +124,7 @@ void main() {
   if (uLejos > 0.5) p = position;
   vec3 desp = vec3(0.0);
   vec3 nrm = vec3(0.0, 1.0, 0.0);
-  float rotura = 0.0, fase = -10.0, vaiven = 0.0, ciclo = 0.5;
+  float rotura = 0.0, fase = -10.0, vaiven = 0.0, ciclo = 0.5, alto = 0.0;
   float prof = uNivel - fondo(p.xz);
   if (uLejos < 0.5) {
     float h = max(prof, 0.08);
@@ -126,6 +134,7 @@ void main() {
     // Fase de la ola principal (para la espuma): siempre la misma componente, sin saltos entre
     // vértices vecinos aunque alguna componente se apague por el nivel de detalle.
     if (uSisA.x >= 0.02) fase = PI2 / max(uSisA.y, 1.0) * (tA - uTiempo);
+    alto = desp.y / max(0.35 * (uSisA.x + uSisB.x), 0.03);
     // Orilla: setup y vaivén hasta R2 (solo en la franja de lavado).
     float franja = (1.0 - smoothstep(0.0, 1.6, prof)) * step(-uR2 - 0.3, prof) * alcA;
     // Vaivén asimétrico, como en la orilla real: el agua sube deprisa (30 % del periodo, frenando
@@ -135,7 +144,10 @@ void main() {
     float bajada = clamp((ciclo - 0.3) / 0.7, 0.0, 1.0);
     bajada = bajada * bajada * (3.0 - 2.0 * bajada);
     float pulso = ciclo < 0.3 ? subida : 1.0 - bajada;
-    vaiven = uR2 * pulso * franja;
+    // Cada ola sube distinto: R2 es la cota que solo supera el 2 % de las olas, así que la
+    // mayoría se queda por debajo (reparto ILUSTRATIVO entre 0,45·R2 y R2, fijo para cada ola).
+    float ola = floor((uTiempo - tA) / max(uSisA.y, 1.0) + 0.15);
+    vaiven = uR2 * pulso * franja * mix(0.45, 1.0, fract(sin(ola * 12.9898) * 43758.5453));
     desp.y += uSetup * franja + vaiven;
     desp *= smoothstep(-uR2 - 0.3, 0.05, prof); // en seco solo queda el vaivén
   }
@@ -144,8 +156,7 @@ void main() {
   vNormal = normalize(nrm);
   vRotura = rotura;
   vFase = fase;
-  vVaiven = vaiven;
-  vCiclo = ciclo;
+  vAlto = clamp(alto, -1.5, 1.5);
   vec4 cA = texture(uCampoA, uvNodo(p.xz - desp.xz, uCampo));
   vDir = normalize(cA.gb + vec2(1e-5));
   vAlcance = uLejos > 0.5 ? 1.0 : cA.a;
@@ -173,8 +184,6 @@ varying vec3 vPos;
 varying vec3 vNormal;
 varying float vRotura;
 varying float vFase;
-varying float vVaiven;
-varying float vCiclo;
 varying vec2 vDir;
 varying float vAlcance;
 varying vec4 vRefl;
@@ -182,160 +191,152 @@ uniform sampler2D uNormAgua;
 uniform sampler2D uReflejo;
 uniform float uConReflejo;
 uniform vec4 uSisA;
+uniform sampler2D uCampoA;
+uniform vec2 uCampo;
 
 const float MEDIO = ${(LADO / 2).toFixed(1)};
 vec2 uvNodo(vec2 xz, vec2 rej) { return ((xz + MEDIO) / rej.y + 0.5) / rej.x; }
-float fondo(vec2 xz) {
-  if (abs(xz.x) > MEDIO || abs(xz.y) > MEDIO) return -40.0;
-  return texture(uRelieve, uvNodo(xz, uRel)).r;
+/** Altura del fondo y cota de rebose (nivel al que llega el mar, ver campoOlas.ts); fuera, mar hondo. */
+vec2 fondoMar(vec2 xz) {
+  if (abs(xz.x) > MEDIO || abs(xz.y) > MEDIO) return vec2(-40.0);
+  return texture(uRelieve, uvNodo(xz, uRel)).rg;
 }
+varying float vAlto;
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float ruidoV(vec2 p) {
   vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
   return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
 }
-float ruido(vec2 p) { return ruidoV(p) * 0.6 + ruidoV(p * 2.3 + 7.1) * 0.4; }
 float fbm(vec2 p) {
   float t = 0.0, a = 0.5;
   for (int i = 0; i < 4; i++) { t += a * ruidoV(p); p = p * 2.03 + vec2(1.7, 9.2); a *= 0.5; }
   return t / 0.9375;
-}
-vec2 hash2(vec2 p) { return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453); }
-/** Ruido celular: distancia entre los dos puntos más cercanos (F2 − F1). Vale ~0 en los bordes
- *  entre celdas, que es donde se dibujan las paredes de las burbujas. */
-float celdas(vec2 p) {
-  vec2 i = floor(p), f = fract(p);
-  float d1 = 8.0, d2 = 8.0;
-  for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++) {
-    vec2 o = vec2(float(x), float(y));
-    vec2 c = o + hash2(i + o) - f;
-    float dd = dot(c, c);
-    if (dd < d1) { d2 = d1; d1 = dd; } else if (dd < d2) { d2 = dd; }
-  }
-  return sqrt(d2) - sqrt(d1);
 }
 
 uniform float uLejos;
 void main() {
   // El anillo de mar lejano no se dibuja dentro del cuadrado modelado (allí están los parches).
   if (uLejos > 0.5 && abs(vPos.x) < MEDIO && abs(vPos.z) < MEDIO) discard;
-  float prof = vPos.y - fondo(vPos.xz);
+  vec2 fm = fondoMar(vPos.xz);
+  // Solo hay mar donde la superficie del agua supera la cota de rebose: los charcos aislados y
+  // las hondonadas de la arena no se llenan (se quedan en arena mojada) salvo que el agua rebase
+  // de verdad el caballón que los cierra.
+  // En una hondonada (fondo por debajo de su caballón) el vaivén no cuenta: lo que rebosa por
+  // arriba en cada ola no llena una cubeta de decenas de metros; se llena cuando sube la marea.
+  float hoya = smoothstep(0.03, 0.08, fm.y - fm.x);
+  float mar = uLejos > 0.5 ? 1.0 : smoothstep(-0.02, 0.03, mix(vPos.y, uNivel, hoya) - fm.y);
+  if (mar < 0.01) discard;
+  float prof = vPos.y - fm.x;
   float d = length(vPos - cameraPosition);
+  float dia = 0.1 + 0.9 * uLuzDia;
+
   // ---------- Superficie ----------
-  // Rizado fino del viento (solo en la normal): mapa de normales fotográfico de agua (three.js,
-  // examples/textures/waternormals.jpg) a dos escalas que se desplazan en direcciones distintas.
-  // Con mipmaps, de lejos se suaviza solo.
+  // Las olas del vértice (con la altura, periodo y dirección de los datos) dan la forma grande; el
+  // rizado del viento solo va en la normal: mapa de normales de agua (three.js,
+  // examples/textures/waternormals.jpg) a tres escalas que derivan en direcciones distintas.
+  // El rizado es DECORATIVO (no sale de los datos).
   vec2 q = vPos.xz;
-  vec3 nA = texture2D(uNormAgua, q / 21.0 + vec2(uTiempo * 0.011, uTiempo * 0.007)).xyz * 2.0 - 1.0;
-  vec3 nB = texture2D(uNormAgua, q / 7.3 + vec2(-uTiempo * 0.019, uTiempo * 0.015)).xyz * 2.0 - 1.0;
-  vec3 nC = texture2D(uNormAgua, q / 2.1 + vec2(uTiempo * 0.035, -uTiempo * 0.028)).xyz * 2.0 - 1.0;
-  vec2 g = nA.xy + nB.xy * 0.8 + nC.xy * 0.5 * (1.0 - smoothstep(10.0, 40.0, d));
-  float fuerza = mix(0.14, 0.05, smoothstep(30.0, 600.0, d)); // poco rizado: estilo limpio
+  float cerca = 1.0 - smoothstep(20.0, 90.0, d);
+  vec3 nA = texture2D(uNormAgua, q / 34.0 + vec2(uTiempo * 0.010, uTiempo * 0.006)).xyz * 2.0 - 1.0;
+  vec3 nB = texture2D(uNormAgua, q / 12.5 + vec2(-uTiempo * 0.017, uTiempo * 0.013)).xyz * 2.0 - 1.0;
+  vec3 nC = texture2D(uNormAgua, q / 3.9 + vec2(uTiempo * 0.031, -uTiempo * 0.025)).xyz * 2.0 - 1.0;
+  vec2 g = nA.xy + nB.xy * 0.75 + nC.xy * 0.5 * cerca;
+  // En la lámina fina de la orilla apenas hay rizado: es un espejo mojado.
+  float fuerza = mix(0.5, 0.12, smoothstep(30.0, 1200.0, d)) * smoothstep(0.05, 1.2, prof);
   vec3 n = normalize(vNormal + vec3(g.x, 0.0, -g.y) * fuerza);
   vec3 v = normalize(cameraPosition - vPos);
-  float fres = 0.02 + 0.98 * pow(1.0 - max(dot(n, v), 0.0), 5.0);
+  float ndv = max(dot(n, v), 0.0);
+  float fres = 0.02 + 0.98 * pow(1.0 - ndv, 5.0);
   vec3 r = reflect(-v, n);
   r.y = abs(r.y); // la ola no refleja el suelo: siempre cielo
-  vec3 cielo = mix(uCieloHorizonte, uCieloCenit, pow(clamp(r.y, 0.0, 1.0), 0.6));
-  // Reflejo de la escena (acantilados, edificios, cielo) desde la cámara espejo, deformado por
-  // el rizado; donde la deformación saca la muestra de la imagen, el cielo.
+  vec3 cielo = mix(uCieloHorizonte, uCieloCenit, pow(clamp(r.y, 0.0, 1.0), 0.45));
+  // Reflejo de la escena (acantilados, edificios) desde la cámara espejo, si está activo.
   vec2 uvR = vRefl.xy / vRefl.w + (n.xz - vNormal.xz) * mix(0.06, 0.02, smoothstep(30.0, 400.0, d));
   vec4 escenaR = texture2D(uReflejo, uvR);
   float dentroR = step(0.001, uvR.x) * step(uvR.x, 0.999) * step(0.001, uvR.y) * step(uvR.y, 0.999);
-  // Alfa 0 en la textura = cielo (no se dibuja en el reflejo): ahí, el degradado de cielo.
   vec3 reflejo = mix(cielo, escenaR.rgb / max(escenaR.a, 1e-3), clamp(escenaR.a, 0.0, 1.0) * dentroR * uConReflejo);
-  float sol = pow(max(dot(r, uDirBrillo), 0.0), 900.0) * 6.0 + pow(max(dot(r, uDirBrillo), 0.0), 90.0) * 0.25;
-  sol *= step(0.0, uDirBrillo.y);
+  // Destello del sol: un núcleo muy fino y brillante (los rizos lo rompen en chispas) y un halo.
+  float rs = max(dot(r, uDirBrillo), 0.0);
+  vec3 sol = uColorBrillo * (pow(rs, 1400.0) * 30.0 + pow(rs, 180.0) * 1.1 + pow(rs, 14.0) * 0.05) * step(0.0, uDirBrillo.y);
 
-  // ---------- Cuerpo del agua (estilo de animación) ----------
-  // Franjas de color planas según la profundidad, con bordes nítidos (antialias con fwidth).
-  float dia = 0.12 + 0.88 * uLuzDia;
-  float aa = fwidth(prof) * 1.2 + 0.01;
-  vec3 c1 = vec3(0.30, 0.78, 0.72);  // sRGB ≈ (148, 228, 220)
-  vec3 c2 = vec3(0.06, 0.50, 0.52);  // ≈ (70, 188, 190)
-  vec3 c3 = vec3(0.02, 0.24, 0.34);  // ≈ (40, 134, 158)
-  vec3 c4 = vec3(0.01, 0.09, 0.20);  // ≈ (20, 84, 124)
-  vec3 cuerpo = c1;
-  cuerpo = mix(cuerpo, c2, smoothstep(0.45 - aa, 0.45 + aa, prof));
-  cuerpo = mix(cuerpo, c3, smoothstep(2.2 - aa, 2.2 + aa, prof));
-  cuerpo = mix(cuerpo, c4, smoothstep(7.0 - aa * 2.0, 7.0 + aa * 2.0, prof));
+  // ---------- Cuerpo del agua ----------
+  // Azul marino en lo hondo; sobre la arena, verde turquesa (la luz rebota en el fondo claro). La
+  // luz que atraviesa la cresta de las olas la ilumina en turquesa (dispersión bajo la superficie).
+  vec3 hondo = vec3(0.006, 0.05, 0.14);
+  vec3 somero = vec3(0.03, 0.36, 0.38);
+  vec3 turquesa = vec3(0.04, 0.4, 0.42);
+  float kProf = 1.0 - exp(-max(prof, 0.0) / 1.3);
+  vec3 cuerpo = mix(somero, hondo, kProf);
+  float cresta = smoothstep(-0.1, 0.9, vAlto);
+  vec3 dirLuz = normalize(uDirBrillo * vec3(1.0, 0.35, 1.0));
+  float contraluz = pow(clamp(dot(v, -normalize(dirLuz + n * 0.55)), 0.0, 1.0), 3.0);
+  float dispersa = (contraluz * 1.4 + (1.0 - ndv) * 0.35) * cresta * smoothstep(0.3, 2.0, prof);
+  cuerpo += turquesa * dispersa * (0.55 + 0.45 * uLuzDia);
+  // senos algo más oscuros que las crestas: se lee la forma de la ola
+  cuerpo *= dia * mix(0.8, 1.1, cresta);
+  // Transparencia: el agua somera deja ver la arena (absorción con la profundidad).
+  // (con un mínimo, para que el agua somera se lea como agua y no como una sombra en la arena)
+  float opaco = mix(0.3, 1.0, 1.0 - exp(-max(prof, 0.0) * 0.9)) * smoothstep(0.0, 0.04, prof);
 
-  // ---------- Olas que llegan ----------
-  // Con la fase de la ola principal: la cara de la ola (antes de la cresta) un tono más clara y
-  // verdosa, el seno un tono más oscuro. Bandas nítidas que avanzan hacia la orilla con cada ola.
-  float fase = vFase + 0.6;
-  float s = sin(fase);
-  float aaS = fwidth(s) * 1.5 + 0.02;
-  float cara = smoothstep(0.45 - aaS, 0.45 + aaS, s);
-  float seno = 1.0 - smoothstep(-0.55 - aaS, -0.55 + aaS, s);
-  float hayOla = smoothstep(0.02, 0.15, uSisA.x) * smoothstep(0.4, 1.2, prof) * (1.0 - smoothstep(900.0, 2200.0, d));
-  cuerpo = mix(cuerpo, cuerpo * vec3(1.18, 1.28, 1.2) + vec3(0.0, 0.02, 0.015), cara * hayOla * 0.9);
-  cuerpo = mix(cuerpo, cuerpo * vec3(0.78, 0.84, 0.9), seno * hayOla * 0.8);
-  cuerpo *= dia;
-
-  // Trazos de agua: líneas onduladas sueltas que derivan despacio (en vez de una red de celdas).
-  vec2 qt = vPos.xz * 0.045 + vec2(uTiempo * 0.012, -uTiempo * 0.008);
-  float ft = fbm(qt);
-  float aaT = fwidth(ft) * 1.3;
-  float trazo = 1.0 - smoothstep(0.0, aaT + 0.004, abs(ft - 0.5));
-  trazo *= smoothstep(0.55, 0.62, fbm(qt * 0.6 + 4.7));                   // solo a ratos
-  trazo *= smoothstep(1.2, 2.5, prof) * (1.0 - smoothstep(120.0, 380.0, d)) * (1.0 - vRotura);
-  cuerpo = mix(cuerpo, vec3(0.72, 0.93, 0.92) * dia, trazo * 0.55);
-
-  // ---------- Espuma de la rompiente ----------
-  // Al romper, el frente de la ola es una banda blanca de borde ondulado y vivo; detrás quedan
-  // burbujas redondeadas (umbral de un ruido suave) que se encogen hasta desaparecer.
-  vec2 perp = vec2(-vDir.y, vDir.x);
+  // ---------- Espuma ----------
+  // Un patrón (ruido fractal con el dominio deformado: manchas y hebras orgánicas) y una
+  // «cobertura» que dice cuánta espuma hay: con cobertura alta la espuma es densa; al bajar solo
+  // quedan las hebras más altas del patrón y la espuma se deshilacha hasta desaparecer.
+  vec2 perp = vec2(-uSisA.w, uSisA.z);
   float along = dot(vPos.xz, perp);
-  vec2 deriva = vDir * uTiempo * 0.6;
-  vec2 pe = vPos.xz - deriva;
-  float edad = 1.0 - fract(fase / 6.28318531 - 0.25);            // 0 en el frente, 1 antes de la siguiente
-  float onda = 0.025 * sin(along * 0.33 + uTiempo * 1.7) + 0.02 * sin(along * 0.9 - uTiempo * 2.3) + 0.03 * (fbm(pe * 0.06) - 0.5);
-  float anchoFrente = 0.07 + onda;
-  float aaE = fwidth(edad) * 1.5 + 0.004;
-  float frenteOla = vRotura * (1.0 - smoothstep(anchoFrente - aaE, anchoFrente + aaE, edad));
-  // pequeña sombra azulada justo debajo del frente (da volumen al rizo)
-  float bajoFrente = vRotura * (1.0 - smoothstep(anchoFrente + 0.02, anchoFrente + 0.05, edad)) * (1.0 - frenteOla);
-  // el detalle fino de las burbujas solo de cerca: de lejos haría motitas
-  float finas = mix(fbm(pe * 0.6 + 9.0), 0.5, smoothstep(40.0, 140.0, d));
-  float burbujas = fbm(pe * 0.22 + 3.0) * 0.65 + finas * 0.35;
-  float umbral = mix(0.5, 0.92, smoothstep(anchoFrente, 0.5, edad));
-  float aaB = fwidth(burbujas) * 1.5 + 0.004;
-  float estela = vRotura * smoothstep(umbral - aaB, umbral + aaB, burbujas) * (1.0 - smoothstep(0.45, 0.6, edad));
-
-  // ---------- Orilla ----------
-  // El agua sube con un frente de espuma grueso y se retira dejando una línea fina; a media
-  // retirada, una segunda línea más atrás (la espuma que se queda).
-  float subiendo = 1.0 - smoothstep(0.25, 0.4, vCiclo);
-  float aaP = fwidth(prof) * 1.5 + 0.003;
-  float anchoOrilla = mix(0.035, 0.11, subiendo) + 0.03 * (fbm(pe * 0.15) - 0.5);
+  // La espuma deriva con el oleaje de mar abierto (dirección única: con la dirección local, que
+  // cambia algo de un vértice a otro, el dibujo se descolocaba entre triángulos).
+  vec2 pe = vPos.xz - uSisA.zw * uTiempo * 0.5;
+  float lejosE = smoothstep(60.0, 220.0, d);
+  vec2 pw = pe * 0.16 + vec2(fbm(pe * 0.06), fbm(pe * 0.06 + 5.2)) * 2.4;
+  float patron = smoothstep(0.2, 0.8, fbm(pw + vec2(fbm(pw * 1.7 + 1.3), fbm(pw * 1.7 + 8.1)) * 0.9));
+  patron += (fbm(pe * 0.85 + 4.0) - 0.5) * 0.3 * cerca;                  // grumos finos, de cerca
+  patron = mix(patron, 0.5, lejosE * 0.6);
+  float anchoP = 0.06 + fwidth(patron);
+  // Rompiente: espuma desde el frente de la ola hacia atrás, que se disuelve en el seno.
+  // Fase de la ola principal y momento del vaivén calculados en cada píxel con el tiempo de
+  // llegada: el ciclo del vaivén vuelve a 0 con cada ola, e interpolarlo entre vértices dibujaba
+  // la espuma en dientes de sierra.
+  float T = max(uSisA.y, 1.0);
+  float tA = texture(uCampoA, uvNodo(vPos.xz, uCampo)).r;
+  bool conOla = uLejos < 0.5 && uSisA.x >= 0.02;
+  float fase = conOla ? 6.28318531 / T * (tA - uTiempo) + 0.6 : vFase + 0.6;
+  float ciclo = conOla ? fract((uTiempo - tA) / T + 0.15) : 0.5;
+  float prof0 = uNivel - fm.x;
+  float franja = (1.0 - smoothstep(0.0, 1.6, prof0)) * step(-uR2 - 0.3, prof0) * vAlcance;
+  float pulso = ciclo < 0.3 ? 1.0 - pow(1.0 - ciclo / 0.3, 2.0) : 1.0 - smoothstep(0.0, 1.0, (ciclo - 0.3) / 0.7);
+  float ola = floor((uTiempo - tA) / T + 0.15);
+  float vaiven = conOla ? uR2 * pulso * franja * mix(0.45, 1.0, fract(sin(ola * 12.9898) * 43758.5453)) : 0.0;
+  float onda = 0.02 * sin(along * 0.31 + uTiempo * 1.3) + 0.03 * (fbm(pe * 0.07) - 0.5);
+  float edad = 1.0 - fract(fase / 6.28318531 - 0.25 + onda); // 0 en el frente, 1 en la siguiente
+  float cobertura = vRotura * exp(-edad * 4.0);
+  float espumaOla = smoothstep(1.0 - cobertura - anchoP, 1.0 - cobertura + anchoP, patron);
+  // Orilla: la lámina sube con un borde de espuma grueso y se retira dejando encaje.
+  float subiendo = 1.0 - smoothstep(0.25, 0.4, ciclo);
+  float aaP = fwidth(prof) * 1.5 + 0.004;
+  float anchoOrilla = mix(0.035, 0.1, subiendo) + 0.04 * (patron - 0.5);
   float borde = (1.0 - smoothstep(anchoOrilla - aaP, anchoOrilla + aaP, prof)) * vAlcance;
-  float linea2 = (1.0 - smoothstep(0.012, 0.012 + aaP, abs(prof - 0.2 - 0.05 * sin(along * 0.2 + uTiempo * 0.9)))) * vAlcance
-               * (1.0 - subiendo) * (1.0 - smoothstep(0.0, 0.6, vRotura));
-  float lamina = smoothstep(0.02, 0.2, vVaiven) * (1.0 - smoothstep(0.0, 0.25, prof)) * vAlcance;
-  float burbujasOrilla = lamina * smoothstep(0.62 - aaB, 0.62 + aaB, burbujas) * mix(0.5, 1.0, subiendo);
-
-  float espuma = max(max(frenteOla, estela * 0.95), max(borde, max(linea2 * 0.8, burbujasOrilla * 0.85)));
-  espuma *= 1.0 - smoothstep(700.0, 2000.0, d) * 0.6;
-  float ndl = dot(n, uDirBrillo);
-  vec3 blanco = vec3(0.95, 0.98, 0.98) * dia;
-  // la espuma por bandas: la parte de abajo de las burbujas, un pelín azulada
-  blanco = mix(blanco * vec3(0.82, 0.92, 0.95), blanco, smoothstep(0.55, 0.7, burbujas + frenteOla));
+  float lamina = smoothstep(0.02, 0.2, vaiven) * (1.0 - smoothstep(0.0, 0.35, prof)) * vAlcance;
+  float coberturaOrilla = max(lamina * mix(0.1, 0.42, subiendo), borde);
+  float espumaOrilla = smoothstep(1.0 - coberturaOrilla - anchoP, 1.0 - coberturaOrilla + anchoP, patron);
+  float espuma = max(espumaOla, espumaOrilla) * (1.0 - smoothstep(900.0, 2400.0, d) * 0.6);
+  // La espuma tiene cuerpo: más clara arriba y en lo denso, algo azulada en lo fino.
+  float densa = smoothstep(0.5, 0.9, patron);
+  float luzE = 0.72 + 0.28 * clamp(dot(n, normalize(uDirBrillo + vec3(0.0, 1.0, 0.0))), 0.0, 1.0);
+  vec3 blanco = mix(vec3(0.72, 0.82, 0.86), vec3(0.96, 0.98, 0.98), densa) * luzE * dia;
 
   // ---------- Composición ----------
-  float alfa = mix(0.5, 1.0, smoothstep(0.0, 0.1, prof));
-  vec3 c = cuerpo;
-  c = mix(c, cuerpo * vec3(0.7, 0.82, 0.9), bajoFrente * 0.6);
-  // brillo del sol: destello de borde nítido
-  float brillo = smoothstep(0.985, 0.99, dot(r, uDirBrillo)) * step(0.0, uDirBrillo.y);
-  c = mix(c, uColorBrillo + 0.3, brillo * (1.0 - espuma));
-  // la lámina que sube por la arena: casi transparente, con un brillo claro
-  c = mix(c, vec3(0.8, 0.95, 0.95) * dia, lamina * 0.35);
-  alfa = mix(alfa, 0.45, lamina * (1.0 - espuma));
+  // Mezcla física sencilla: reflejo (Fresnel) + cuerpo del agua (con su opacidad) + fondo.
+  float a = fres + (1.0 - fres) * opaco;
+  vec3 c = (reflejo * fres + cuerpo * (1.0 - fres) * opaco) / max(a, 1e-3);
+  float lumSol = clamp(dot(sol, vec3(0.33)), 0.0, 1.0) * (1.0 - espuma);
+  c += sol * (1.0 - espuma) / max(a, 0.05);
+  a = max(a, lumSol);
   c = mix(c, blanco, espuma);
-  alfa = max(alfa, espuma);
+  a = max(a, espuma);
+  a *= mar;
   c = mix(c, uColorNiebla, 1.0 - exp(-uDensidadNiebla * uDensidadNiebla * d * d));
-  gl_FragColor = vec4(c, alfa);
+  gl_FragColor = vec4(c, a);
   #include <colorspace_fragment>
 }
 `;

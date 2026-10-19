@@ -331,6 +331,7 @@ input[type='range']::-moz-range-thumb {
   font-size: 12px; font-weight: 600; letter-spacing: 0.01em; color: #1d2a31;
   background: rgb(255 255 255 / 0.88); border-radius: 999px;
   box-shadow: 0 2px 8px rgb(16 32 40 / 0.18);
+  opacity: 0; /* hasta que se coloca: si no, aparecería un instante en la esquina */
   transition: opacity 200ms ease;
 }
 /* un pequeño trazo hacia el punto que señala */

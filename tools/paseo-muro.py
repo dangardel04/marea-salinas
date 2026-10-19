@@ -96,6 +96,22 @@ for c in range(5):
         col[v] = median_filter(col[v], 9)
         col[v] = np.convolve(np.pad(col[v], 3, 'edge'), np.ones(7) / 7, 'valid')
     A[:, c] = col
+# Huecos cortos (bajadas, escaleras, tramos donde el LiDAR no da un perfil limpio): el muro sigue
+# por delante, así que se rellenan interpolando entre los dos extremos. Sin esto, ahí se veía el
+# relieve del LiDAR a manchas. Solo huecos de hasta HUECO_MAX m con muro a los dos lados.
+HUECO_MAX = 60
+i = 0
+rellenos = 0
+while i < len(s):
+    if ok[i]: i += 1; continue
+    j = i
+    while j < len(s) and not ok[j]: j += 1
+    if i > 0 and j < len(s) and (j - i) * 2.0 <= HUECO_MAX:
+        for c in range(5):
+            A[i:j, c] = np.interp(np.arange(i, j), [i - 1, j], [A[i - 1, c], A[j, c]])
+        ok[i:j] = True
+        rellenos += j - i
+    i = j
 tramos, actual = [], []
 for i in range(len(s)):
     if ok[i]:
@@ -144,5 +160,6 @@ salida = {
 }
 json.dump(salida, open(os.path.join(RAIZ, 'src', 'scene', 'bahia-paseo.json'), 'w', encoding='utf-8'), ensure_ascii=False)
 alt = np.array([t['arriba'][1] - t['pie'][1] for t in todos])
+print(f'{rellenos * 2} m de huecos rellenados (de hasta {HUECO_MAX} m)')
 print(f'{len(tramos)} tramos de muro, {len(todos) * 2} m, altura del muro mediana {np.median(alt):.1f} m (p10 {np.percentile(alt, 10):.1f}, p90 {np.percentile(alt, 90):.1f}); {len(lugares)} lugares')
 for l_ in lugares: print('  ', l_)

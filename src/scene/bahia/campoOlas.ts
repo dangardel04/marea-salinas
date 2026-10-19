@@ -6,7 +6,7 @@
 //       que el oleaje no alcanza (charcos y canales aislados de bajamar) se queda con A = 0.
 
 import * as THREE from 'three';
-import { PASO_RELIEVE } from '../../bahia';
+import { LADO, PASO_RELIEVE } from '../../bahia';
 import { tiemposLlegada } from '../../oleaje/propagacion';
 import type { Relieve } from './relieve';
 
@@ -71,4 +71,103 @@ export function calcularCampo(relieve: Relieve, nivel: number, periodo: number, 
   tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
   tex.needsUpdate = true;
   return tex;
+}
+
+/**
+ * Cota de rebose: el nivel más bajo al que el agua del mar abierto llega a cada nodo (inundación
+ * por prioridad desde los nodos del borde que están bajo el cero hidrográfico). En una ladera es
+ * la altura del propio nodo; en un charco detrás de un caballón de arena es la altura del
+ * caballón. Para pasar de un nodo al siguiente el agua tiene que llevar al menos `margen` m de
+ * calado: un charco unido al mar solo por un hilo de centímetros en la rejilla de 5 m (que en el
+ * relieve de 1 m queda en seco) se trata como aislado.
+ */
+export function cotaRebose(alturas: Float32Array, n: number, margen: number): Float32Array {
+  const N = n * n;
+  const paso = new Float32Array(N).fill(Infinity); // nivel necesario para seguir desde el nodo
+  const cota = new Float32Array(N).fill(Infinity);
+  // Montículo binario de índices ordenados por `paso`.
+  const monton = new Int32Array(N * 5); // un nodo entra como mucho una vez por vecino y otra de semilla
+  let tam = 0;
+  const meter = (k: number) => {
+    let i = tam++;
+    monton[i] = k;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (paso[monton[p]] <= paso[monton[i]]) break;
+      const t = monton[p]; monton[p] = monton[i]; monton[i] = t;
+      i = p;
+    }
+  };
+  const sacar = () => {
+    const r = monton[0];
+    monton[0] = monton[--tam];
+    let i = 0;
+    for (;;) {
+      const a = 2 * i + 1, b = a + 1;
+      let m = i;
+      if (a < tam && paso[monton[a]] < paso[monton[m]]) m = a;
+      if (b < tam && paso[monton[b]] < paso[monton[m]]) m = b;
+      if (m === i) break;
+      const t = monton[m]; monton[m] = monton[i]; monton[i] = t;
+      i = m;
+    }
+    return r;
+  };
+  for (let k = 0; k < N; k++) {
+    const f = Math.floor(k / n), c = k % n;
+    const borde = f === 0 || c === 0 || f === n - 1 || c === n - 1;
+    if (borde && alturas[k] < 0) { cota[k] = alturas[k]; paso[k] = alturas[k] + margen; meter(k); }
+  }
+  const hecho = new Uint8Array(N);
+  while (tam > 0) {
+    const k = sacar();
+    if (hecho[k]) continue;
+    hecho[k] = 1;
+    const c = k % n;
+    const vecinos = [c > 0 ? k - 1 : -1, c < n - 1 ? k + 1 : -1, k - n, k + n];
+    for (const kk of vecinos) {
+      if (kk < 0 || kk >= N || hecho[kk]) continue;
+      const llega = Math.max(alturas[kk], paso[k]);           // nivel al que el agua entra en kk
+      if (llega < cota[kk]) {
+        cota[kk] = llega;
+        paso[kk] = Math.max(alturas[kk] + margen, paso[k]);
+        meter(kk);
+      }
+    }
+  }
+  return cota;
+}
+
+/**
+ * Fondo que ve el agua, en una textura RG float con la rejilla de 5 m:
+ *   R = altura del fondo (m sobre el CH), con el relieve fino de la playa ya fundido, para que la
+ *       orilla del agua caiga donde la arena (antes, cada 10 m y sin el LiDAR fino);
+ *   G = cota de rebose (ver cotaRebose): el agua solo se dibuja donde su superficie la supera.
+ *       Así los charcos aislados y las hondonadas de la arena no salen como mar, ni con la
+ *       subida del vaivén, salvo que el agua rebase de verdad el caballón que los cierra.
+ * No depende del nivel del mar: se calcula al cargar y otra vez cuando llega el relieve fino.
+ */
+export function crearFondoAgua(relieve: Relieve) {
+  const n = relieve.n;
+  const alturas = new Float32Array(n * n);
+  const datos = new Float32Array(n * n * 2);
+  const tex = new THREE.DataTexture(datos, n, n, THREE.RGFormat, THREE.FloatType);
+  tex.magFilter = tex.minFilter = THREE.LinearFilter;
+  tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
+
+  /** Lee las alturas de la rejilla y recalcula la cota de rebose (otra vez con el relieve fino). */
+  function actualizar() {
+    for (let f = 0; f < n; f++) for (let c = 0; c < n; c++) {
+      alturas[f * n + c] = relieve.altura(-LADO / 2 + c * PASO_RELIEVE, -LADO / 2 + f * PASO_RELIEVE);
+    }
+    const cota = cotaRebose(alturas, n, 0.08);
+    for (let k = 0; k < n * n; k++) {
+      datos[k * 2] = alturas[k];
+      datos[k * 2 + 1] = Number.isFinite(cota[k]) ? cota[k] : 1000;
+    }
+    tex.needsUpdate = true;
+  }
+
+  actualizar();
+  return { textura: tex, n, actualizar };
 }
