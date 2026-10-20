@@ -21,6 +21,7 @@
   --curva: #2f5f7a;
   --curva-relleno: rgb(47 95 122 / 0.12);
   --rejilla: rgb(20 32 40 / 0.08);
+  --pista-apagada: rgb(20 32 40 / 0.32);
   --sombra: 0 10px 30px rgb(22 40 52 / 0.14);
   color-scheme: light;
 }
@@ -39,6 +40,7 @@
     --curva: #8cc2df;
     --curva-relleno: rgb(140 194 223 / 0.13);
     --rejilla: rgb(220 232 240 / 0.08);
+    --pista-apagada: rgb(220 232 240 / 0.34);
     --sombra: 0 10px 30px rgb(0 0 0 / 0.35);
     color-scheme: dark;
   }
@@ -56,6 +58,7 @@
   --curva: #8cc2df;
   --curva-relleno: rgb(140 194 223 / 0.13);
   --rejilla: rgb(220 232 240 / 0.08);
+  --pista-apagada: rgb(220 232 240 / 0.34);
   --sombra: 0 10px 30px rgb(0 0 0 / 0.35);
   color-scheme: dark;
 }
@@ -327,6 +330,30 @@ input[type='range']::-moz-range-thumb {
 .arena[hidden] { display: none; }
 .arena-lugar { display: grid; gap: 4px; }
 .arena-lugar label { font-size: 12.5px; color: var(--texto-2); }
+.arena-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 28px; }
+/* Interruptor: pista con bola que se desliza; pulsado, se hunde un poco */
+.interruptor {
+  display: inline-flex; align-items: center; gap: 7px; height: 28px; margin-right: -4px; padding: 0 4px;
+  border: 0; border-radius: var(--radio-control); background: none; color: var(--texto-2);
+  font: inherit; font-size: 12.5px; white-space: nowrap; cursor: pointer;
+}
+.interruptor:focus-visible { outline: 2px solid var(--acento); outline-offset: 1px; }
+.interruptor-pista {
+  position: relative; width: 30px; height: 18px; flex: none; border-radius: 999px;
+  background: var(--pista-apagada); box-shadow: inset 0 0 0 1px var(--borde);
+  transition: background-color 160ms ease, transform 160ms var(--ease-out);
+}
+.interruptor-bola {
+  position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--superficie-solida); box-shadow: 0 1px 2px rgb(10 20 28 / 0.28);
+  transition: transform 180ms var(--ease-out);
+}
+.interruptor[aria-checked='true'] { color: var(--texto); }
+.interruptor[aria-checked='true'] .interruptor-pista { background: var(--acento); box-shadow: none; }
+.interruptor[aria-checked='true'] .interruptor-bola { transform: translateX(12px); }
+.interruptor:active .interruptor-pista { transform: scale(0.94); }
+@media (pointer: coarse) { .interruptor { height: 44px; } }
+@media (prefers-reduced-motion: reduce) { .interruptor-bola, .interruptor-pista { transition-property: background-color; } }
 .arena-select {
   width: 100%; min-width: 0; height: 34px; padding: 0 8px; border-radius: var(--radio-control);
   border: 1px solid var(--borde); background: var(--superficie-solida); font-size: 13px;

@@ -187,15 +187,34 @@ void main() {
   // Franja mojada (lo que cubrió la marea en las últimas horas) y empapada (junto al agua).
   float rango = max(uNivelMax - uNivel, 0.25);
   float aa = fwidth(h) * 1.5 + 0.05;
-  float mojada = 1.0 - smoothstep(rango + 0.08 - aa, rango + 0.08 + aa, h - uNivel);
+  // (borde irregular, como lo deja el agua al secarse, no una curva de nivel)
+  float mojada = 1.0 - smoothstep(rango + 0.08 - aa, rango + 0.08 + aa, h - uNivel + (fbm(vPos.xz * 0.12) - 0.5) * 0.16);
   // Empapada: la franja que lava el vaivén de las olas ahora (hasta el nivel + setup + R2) y un
   // poco más; transición suave. Con la cota de rebose (no la altura), así las hondonadas detrás de
   // un caballón no salen como manchas oscuras.
   float cotaMar = max(h, texture2D(uFondoAgua, uvP).g + vAjuste);
   float lavado = uSetup + uR2 + 0.08;
   float empapada = 1.0 - smoothstep(lavado - 0.06, lavado + 0.14, cotaMar - uNivel);
+  // Grano y dibujo de la arena: fotos escaneadas (Poly Haven, CC0). Solo se usa su variación
+  // relativa (la foto dividida por su color medio, el último mip), así el color sigue siendo el
+  // elegido: la seca, la foto aérea de 30 m (huellas, marcas del viento); la mojada, la de 1,87 m.
+  float mezclaT = fbm(vPos.xz * 0.04);
+  vec3 fSeca = muestraArena(uTexArena, vPos.xz, mezclaT).rgb / max(textureLod(uTexArena, vec2(0.5), 12.0).rgb, vec3(0.02));
+  vec3 fMoj = mix(texture2D(uTexMojada, vPos.xz / 1.87).rgb, texture2D(uTexMojada, GIRO * vPos.xz / 1.43 + 0.31).rgb, mezclaT)
+            / max(textureLod(uTexMojada, vec2(0.5), 12.0).rgb, vec3(0.02));
+  float verSeca = 0.6 * (1.0 - smoothstep(250.0, 900.0, d));
+  float verMoj = 0.5 * (1.0 - smoothstep(12.0, 70.0, d));
+  arenaSeca *= mix(vec3(1.0), clamp(fSeca, 0.45, 1.7), verSeca);
+  arenaHumeda *= mix(vec3(1.0), clamp(mix(fSeca, fMoj, 0.6), 0.45, 1.7), max(verMoj, verSeca * 0.6));
+  arenaEmpapada *= mix(vec3(1.0), clamp(fMoj, 0.45, 1.7), verMoj);
   vec3 arena = mix(arenaSeca, arenaHumeda, mojada);
   arena = mix(arena, arenaEmpapada, empapada);
+  // Línea de la última pleamar: algas y restos que deja el mar en lo más alto (el dibujo es
+  // DECORATIVO; la altura es la de la pleamar de las últimas 6 h más la subida de las olas).
+  float cotaAlga = uNivelMax + uSetup + uR2 * 0.7;
+  float dAlga = abs(h - cotaAlga + (fbm(vPos.xz * 0.07) - 0.5) * 0.3);
+  float alga = (1.0 - smoothstep(0.02, 0.09 + fwidth(h) * 2.0, dAlga)) * smoothstep(0.42, 0.68, fbm(vPos.xz * 0.9 + 3.3));
+  arena = mix(arena, vec3(0.11, 0.095, 0.06), alga * 0.8);
   // Bajo el mar (se ve a través del agua somera), algo más oscura; en los charcos aislados de
   // bajamar, que no se dibujan como mar, se queda en arena empapada.
   float esMar = smoothstep(-0.03, 0.03, uNivel - cotaMar);
@@ -214,6 +233,24 @@ void main() {
   // ---------- Luz ----------
   vec3 n = normalize(vNor);
   vec3 v = normalize(cameraPosition - vPos);
+  // Relieve fino de la arena (solo en la playa): normales de las fotos y, en lo que cubre la
+  // marea, ripples (las marcas de las olas, de ~12 cm y ~70 cm) paralelos a la orilla. DECORATIVO.
+  if (playa > 0.01) {
+    vec3 tnS = texture2D(uTexArenaN, vPos.xz / 30.0).xyz * 2.0 - 1.0;
+    vec3 tnM = texture2D(uTexMojadaN, vPos.xz / 1.87).xyz * 2.0 - 1.0;
+    vec2 pert = tnS.xy * 0.55 * (1.0 - smoothstep(60.0, 400.0, d))
+              + tnM.xy * 0.6 * (1.0 - smoothstep(6.0, 35.0, d)) * max(mojada, 0.35);
+    float o2 = 1.0 / 1281.0;
+    vec2 gF = vec2(texture2D(uFondoAgua, uvP + vec2(o2, 0.0)).r - texture2D(uFondoAgua, uvP - vec2(o2, 0.0)).r,
+                   texture2D(uFondoAgua, uvP + vec2(0.0, o2)).r - texture2D(uFondoAgua, uvP - vec2(0.0, o2)).r);
+    vec2 baja = -gF / max(length(gF), 1e-4);
+    float sx = dot(vPos.xz, baja);
+    float fase1 = sx * 52.0 + fbm(vPos.xz * 0.5) * 9.0;           // λ ≈ 0,12 m
+    float fase2 = sx * 9.0 + fbm(vPos.xz * 0.15 + 2.0) * 7.0;     // λ ≈ 0,7 m
+    float rip = cos(fase1) * 0.38 * (1.0 - smoothstep(4.0, 16.0, d)) + cos(fase2) * 0.2 * (1.0 - smoothstep(10.0, 50.0, d));
+    pert += baja * rip * mojada * (1.0 - empapada * 0.6);
+    n = normalize(n + vec3(pert.x, 0.0, pert.y) * playa);
+  }
   float estilo = max(playa, muro);
   // (el mapa de sombras tiene la arena sin el ajuste de la orilla)
   float sSol = sombra(vPos - vec3(0.0, vAjuste, 0.0), n);
@@ -221,10 +258,19 @@ void main() {
   float ao = 1.0 - smoothstep(0.12, 0.75, vOcl) * 0.5;
   // Arena: seca, mate (rugosidad 0,9); húmeda de la marea, 0,6; empapada por el vaivén, la
   // película de agua la hace lisa (0,2): brilla y refleja el cielo.
+  // junto al agua, una película fina: casi un espejo (0,06 en el centro de la franja)
   float rug = mix(mix(0.9, 0.6, mojada), 0.2, empapada);
+  rug = mix(rug, 0.06, empapada * empapada);
   rug = mix(rug, 0.88, muro);
   float f0 = mix(0.03, 0.02, empapada);
   vec3 dibujado = iluminar(c, n, v, rug, f0, sSol, ao);
+  // Chispas del sol en el grano seco, de cerca (cuarzo y mica). DECORATIVO.
+  if (d < 30.0 && playa > 0.5) {
+    vec2 celda = floor(vPos.xz * 40.0);
+    vec3 nG = normalize(vec3(hash(celda + 1.7) - 0.5, 0.9, hash(celda + 3.1) - 0.5));
+    float chispa = step(0.993, hash(celda)) * pow(max(dot(nG, normalize(uDirSol + v)), 0.0), 400.0);
+    dibujado += uColorSol * uLuzSol * chispa * 5.0 * (1.0 - smoothstep(10.0, 30.0, d)) * sSol * (1.0 - mojada);
+  }
   // La foto ya trae su luz: se escala con la de ahora y con las sombras (a medias, que la foto
   // tiene las suyas del día del vuelo, más cortas o largas según la hora).
   vec3 foto = c * luz(n, mix(0.55, 0.45, usarFoto), mix(1.0, sSol, 0.85)) * mix(1.0, ao, 0.5);

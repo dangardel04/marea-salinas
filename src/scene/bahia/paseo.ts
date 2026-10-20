@@ -1,8 +1,9 @@
 // Muro del paseo de Salinas, su remate, la barandilla y el suelo del paseo, como piezas limpias
 // (tools/paseo-muro.py: eje del «Paseo del Cantábrico» de OpenStreetMap; borde y pie del muro del
-// LiDAR de 2024). Estilo de animación, a juego con la playa: luz por bandas y contornos.
-// La sillería, el color y la barandilla (1 m, postes cada 2 m) son DECORATIVOS; la línea y la
-// altura del muro, medidas. Luz física sencilla y sombras, como el terreno (sombreado.ts).
+// LiDAR de 2024). La sillería (con relieve en las juntas), el color de cada sillar, los
+// chorreones, el salitre, el verdín, las baldosas y la barandilla (1 m, postes cada 2 m) son
+// DECORATIVOS; la línea y la altura del muro, medidas; la franja del verdín sigue la pleamar de
+// las últimas horas. Luz física sencilla y sombras, como el terreno (sombreado.ts).
 
 import * as THREE from 'three';
 import { LUZ_GLSL } from './sombreado';
@@ -32,6 +33,31 @@ varying vec2 vUv;    // cara: u = metros a lo largo, v = metros desde el pie; su
 varying vec3 vPos;
 varying vec3 vNor;
 varying float vTipo;
+float hashP(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float ruidoP(vec2 p) {
+  vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hashP(i), hashP(i + vec2(1, 0)), u.x), mix(hashP(i + vec2(0, 1)), hashP(i + vec2(1, 1)), u.x), u.y);
+}
+float fbmP(vec2 p) {
+  float s = 0.0, a = 0.5;
+  for (int i = 0; i < 4; i++) { s += a * ruidoP(p); p = p * 2.07 + vec2(3.1, 1.7); a *= 0.5; }
+  return s / 0.9375;
+}
+/** Sillar: distancia (m) a la junta más cercana en u y en v, e índice del bloque. */
+vec4 sillar(vec2 uv) {
+  float fila = floor(uv.y / 0.5);
+  // cada hilada con su largo de sillar (0,9–1,6 m) y su desfase
+  float largo = 0.9 + 0.7 * hashP(vec2(fila, 2.0));
+  float u = uv.x / largo + hashP(vec2(fila, 7.0));
+  float du = (0.5 - abs(fract(u) - 0.5)) * largo, dv = (0.5 - abs(fract(uv.y / 0.5) - 0.5)) * 0.5;
+  return vec4(du, dv, floor(u), fila);
+}
+/** Altura del relieve de la piedra: el sillar abombado, más bajo en la junta, con grano. */
+float relieveSillar(vec2 uv) {
+  vec4 s = sillar(uv);
+  float borde = min(s.x, s.y);
+  return smoothstep(0.0, 0.06, borde) * 0.02 + smoothstep(0.0, 0.012, borde) * 0.008 + fbmP(uv * 9.0) * 0.004;
+}
 float linea(float x, float ancho) {     // líneas finas cada 1 (antialias)
   float f = abs(fract(x) - 0.5);
   float w = fwidth(x) * 1.2 + ancho;
@@ -39,35 +65,73 @@ float linea(float x, float ancho) {     // líneas finas cada 1 (antialias)
 }
 void main() {
   vec3 n = normalize(vNor) * (gl_FrontFacing ? 1.0 : -1.0);
-  vec3 c;
-  if (vTipo < 0.5) {
-    // Sillería: hiladas de 0,5 m, juntas verticales cada 1,2 m al tresbolillo.
-    float fila = floor(vUv.y / 0.5);
-    float u = vUv.x / 1.2 + mod(fila, 2.0) * 0.5;
-    float juntas = max(linea(vUv.y / 0.5, 0.02), linea(u, 0.015));
-    c = vec3(0.80, 0.76, 0.67);
-    c *= 0.94 + 0.06 * fract(sin(dot(vec2(floor(u), fila), vec2(12.9898, 78.233))) * 43758.5453);
-    c = mix(c, c * 0.72, juntas);
-    // franja que moja el mar: verdín oscuro, de borde nítido
-    float verdin = 1.0 - smoothstep(uNivelMax + 0.35 - 0.03, uNivelMax + 0.35 + 0.03, vPos.y);
-    c = mix(c, vec3(0.30, 0.36, 0.26), verdin);
-    // contorno en el pie y en lo alto de la cara
-    float pie = 1.0 - smoothstep(0.0, 0.06 + fwidth(vUv.y) * 1.5, vUv.y);
-    c = mix(c, vec3(0.12, 0.1, 0.09), pie * 0.8);
-  } else if (vTipo < 1.5) {
-    c = vec3(0.9, 0.88, 0.82);                    // albardilla clara
-    c = mix(c, c * 0.75, linea(vUv.x / 2.0, 0.02));
-  } else if (vTipo < 2.5) {
-    // suelo del paseo: baldosa clara en cuadrícula de 1 m
-    c = vec3(0.78, 0.75, 0.7);
-    c = mix(c, c * 0.86, max(linea(vUv.x, 0.03), linea(vUv.y, 0.03)));
-  } else {
-    c = vec3(0.92, 0.95, 0.96);                   // barandilla blanca
-  }
-  // piedra y baldosa mates; la barandilla, pintura algo satinada
-  float rug = vTipo > 2.5 ? 0.45 : 0.88;
   vec3 v = normalize(cameraPosition - vPos);
-  c = iluminar(c, n, v, rug, 0.04, sombra(vPos, n), 1.0);
+  float d = length(vPos - cameraPosition);
+  float detalle = 1.0 - smoothstep(40.0, 220.0, d);
+  vec3 c;
+  float rug = 0.88, ao = 1.0;
+  if (vTipo < 0.5) {
+    // ---- Cara del muro: sillería (DECORATIVA; la línea y la altura del muro, medidas) ----
+    vec4 s = sillar(vUv);
+    vec2 bloque = s.zw;
+    float hb = hashP(bloque), hb2 = hashP(bloque + 3.7);
+    // piedra arenisca clara, cada sillar de un tono (algo más ocre, más gris, más claro)
+    c = mix(vec3(0.46, 0.4, 0.31), vec3(0.62, 0.56, 0.45), hb) * mix(0.84, 1.1, hb2);
+    c *= 0.86 + 0.24 * fbmP(vUv * vec2(3.0, 4.0) + bloque * 1.7) * detalle + 0.12 * (1.0 - detalle);
+    c *= 0.94 + 0.12 * fbmP(vUv * vec2(14.0, 18.0)) * detalle;      // grano
+    // relieve: normal con las pendientes del relieve del sillar (marco tangente de la cara)
+    vec3 dp1 = dFdx(vPos), dp2 = dFdy(vPos);
+    vec2 duv1 = dFdx(vUv), duv2 = dFdy(vUv);
+    vec3 dp2p = cross(dp2, n), dp1p = cross(n, dp1);
+    vec3 T = dp2p * duv1.x + dp1p * duv2.x, B = dp2p * duv1.y + dp1p * duv2.y;
+    float inv = inversesqrt(max(max(dot(T, T), dot(B, B)), 1e-8));
+    float e = 0.01;
+    float h0 = relieveSillar(vUv);
+    vec2 g = vec2(relieveSillar(vUv + vec2(e, 0.0)) - h0, relieveSillar(vUv + vec2(0.0, e)) - h0) / e;
+    n = normalize(n - (T * inv) * g.x * 1.6 * detalle - (B * inv) * g.y * 1.6 * detalle);
+    // junta hundida: mortero gris en sombra
+    float junta = 1.0 - smoothstep(0.003, 0.014 + fwidth(vUv.y) * 1.2, min(s.x, s.y));
+    c = mix(c, vec3(0.3, 0.27, 0.23), junta * 0.6);
+    ao = 1.0 - junta * 0.4;
+    float hMar = uNivelMax + 0.35;
+    // chorreones de la lluvia desde la albardilla (más oscuros, en vertical)
+    float chorro = smoothstep(0.55, 0.85, fbmP(vec2(vUv.x * 2.2, vPos.y * 0.25))) * smoothstep(hMar + 0.5, hMar + 2.5, vPos.y);
+    c *= 1.0 - 0.18 * chorro;
+    // salitre: velo blanquecino por encima de donde moja el mar
+    float sal = smoothstep(0.45, 0.8, fbmP(vUv * vec2(1.3, 2.5) + 9.0)) * (1.0 - smoothstep(hMar + 0.3, hMar + 1.8, vPos.y)) * step(hMar, vPos.y);
+    c = mix(c, vec3(0.86, 0.85, 0.8), sal * 0.35);
+    // humedad: la piedra más oscura justo encima de la franja que moja el mar
+    float humedad = 1.0 - smoothstep(hMar, hMar + 0.9 + 0.4 * fbmP(vUv * 1.5), vPos.y);
+    c *= 1.0 - 0.25 * humedad;
+    // franja que moja el mar: verdín y algas, oscuros, de borde irregular, y brillo de mojado
+    float borde = hMar + (fbmP(vec2(vUv.x * 0.8, 0.0)) - 0.5) * 0.35;
+    float verdin = 1.0 - smoothstep(borde - 0.04, borde + 0.04, vPos.y);
+    vec3 alga = mix(vec3(0.16, 0.2, 0.12), vec3(0.24, 0.28, 0.16), fbmP(vUv * 4.0));
+    c = mix(c, alga, verdin * 0.92);
+    rug = mix(0.86, 0.35, verdin);
+    // pie del muro, algo más oscuro (arena húmeda y sombra)
+    c *= 1.0 - 0.35 * (1.0 - smoothstep(0.0, 0.35, vUv.y));
+  } else if (vTipo < 1.5) {
+    // ---- Albardilla: hormigón claro, tramos de 2 m, grano y algo de suciedad ----
+    c = vec3(0.86, 0.84, 0.78) * (0.92 + 0.08 * fbmP(vUv * vec2(2.0, 6.0)));
+    c = mix(c, c * 0.72, linea(vUv.x / 2.0, 0.015));
+    rug = 0.8;
+  } else if (vTipo < 2.5) {
+    // ---- Suelo del paseo: baldosa de 1 m, cada una de un tono, gastada en el centro ----
+    vec2 b = floor(vUv);
+    float hb = hashP(b);
+    c = mix(vec3(0.7, 0.67, 0.62), vec3(0.8, 0.77, 0.72), hb);
+    c *= 0.93 + 0.1 * fbmP(vUv * 3.0 + b) * detalle;
+    float jun = max(linea(vUv.x, 0.025), linea(vUv.y, 0.025));
+    c = mix(c, c * 0.68, jun);
+    ao = 1.0 - jun * 0.3;
+    rug = 0.75 - 0.15 * fbmP(vUv * 0.4);   // zonas pulidas por el paso
+  } else {
+    // ---- Barandilla: pintura blanca satinada, con algo de suciedad abajo ----
+    c = vec3(0.9, 0.92, 0.92) * (0.94 + 0.06 * fbmP(vPos.xz * 2.0 + vPos.y));
+    rug = 0.38;
+  }
+  c = iluminar(c, n, v, rug, 0.04, sombra(vPos, n), ao);
   gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
   #include <colorspace_fragment>
 }

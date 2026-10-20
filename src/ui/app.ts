@@ -35,6 +35,8 @@ export interface DestinoEscena {
     elegido(): { id: string; nombre: string };
     elegir(id: string): void;
     alCambiar(f: () => void): void;
+    /** Muestra u oculta la regla en la playa. */
+    mostrar(v: boolean): void;
   };
 }
 
@@ -289,6 +291,17 @@ export function iniciarInterfaz() {
       ultimoTexto = 0; // repintar ya
     };
     el.lugarArena.addEventListener('change', () => ar.elegir(el.lugarArena.value));
+    // Regla en la playa: se puede quitar; se recuerda en este navegador.
+    const boton = document.getElementById('cinta-arena')!;
+    let ver = true;
+    try { ver = localStorage.getItem('cintaArena') !== '0'; } catch { /* sin almacenamiento */ }
+    const aplicar = () => { boton.setAttribute('aria-checked', String(ver)); ar.mostrar(ver); };
+    boton.addEventListener('click', () => {
+      ver = !ver;
+      aplicar();
+      try { localStorage.setItem('cintaArena', ver ? '1' : '0'); } catch { /* sin almacenamiento */ }
+    });
+    aplicar();
     ar.alCambiar(opciones);
     opciones();
     el.arenaBloque.hidden = false;

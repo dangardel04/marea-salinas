@@ -3,8 +3,8 @@
 # La escena solo dibuja con detalle lo cercano a la playa (src/scene/bahia/zona.ts); lo demás se
 # funde en la bruma. Los edificios de toda la bahía pesaban ~12 MB que casi nadie llegaba a ver:
 # aquí se quitan los triángulos cuyo centro queda a más de `recorteEdificios` m de las semillas de
-# la zona (pies del muro, uno de cada `cadaPie`, y arranques de los perfiles de la playa; las
-# mismas que zona.ts).
+# la zona (pies del muro, uno de cada `cadaPie`, y arranques de los perfiles de la playa a menos
+# de `perfilesHasta` m del muro; las mismas que zona.ts).
 #
 # Entrada y salida (se reescriben en su sitio; repetirlo no cambia nada):
 #   public/bahia/edificios.bin        + src/scene/bahia-edificios.json        (triángulos sueltos)
@@ -24,7 +24,9 @@ paseo = json.load(open(os.path.join(ESC, 'bahia-paseo.json'), encoding='utf-8'))
 perfiles = json.load(open(os.path.join(ESC, 'bahia-perfiles-playa.json'), encoding='utf-8'))['perfiles']
 pies = [p for t in paseo['tramos'] for p in t]
 semillas = [(p['pie'][0], p['pie'][2]) for i, p in enumerate(pies) if i % zona['cadaPie'] == 0]
-semillas += [(p[0], p[1]) for p in perfiles]
+piesXZ = np.array([(p['pie'][0], p['pie'][2]) for p in pies])
+semillas += [(p[0], p[1]) for p in perfiles
+             if np.min(np.hypot(piesXZ[:, 0] - p[0], piesXZ[:, 1] - p[1])) < zona['perfilesHasta']]
 arbol = cKDTree(np.array(semillas))
 R = zona['recorteEdificios']
 

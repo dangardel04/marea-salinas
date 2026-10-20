@@ -2,9 +2,9 @@
  "fuente": "Dirección General del Catastro, INSPIRE Buildings (BU:BuildingPart): https://ovc.catastro.meh.es/INSPIRE/wfsBU.aspx?service=WFS&version=2.0.0&request=GetFeature&typenames=BU:BuildingPart&srsname=EPSG::25830",
  "consultado": "2026-10-19",
  "partes": 10509,
- "vertices": 28389,
+ "vertices": 17286,
  "alturaPlantaSupuesta": 3,
  "sinColorDeOrtofoto": 0,
  "formato": "Int16 x,y,z (dm, local) por vértice y después Uint8 r,g,b por vértice; triángulos sueltos",
- "recorte": "Solo a menos de 470 m de la playa y el paseo (tools/recortar-zona.py)"
+ "recorte": "Solo a menos de 390 m de la playa y el paseo (tools/recortar-zona.py)"
 }

@@ -1,6 +1,6 @@
 # Marea en Salinas
 
-Web estática (Vite + TypeScript + Three.js) con la playa de Salinas (Castrillón, Asturias) en 3D: la playa, el paseo y las primeras calles del pueblo, con su relieve, y el mar hasta el horizonte. Lo que queda lejos de la playa (montes, casas de campo, la ría) se funde en la bruma y no se descarga. El nivel del mar sigue la marea calculada para el puerto de Avilés y las olas, la previsión de oleaje propagada sobre el fondo de la bahía. Por defecto muestra la hora actual y permite moverse por el resto del día y los 7 días siguientes.
+Web estática (Vite + TypeScript + Three.js) con la playa de Salinas (Castrillón, Asturias) en 3D: la playa delante del paseo, el paseo y las primeras calles del pueblo, con su relieve, y el mar hasta el horizonte. Lo que queda lejos de la playa (montes, casas de campo, la ría) se funde en la bruma y no se descarga. El nivel del mar sigue la marea calculada para el puerto de Avilés y las olas, la previsión de oleaje propagada sobre el fondo de la bahía. Por defecto muestra la hora actual y permite moverse por el resto del día y los 7 días siguientes.
 
 - **Marea**: altura sobre el cero hidrográfico, si sube o baja y a qué ritmo, próximas pleamar y bajamar (junto a las de la tabla oficial del IHM) y curva del día.
 - **Corrección en vivo** con el mareógrafo REDMAR de Avilés cuando hay red. El panel indica siempre si es **«Predicción»** o **«Predicción + corrección»**.
@@ -12,7 +12,8 @@ Web estática (Vite + TypeScript + Three.js) con la playa de Salinas (Castrilló
   - Fondo marino de EMODnet.
   - Olas que se refractan hacia la orilla, rompen y suben por la arena.
   - Sol, luna y fase lunar reales.
-  - Vistas rápidas: Playa, Salinas, El Espartal, San Juan y A pie de playa.
+  - Vistas rápidas: Playa, Salinas, Paseo y A pie de playa.
+  - Regla en la playa (se puede quitar con «Ver en la playa»): del pie del muro al agua, con marcas cada 10 m.
 - **Sin conexión**: el motor de marea, la escena y las fuentes van empaquetados. Sin red solo se pierden la corrección en vivo, las olas y la comparación con el IHM.
 - **Hora**: interna en UTC; todo lo que se muestra va en Europe/Madrid, incluido el cambio de hora del 25/10/2026 (ese domingo dura 25 horas).
 

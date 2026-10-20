@@ -309,13 +309,15 @@ En pleamar el ancho depende sobre todo de la arena alta, que es la del LiDAR de 
 
 | Nivel del mar | Mediana | 99 % de los puntos | Puntos con la cinta > 5 m dentro del agua |
 |---|---|---|---|
-| 0,8 m | 0,7 m | 8,3 m | 14 (2 %) |
-| 1,0 m | 0,5 m | 7,6 m | 12 (2 %) |
-| 1,4 m | 0,5 m | 4,0 m | 1 |
-| 1,8 m | 0,5 m | 2,2 m | 0 |
-| 2,6 m | 0,4 m | 2,1 m | 0 |
-| 3,3 m | 0,4 m | 2,0 m | 0 |
-| 3,9 m | 0,3 m | 1,6 m | 0 |
+| 0,8 m | 0,9 m | 10,4 m | 21 (4 %) |
+| 1,0 m | 0,7 m | 9,2 m | 17 (3 %) |
+| 1,4 m | 0,7 m | 4,5 m | 2 |
+| 1,8 m | 0,6 m | 2,5 m | 0 |
+| 2,6 m | 0,5 m | 3,0 m | 0 |
+| 3,3 m | 0,5 m | 2,5 m | 0 |
+| 3,9 m | 0,4 m | 1,7 m | 0 |
+
+(Con el ajuste suavizado, filtro de ~10 m, y la regla de «seco antes, mojado después» limitada a ±10 m del final de la medida: forzarla en toda la franja dejaba placas de arena planas a ras del agua, con bordes rectos.)
 
 Lo que queda en las bajamares más vivas está en canales y barras al final del paseo, más estrechos que la rejilla. El vaivén de cada ola sigue subiendo y bajando por encima de ese borde medio.
 

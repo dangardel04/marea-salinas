@@ -351,6 +351,45 @@ float fbm(vec2 p) {
   for (int i = 0; i < 4; i++) { t += a * ruidoV(p); p = p * 2.03 + vec2(1.7, 9.2); a *= 0.5; }
   return t / 0.9375;
 }
+/** Celdas de Worley: distancia al centro más cercano (x) y al segundo (y). Los centros se mueven
+ *  despacio: las burbujas de la espuma se juntan y revientan. */
+vec2 celdas(vec2 p, float t) {
+  vec2 i = floor(p), f = fract(p);
+  float d1 = 8.0, d2 = 8.0;
+  for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++) {
+    vec2 o = vec2(float(x), float(y));
+    vec2 h = vec2(hash(i + o), hash(i + o + 17.31));
+    vec2 c = o + 0.5 + 0.4 * sin(t * (0.5 + h) + 6.2831853 * h);
+    float dd = length(c - f);
+    if (dd < d1) { d2 = d1; d1 = dd; } else if (dd < d2) { d2 = dd; }
+  }
+  return vec2(d1, d2);
+}
+/** Espuma con estructura de burbujas: con cobertura alta llena las celdas; al bajar quedan los
+ *  hilos entre burbujas (un encaje con agua en los huecos) y al final, hebras sueltas. De lejos,
+ *  donde las celdas serían más pequeñas que un píxel, un velo con la misma cobertura. */
+float encaje(vec2 p, float cob, float lejos) {
+  if (cob < 0.005) return 0.0;
+  // dominio deformado: juntas curvas y burbujas de tamaños distintos, no un mosaico
+  vec2 w = vec2(ruidoV(p * 0.9), ruidoV(p * 0.9 + 5.3)) - 0.5;
+  vec2 c1 = celdas(p * 0.85 + w * 0.9, uTiempo * 0.35);
+  vec2 c2 = celdas(p * 2.7 + 3.7 + w * 2.2, uTiempo * 0.6);
+  float b1 = c1.y - c1.x, b2 = c2.y - c2.x;           // 0 en la junta entre dos burbujas
+  float aa1 = fwidth(b1) + 0.03, aa2 = fwidth(b2) + 0.03;
+  // grosor de los hilos variable: unos se cierran antes que otros
+  float var = ruidoV(p * 0.35 + 2.1);
+  float k = clamp(cob * (0.7 + 0.6 * var), 0.0, 1.0);
+  float g1 = 0.02 + 0.8 * k * k, g2 = 0.015 + 0.5 * k;
+  // con poca espuma los hilos se rompen en trozos (no una red continua, que parece barro seco)
+  float trozos = smoothstep(0.62 - 0.7 * k, 0.8 - 0.7 * k, ruidoV(p * 1.4 + 9.0));
+  float hilo1 = (1.0 - smoothstep(g1 - aa1, g1 + aa1, b1)) * trozos;
+  float hilo2 = (1.0 - smoothstep(g2 - aa2, g2 + aa2, b2)) * smoothstep(0.1, 0.5, k);
+  // los hilos finos son algo translúcidos; las juntas gruesas, blancas
+  float red = max(hilo1 * mix(0.7, 1.0, smoothstep(0.1, 0.5, k)), hilo2 * 0.75);
+  red = max(red, smoothstep(0.85, 0.99, k));             // espuma densa: blanca y llena
+  float velo = pow(cob, 0.8) * 0.8;
+  return mix(red * smoothstep(0.0, 0.08, cob), velo, lejos);
+}
 
 uniform float uLejos;
 void main() {
@@ -382,7 +421,10 @@ void main() {
   vec2 perp = vec2(-uSisA.w, uSisA.z);
   float along = dot(vPos.xz, perp);
   float onda = 0.012 * sin(along * 0.31 + uTiempo * 1.3) + 0.02 * (fbm(pe * 0.07) - 0.5);
-  float edad = fract((sOla - vCresta) / 6.28318531 + onda);
+  // en la rompiente, el frente de la ola rota (el «bore» de espuma) no es una recta: avanza a
+  // trompicones, con lenguas y entrantes de unos metros
+  float frente = smoothstep(0.9, 1.04, vBeta) * 0.06 * (fbm(pe * 0.22 + 11.0) - 0.5 + 0.5 * (fbm(pe * 0.9 + 4.0) - 0.5));
+  float edad = fract((sOla - vCresta) / 6.28318531 + onda + frente);
   // Pendiente de la ola principal calculada en este píxel con su forma completa: la malla no
   // tiene vértices para dibujar una cara de pocos metros, el sombreado sí. Se cambia la pendiente
   // que dibujó la malla por esta. Cara delantera: donde la ola sube al llegar (dF/ds > 0).
@@ -492,6 +534,7 @@ void main() {
   // (deriva en una dirección única: con la dirección local, que cambia algo de un vértice a otro,
   // el dibujo se descolocaba entre triángulos)
   float lejosE = smoothstep(60.0, 220.0, d);
+  float lejosC = smoothstep(35.0, 110.0, d);            // las burbujas se ven hasta ~100 m
   vec2 pw = pe * 0.16 + vec2(fbm(pe * 0.06), fbm(pe * 0.06 + 5.2)) * 2.4;
   // la espuma de la rompiente se revuelve (agua que cae y da vueltas)
   float revuelve = smoothstep(0.9, 1.1, vBeta);
@@ -499,7 +542,6 @@ void main() {
   float patron = smoothstep(0.2, 0.8, fbm(pw + vec2(fbm(pw * 1.7 + 1.3), fbm(pw * 1.7 + 8.1)) * 0.9));
   patron += (fbm(pe * 0.85 + 4.0) - 0.5) * 0.3 * cerca;                  // grumos finos, de cerca
   patron = mix(patron, 0.5, lejosE * 0.6);
-  float anchoP = 0.06 + fwidth(patron);
   float ciclo = conOla ? fract((uTiempo - tA) / T + 0.15) : 0.5;
   float prof0 = uNivel - fm.x;
   float franja = (1.0 - smoothstep(0.0, 1.6, prof0)) * step(-uR2 - 0.3, prof0) * vAlcance;
@@ -518,20 +560,31 @@ void main() {
   float cascada = caida * subeOla * smoothstep(1.0 - 1.7 * caida, 1.15 - 1.7 * caida, altoOla);
   float manto = exp(-edad * 5.0) * (1.0 - subeOla) * romp;
   float cobertura = max(labio, max(cascada, manto));
-  float espumaOla = smoothstep(1.0 - cobertura - anchoP, 1.0 - cobertura + anchoP, patron);
+  // el dibujo grande (manchas y hebras) reparte la cobertura; las burbujas dan la textura
+  float cobOla = clamp(cobertura * (0.45 + 1.1 * patron) - 0.08 * (1.0 - cobertura), 0.0, 1.0);
+  float espumaOla = encaje(pe, cobOla, lejosC);
   // Orilla: la lámina sube con un borde de espuma grueso y se retira dejando encaje.
   float subiendo = 1.0 - smoothstep(0.25, 0.4, ciclo);
   float aaP = fwidth(prof) * 1.5 + 0.004;
-  float anchoOrilla = mix(0.035, 0.1, subiendo) + 0.04 * (patron - 0.5);
+  // ancho del borde en metros de arena, no en centímetros de agua: en la arena casi llana de
+  // Salinas unos centímetros de agua son varios metros; el borde de espuma real es de 1–2 m
+  float pendFondo = 0.5 * length(vec2(fondoMar(vPos.xz + vec2(1.0, 0.0)).x - fondoMar(vPos.xz - vec2(1.0, 0.0)).x,
+                                      fondoMar(vPos.xz + vec2(0.0, 1.0)).x - fondoMar(vPos.xz - vec2(0.0, 1.0)).x));
+  float anchoOrilla = min(mix(0.035, 0.1, subiendo), max(pendFondo, 0.004) * mix(0.8, 2.0, subiendo)) * (0.75 + 0.5 * patron);
   float borde = (1.0 - smoothstep(anchoOrilla - aaP, anchoOrilla + aaP, prof)) * vAlcance;
   float lamina = smoothstep(0.02, 0.2, vaiven) * (1.0 - smoothstep(0.0, 0.35, prof)) * vAlcance;
-  float coberturaOrilla = max(lamina * mix(0.1, 0.42, subiendo), borde);
-  float espumaOrilla = smoothstep(1.0 - coberturaOrilla - anchoP, 1.0 - coberturaOrilla + anchoP, patron);
+  float coberturaOrilla = max(lamina * mix(0.05, 0.3, subiendo), borde * 0.97);
+  float cobOrilla = clamp(coberturaOrilla * (0.5 + patron), 0.0, 1.0);
+  float espumaOrilla = encaje(pe * 1.3 + 7.1, cobOrilla, lejosC);
   float espuma = max(espumaOla, espumaOrilla) * (1.0 - smoothstep(900.0, 2400.0, d) * 0.6);
   // La espuma tiene cuerpo: más clara arriba y en lo denso, algo azulada en lo fino.
-  float densa = smoothstep(0.5, 0.9, patron);
+  float densa = smoothstep(0.45, 0.95, max(cobOla, cobOrilla));
   float luzE = 0.72 + 0.28 * clamp(dot(n, normalize(uDirBrillo + vec3(0.0, 1.0, 0.0))), 0.0, 1.0);
-  vec3 blanco = mix(vec3(0.72, 0.82, 0.86), vec3(0.96, 0.98, 0.98), densa) * luzE * dia;
+  vec3 blanco = mix(vec3(0.66, 0.78, 0.82), vec3(0.95, 0.97, 0.97), densa) * luzE * dia * mix(0.85, 1.0, sombraAgua);
+  // Volumen: la espuma es un colchón de burbujas con bultos y hoyos; los hoyos, en sombra y algo
+  // azulados (luz que pasa por el agua de debajo). Dos escalas de ruido que se mueven despacio.
+  float bulto = fbm(pe * 0.9 + uTiempo * 0.05) * 0.6 + fbm(pe * 3.1 - uTiempo * 0.08) * 0.4;
+  blanco *= mix(vec3(0.72, 0.8, 0.86), vec3(1.0), smoothstep(0.25, 0.75, bulto)) * mix(1.0, 0.9, lejosC);
 
   // ---------- Composición ----------
   vec3 c;
@@ -643,19 +696,22 @@ export function crearAgua(opciones: {
     /** Muestra un parche por cada tesela visible que pueda tener agua; oculta el resto. */
     actualizar(teselas: { clave: string; x0: number; z0: number; lado: number; minY: number }[], nivelMax: number, camara: THREE.Vector3) {
       for (const m of grupo.children) m.visible = false;
+      // El tamaño del parche lo decide la distancia a la cámara, no la tesela del terreno: la
+      // separación entre vértices cambia lo que se dibuja (qué olas caben, cuánto se empinan) y
+      // un parche grande junto a uno fino dejaba un borde recto en la espuma. Lo que esté cerca
+      // se parte en parches de 200 m (a menos de 1,5 lados) y, junto a la cámara, en los finos.
+      const poner = (clave: string, x0: number, z0: number, lado: number) => {
+        const dx = Math.max(x0 - camara.x, 0, camara.x - (x0 + lado));
+        const dz = Math.max(z0 - camara.z, 0, camara.z - (z0 + lado));
+        const dist = Math.hypot(dx, dz);
+        const nuevo = lado > LADO_GRUESO + 1 ? (dist < lado * 1.5 ? lado / 2 : 0) : lado > LADO_FINO + 1 && dist < RADIO_FINO ? LADO_FINO : 0;
+        if (!nuevo) { parche(clave, x0, z0, lado).visible = true; return; }
+        const n = Math.round(lado / nuevo);
+        for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) poner(`${clave}/${i}${j}`, x0 + i * nuevo, z0 + j * nuevo, nuevo);
+      };
       for (const t of teselas) {
         if (t.minY > nivelMax + 4) continue;
-        // Distancia de la cámara al recuadro de la tesela (0 si está encima).
-        const dx = Math.max(t.x0 - camara.x, 0, camara.x - (t.x0 + t.lado));
-        const dz = Math.max(t.z0 - camara.z, 0, camara.z - (t.z0 + t.lado));
-        if (Math.abs(t.lado - LADO_GRUESO) < 1 && Math.hypot(dx, dz) < RADIO_FINO) {
-          const n = LADO_GRUESO / LADO_FINO;
-          for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
-            parche(`${t.clave}/${i}${j}`, t.x0 + i * LADO_FINO, t.z0 + j * LADO_FINO, LADO_FINO).visible = true;
-          }
-          continue;
-        }
-        parche(t.clave, t.x0, t.z0, t.lado).visible = true;
+        poner(t.clave, t.x0, t.z0, t.lado);
       }
       if (parches.size > 500) {
         for (const [k, m] of parches) if (!m.visible) { grupo.remove(m); m.material.dispose(); parches.delete(k); }

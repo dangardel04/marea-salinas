@@ -1,8 +1,9 @@
 {
- "descripcion": "Zona que se dibuja con detalle: lo que está a menos de 'detalle' m del muro del paseo o del arranque de los perfiles de la playa. De 'detalle' a 'fin' la tierra se funde en bruma; más allá no se dibuja con detalle (ni ortofoto ni edificios) y el relieve se aplana. Los edificios se recortan a 'recorteEdificios' m (tools/recortar-zona.py). Distancias ELEGIDAS, no medidas.",
- "semillas": "pies del muro (src/scene/bahia-paseo.json, uno de cada 5) y arranques de los perfiles (src/scene/bahia-perfiles-playa.json)",
+ "descripcion": "Zona que se dibuja con detalle: la playa de Salinas, delante del paseo. Cuenta lo que está a menos de 'detalle' m del muro del paseo o del arranque de los perfiles de la playa que quedan a menos de 'perfilesHasta' m del muro (así El Espartal queda fuera). De 'detalle' a 'fin' la tierra se funde en bruma; más allá no se dibuja con detalle (ni ortofoto ni edificios) y el relieve se aplana. Los edificios se recortan a 'recorteEdificios' m (tools/recortar-zona.py). Distancias ELEGIDAS, no medidas.",
+ "semillas": "pies del muro (src/scene/bahia-paseo.json, uno de cada 5) y arranques de los perfiles (src/scene/bahia-perfiles-playa.json) a menos de 'perfilesHasta' m de algún pie",
  "cadaPie": 5,
- "detalle": 300,
- "fin": 550,
- "recorteEdificios": 470
+ "perfilesHasta": 100,
+ "detalle": 250,
+ "fin": 450,
+ "recorteEdificios": 390
 }

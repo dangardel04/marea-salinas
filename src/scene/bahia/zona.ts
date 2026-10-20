@@ -1,7 +1,7 @@
-// Zona de la escena: la playa y lo cercano al paseo.
+// Zona de la escena: la playa de Salinas y lo cercano al paseo.
 //
 // Solo se dibuja con detalle lo que está a menos de `detalle` m del muro o del arranque de los
-// perfiles de la playa (src/scene/bahia-zona.json). Hasta `fin`, la tierra se funde en bruma; más
+// perfiles de la playa que quedan delante del paseo (src/scene/bahia-zona.json; El Espartal, no). Hasta `fin`, la tierra se funde en bruma; más
 // allá el relieve se aplana (sin montes ni casas de campo en el horizonte), no se piden ortofotos
 // ni se subdivide el terreno, y los edificios ya vienen recortados (tools/recortar-zona.py).
 // El mar no se toca: sigue hasta el horizonte.
@@ -34,7 +34,10 @@ float brumaZonaAgua(vec2 xz) {
 export function semillasZona(): [number, number][] {
   const pies = (metaPaseo.tramos as { pie: number[] }[][]).flat();
   const s: [number, number][] = pies.filter((_, i) => i % metaZona.cadaPie === 0).map((p) => [p.pie[0], p.pie[2]]);
-  for (const p of perfiles) s.push([p[0], p[1]]);
+  for (const p of perfiles) {
+    const cerca = pies.some((q) => Math.hypot(q.pie[0] - p[0], q.pie[2] - p[1]) < metaZona.perfilesHasta);
+    if (cerca) s.push([p[0], p[1]]);
+  }
   return s;
 }
 

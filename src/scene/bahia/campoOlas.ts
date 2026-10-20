@@ -1,9 +1,13 @@
 // Campo de oleaje para el sombreador del agua: tiempo de llegada del frente (fast marching) y
 // dirección local de propagación, en una textura RGBA float sobre toda la bahía.
 //   R = tiempo de llegada (s), relativo; G, B = dirección de propagación unitaria (x este, z sur);
-//   A = 1 si el oleaje alcanza ese nodo. En tierra se copian los cuatro valores del agua más
-//       cercana, para que el vaivén de la orilla tenga fase y alcance sobre la arena. El agua
-//       que el oleaje no alcanza (charcos y canales aislados de bajamar) se queda con A = 0.
+//   A = 1 si el oleaje alcanza ese nodo. A la tierra y al agua que el frente no alcanza (canales
+//       aislados a este nivel, sombras) se les sigue propagando el tiempo desde el agua alcanzada,
+//       como una resaca a √(g·h) (h de 1 m como mínimo), y la dirección del agua más cercana: así
+//       el vaivén de la orilla tiene fase sobre la arena, y un canal que con la marea subiendo o
+//       con el ajuste de la orilla (orilla.ts) ya está unido al mar tiene olas. (Antes se copiaba
+//       el tiempo de la celda vecina: franjas con la misma fase y saltos bruscos, que salían como
+//       rectángulos de agua sin olas ni espuma.) Los charcos aislados de verdad no se dibujan.
 
 import * as THREE from 'three';
 import { LADO, PASO_RELIEVE } from '../../bahia';
@@ -43,24 +47,44 @@ export function calcularCampo(relieve: Relieve, nivel: number, periodo: number, 
     datos[k * 4 + 2] = valido(k) && l > 0 ? tz / l : hacia.z;
     datos[k * 4 + 3] = valido(k) ? 1 : 0;
   }
-  // Rellenar tierra y sombras con el valor del agua alcanzada más cercana (barrido en anchura).
-  const cola: number[] = [];
-  for (let k = 0; k < n * n; k++) if (datos[k * 4 + 3] === 1) cola.push(k);
-  const hecho = new Uint8Array(n * n);
-  for (const k of cola) hecho[k] = 1;
-  for (let q = 0; q < cola.length; q++) {
-    const k = cola[q], f = Math.floor(k / n), c = k % n;
-    for (const kk of [k - 1, k + 1, k - n, k + n]) {
-      if (kk < 0 || kk >= n * n || hecho[kk]) continue;
-      if (Math.abs((kk % n) - c) > 1 || Math.abs(Math.floor(kk / n) - f) > 1) continue;
-      hecho[kk] = 1;
-      datos[kk * 4] = datos[k * 4]; // misma fase que el agua contigua
+  // Rellenar tierra y sombras: Dijkstra desde el agua alcanzada, con coste paso / √(g·h).
+  const N = n * n;
+  const tiempo = new Float64Array(N).fill(Infinity);
+  const monticulo = new Int32Array(N * 5 + 8);
+  let tam = 0;
+  const subir = (i: number) => {
+    while (i > 0) { const p = (i - 1) >> 1; if (tiempo[monticulo[p]] <= tiempo[monticulo[i]]) break; const x = monticulo[p]; monticulo[p] = monticulo[i]; monticulo[i] = x; i = p; }
+  };
+  const sacar = () => {
+    const r = monticulo[0]; monticulo[0] = monticulo[--tam];
+    for (let i = 0; ;) {
+      const a = 2 * i + 1, b = a + 1; let m = i;
+      if (a < tam && tiempo[monticulo[a]] < tiempo[monticulo[m]]) m = a;
+      if (b < tam && tiempo[monticulo[b]] < tiempo[monticulo[m]]) m = b;
+      if (m === i) break;
+      const x = monticulo[m]; monticulo[m] = monticulo[i]; monticulo[i] = x; i = m;
+    }
+    return r;
+  };
+  for (let k = 0; k < N; k++) if (datos[k * 4 + 3] === 1) { tiempo[k] = datos[k * 4]; monticulo[tam++] = k; subir(tam - 1); }
+  const hecho = new Uint8Array(N);
+  while (tam > 0) {
+    const k = sacar();
+    if (hecho[k]) continue;
+    hecho[k] = 1;
+    const c = k % n;
+    for (const kk of [c > 0 ? k - 1 : -1, c < n - 1 ? k + 1 : -1, k - n, k + n]) {
+      if (kk < 0 || kk >= N || hecho[kk] || datos[kk * 4 + 3] === 1) continue;
+      const t2 = tiempo[k] + paso / Math.sqrt(9.81 * Math.max(prof[kk], 1));
+      if (t2 >= tiempo[kk]) continue;
+      tiempo[kk] = t2;
+      datos[kk * 4] = t2;
       datos[kk * 4 + 1] = datos[k * 4 + 1];
       datos[kk * 4 + 2] = datos[k * 4 + 2];
-      datos[kk * 4 + 3] = prof[kk] > 0.05 ? 0 : datos[k * 4 + 3];
-      cola.push(kk);
+      if (tam < monticulo.length) { monticulo[tam++] = kk; subir(tam - 1); }
     }
   }
+  for (let k = 0; k < N; k++) if (hecho[k]) datos[k * 4 + 3] = 1;
   // Tiempos relativos al mínimo, para que la precisión float sea buena en la GPU.
   let min = Infinity;
   for (let k = 0; k < n * n; k++) if (Number.isFinite(datos[k * 4])) min = Math.min(min, datos[k * 4]);

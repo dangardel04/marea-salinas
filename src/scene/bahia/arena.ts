@@ -178,16 +178,100 @@ export function crearMedidaArena(o: {
     puntos.push({ id: l.nombre, nombre: l.nombre === 'Paseo del Cantábrico' ? 'en el centro del paseo' : frenteA(l.nombre), k: c.k });
   }
   puntos.push({ id: 'oeste', nombre: 'en el extremo oeste del paseo', k: 0 });
-  puntos.push({ id: 'este', nombre: 'en el extremo este del paseo, hacia El Espartal', k: pies.length - 1 });
+  puntos.push({ id: 'este', nombre: 'en el extremo este del paseo', k: pies.length - 1 });
   puntos.sort((a, b) => a.k - b.k);
   const balneario = puntos.find((p) => p.id === 'Balneario') ?? puntos[0];
   let sel: { id: string; nombre: string; k: number } = { ...balneario };
   const oyentes: (() => void)[] = [];
 
   // ---------- Cinta sobre la arena y rótulo ----------
-  // Transparente (aunque opaca) para dibujarse después del agua: donde el satélite ve arena que el
-  // relieve de 2024 deja bajo el agua, la cinta sigue viéndose encima.
-  const material = new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false, transparent: true, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  // Una regla tendida en la arena, del pie del muro al agua: línea fina del color de acento con
+  // borde claro y una sombra suave debajo (se lee igual sobre arena seca, mojada o en sombra),
+  // marcas cada 10 m (más largas cada 50 m), un punto en el pie del muro y un anillo donde llega
+  // el agua, con un pulso lento. Grosor casi constante en pantalla (crece con la distancia).
+  // Al elegir otro punto o al mostrarla, se traza del muro al agua (explica qué se mide); al
+  // ocultarla, se desvanece rápido. Con «reducir movimiento», sin trazado ni pulso.
+  // Transparente para dibujarse después del agua (orden de grupo 3).
+  const reducir = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const uCinta = {
+    uLargo: { value: 0 },
+    uProgreso: { value: 1 },
+    uOpacidad: { value: 1 },
+    uTiempo: { value: 0 },
+    uPulso: { value: reducir ? 0 : 1 },
+    uDir: { value: new THREE.Vector2(0, 1) },
+    // Naranja de acento de la web, en lineal y más saturado: el tono ACES lo apaga y lo aclara.
+    uAcento: { value: new THREE.Color(1.0, 0.17, 0.035).multiplyScalar(1.25) },
+    uClaro: { value: new THREE.Color('#fbf7f0').multiplyScalar(1.1) },
+  };
+  const material = new THREE.ShaderMaterial({
+    uniforms: uCinta, transparent: true, depthWrite: false, side: THREE.DoubleSide,
+    polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4,
+    vertexShader: /* glsl */ `
+      attribute float lado;     // −1 / +1 a cada lado de la línea
+      attribute float extremo;  // −1 en el pie, +1 en el agua, 0 en medio
+      attribute float largo;    // metros desde el pie
+      uniform vec2 uDir;
+      varying vec2 vC;          // (a lo largo, de través) en metros
+      varying float vW;         // medio ancho de la línea, en metros
+      void main() {
+        vec4 m = modelMatrix * vec4(position, 1.0);
+        float w = max(0.5, distance(cameraPosition, m.xyz) * 0.014);
+        vec2 perp = vec2(-uDir.y, uDir.x);
+        float r = 2.6 * w;      // el anillo del agua cabe dentro
+        m.xz += perp * lado * r + uDir * extremo * r;
+        vC = vec2(largo + extremo * r, lado * r);
+        vW = w;
+        gl_Position = projectionMatrix * viewMatrix * m;
+      }`,
+    fragmentShader: /* glsl */ `
+      uniform float uLargo, uProgreso, uOpacidad, uTiempo, uPulso;
+      uniform vec3 uAcento, uClaro;
+      varying vec2 vC;
+      varying float vW;
+      // «Sobre»: pone una capa de color c y opacidad a encima de lo que hay.
+      void sobre(inout vec4 base, vec3 c, float a) { base.rgb = mix(base.rgb, c, a); base.a = a + base.a * (1.0 - a); }
+      float banda(float d, float r, float aa) { return 1.0 - smoothstep(r - aa, r + aa, d); }
+      void main() {
+        float a = vC.x, b = abs(vC.y), w = vW;
+        float aa = fwidth(vC.y) * 0.75 + 1e-4;
+        float hasta = uProgreso * uLargo;
+        float dentro = step(0.0, a) * step(a, hasta);
+        vec4 c = vec4(0.0);
+        // sombra suave bajo la línea
+        sobre(c, vec3(0.05, 0.04, 0.03), 0.22 * dentro * (1.0 - smoothstep(0.3 * w, 1.5 * w, b)));
+        // marcas cada 10 m (cada 50 m, más largas), sin tocar los extremos
+        float aaU = fwidth(a) * 0.75 + 1e-4;
+        float t10 = abs(a - 10.0 * floor(a / 10.0 + 0.5));
+        float mayor = step(abs(a - 50.0 * floor(a / 50.0 + 0.5)), 0.5);
+        float marca = banda(t10, 0.14 * w, aaU) * banda(b, mix(0.95, 1.4, mayor) * w, aa)
+                    * step(3.0, a) * step(a, uLargo - 3.0) * dentro;
+        sobre(c, uClaro, marca * 0.95);
+        // línea: borde claro y alma de acento
+        sobre(c, uClaro, dentro * banda(b, 0.42 * w, aa));
+        sobre(c, uAcento, dentro * banda(b, 0.27 * w, aa));
+        // punta redonda mientras se traza
+        float punta = length(vec2(a - hasta, vC.y));
+        float trazando = step(uProgreso, 0.999);
+        sobre(c, uClaro, trazando * banda(punta, 0.42 * w, aa));
+        sobre(c, uAcento, trazando * banda(punta, 0.27 * w, aa));
+        // pie del muro: punto claro con aro de acento
+        float p0 = length(vec2(a, vC.y));
+        sobre(c, uAcento, banda(p0, 0.78 * w, aa));
+        sobre(c, uClaro, banda(p0, 0.5 * w, aa));
+        // donde llega el agua: anillo, punto central y un pulso lento hacia fuera
+        float fin = smoothstep(0.85, 1.0, uProgreso);
+        float p1 = length(vec2(a - uLargo, vC.y));
+        float fase = fract(uTiempo / 2.6);
+        float rp = mix(1.2, 2.5, fase) * w;
+        sobre(c, uClaro, fin * uPulso * (1.0 - fase) * 0.55 * banda(abs(p1 - rp), 0.09 * w, aa));
+        sobre(c, uClaro, fin * banda(abs(p1 - 1.15 * w), 0.3 * w, aa));
+        sobre(c, uAcento, fin * banda(abs(p1 - 1.15 * w), 0.17 * w, aa));
+        sobre(c, uAcento, fin * banda(p1, 0.38 * w, aa));
+        if (c.a < 0.003) discard;
+        gl_FragColor = vec4(c.rgb, c.a * uOpacidad);
+      }`,
+  });
   const cinta = new THREE.Mesh(new THREE.BufferGeometry(), material);
   cinta.frustumCulled = false;
   // En un grupo con su orden: el del grupo del agua manda sobre el de los objetos sueltos.
@@ -199,8 +283,9 @@ export function crearMedidaArena(o: {
   rotulo.className = 'etiqueta etiqueta-medida';
   o.capa.appendChild(rotulo);
   const posRotulo = new THREE.Vector3();
-  const ACENTO = new THREE.Color('#ff7a45'), BLANCO = new THREE.Color('#fbf7f0');
-  let hecho = '';
+  let hecho = '', kDibujado = -1;
+  /** Mostrar u ocultar la cinta (la medida sigue en el panel). */
+  let mostrar = true, opacidad = 1, progreso = 1, previo = -1;
 
   function dibujar(metros: number | null, nivel: number) {
     const clave = `${sel.k}|${metros == null ? 'x' : Math.round(metros)}|${Math.round(nivel * 20)}`;
@@ -209,27 +294,46 @@ export function crearMedidaArena(o: {
     const [px, pz] = pieEn(sel.k);
     const [dx, dz] = haciaMar(sel.k);
     const largo = Math.max(metros ?? 0, 0);
-    const pos: number[] = [], col: number[] = [], idx: number[] = [];
-    const ANCHO = 2.4, nx = -dz * ANCHO / 2, nz = dx * ANCHO / 2;
-    const n = Math.max(1, Math.ceil(largo / 2));
+    const pos: number[] = [], lados: number[] = [], extremos: number[] = [], largos: number[] = [], idx: number[] = [];
+    const n = Math.max(1, Math.ceil(largo));
     for (let i = 0; i <= n; i++) {
       const d = (largo * i) / n;
-      const x = px + dx * d, z = pz + dz * d, y = alturaVista(x, z) + 0.25;
-      const c = Math.floor(d / 10) % 2 === 0 ? ACENTO : BLANCO;   // franjas de 10 m
-      pos.push(x + nx, y, z + nz, x - nx, y, z - nz);
-      col.push(c.r, c.g, c.b, c.r, c.g, c.b);
+      const x = px + dx * d, z = pz + dz * d, y = alturaVista(x, z) + 0.12;
+      const ext = i === 0 ? -1 : i === n ? 1 : 0;
+      pos.push(x, y, z, x, y, z);
+      lados.push(-1, 1); extremos.push(ext, ext); largos.push(d, d);
       if (i < n) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-    g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    g.setAttribute('lado', new THREE.Float32BufferAttribute(lados, 1));
+    g.setAttribute('extremo', new THREE.Float32BufferAttribute(extremos, 1));
+    g.setAttribute('largo', new THREE.Float32BufferAttribute(largos, 1));
     g.setIndex(idx);
     cinta.geometry.dispose();
     cinta.geometry = g;
-    cinta.visible = largo >= 2;
+    uCinta.uLargo.value = largo;
+    uCinta.uDir.value.set(dx, dz);
+    // Otro punto: se vuelve a trazar del muro al agua.
+    if (sel.k !== kDibujado) { kDibujado = sel.k; if (!reducir) progreso = 0; }
     const m = largo / 2;
-    posRotulo.set(px + dx * m, alturaVista(px + dx * m, pz + dz * m) + 9, pz + dz * m);
+    posRotulo.set(px + dx * m, alturaVista(px + dx * m, pz + dz * m) + 4, pz + dz * m);
     rotulo.textContent = metros == null ? '' : largo < 2 ? 'El agua llega al muro' : `${Math.round(largo)} m de arena`;
+  }
+
+  /** Avanza el trazado, el pulso y el desvanecido (cada cuadro). */
+  function animar(ahora: number) {
+    const dt = previo < 0 ? 0 : Math.min(0.1, (ahora - previo) / 1000);
+    previo = ahora;
+    // Trazado: 0,7 s con salida suave (cúbica); desvanecido: entra en 0,2 s y sale en 0,15 s.
+    if (progreso < 1) progreso = Math.min(1, progreso + dt / 0.7);
+    opacidad = mostrar ? Math.min(1, opacidad + dt / 0.2) : Math.max(0, opacidad - dt / 0.15);
+    uCinta.uProgreso.value = 1 - (1 - progreso) ** 3;
+    uCinta.uOpacidad.value = opacidad;
+    uCinta.uTiempo.value = ahora / 1000;
+    const largo = uCinta.uLargo.value;
+    cinta.visible = opacidad > 0.001 && largo >= 2;
+    rotulo.style.display = opacidad > 0.001 && rotulo.textContent ? '' : 'none';
   }
 
   // ---------- Elegir un punto tocando la playa ----------
@@ -266,8 +370,11 @@ export function crearMedidaArena(o: {
   return {
     /** Rótulo para colocarlo con los demás (posición 3D que cambia). */
     etiqueta: { e: rotulo, p: posRotulo },
-    /** Actualiza la cinta para el nivel del mar del momento. */
-    actualizar(nivel: number) { dibujar(medir(sel.k, nivel), nivel); },
+    /** Actualiza la cinta para el nivel del mar del momento (cada cuadro). */
+    actualizar(nivel: number, ahora = performance.now()) { dibujar(medir(sel.k, nivel), nivel); animar(ahora); },
+    /** Muestra u oculta la cinta en la playa (la medida sigue en el panel). */
+    mostrar(v: boolean) { if (v && !mostrar && !reducir) progreso = 0; mostrar = v; },
+    visible: () => mostrar,
     /** Metros de arena en el punto elegido con el mar a `nivel` (null si no se puede medir). */
     medir: (nivel: number) => medir(sel.k, nivel),
     margen: metaCorreccion.margen,
@@ -279,7 +386,7 @@ export function crearMedidaArena(o: {
     },
     alCambiar(f: () => void) { oyentes.push(f); },
     /** Cuando llega el relieve fino: el pie del muro se vuelve a buscar en él. */
-    rehacer() { pieCache.clear(); cachePunto.clear(); cacheMedida.clear(); hecho = ''; oyentes.forEach((f) => f()); },
+    rehacer() { pieCache.clear(); cachePunto.clear(); cacheMedida.clear(); hecho = ''; kDibujado = -1; oyentes.forEach((f) => f()); },
     /** Para depurar: punto del muro elegido y su dirección hacia el mar. */
     depurar: () => ({ sel, pie: pieEn(sel.k), haciaMar: haciaMar(sel.k) }),
     /** Para comprobar la orilla: medida y recta de cualquier punto k del muro. */

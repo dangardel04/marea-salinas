@@ -33,7 +33,13 @@
         <p class="referencia">Sobre el cero hidrográfico del puerto de Avilés</p>
         <div class="arena" id="arena" hidden>
           <div class="arena-lugar">
-            <label for="lugar-arena">Arena hasta el agua</label>
+            <div class="arena-cabecera">
+              <label for="lugar-arena">Arena hasta el agua</label>
+              <button class="interruptor" id="cinta-arena" type="button" role="switch" aria-checked="true">
+                <span class="interruptor-pista" aria-hidden="true"><span class="interruptor-bola"></span></span>
+                Ver en la playa
+              </button>
+            </div>
             <select class="arena-select" id="lugar-arena"></select>
           </div>
           <p class="arena-ancho" id="arena-ancho" aria-live="polite"></p>
@@ -95,8 +101,7 @@
     <nav class="vistas" aria-label="Vistas de la playa">
       <button class="vista" type="button" data-vista="playa" aria-pressed="true">Playa</button>
       <button class="vista" type="button" data-vista="salinas" aria-pressed="false">Salinas</button>
-      <button class="vista" type="button" data-vista="espartal" aria-pressed="false">El Espartal</button>
-      <button class="vista" type="button" data-vista="sanjuan" aria-pressed="false">San Juan</button>
+      <button class="vista" type="button" data-vista="paseo" aria-pressed="false">Paseo</button>
       <button class="vista" type="button" data-vista="pie" aria-pressed="false">A pie de playa</button>
     </nav>
     <p class="ayuda-controles" id="ayuda-controles">Arrastra para moverte · rueda para acercar · botón derecho para girar</p>

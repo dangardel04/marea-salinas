@@ -81,7 +81,7 @@ export function crearAjusteOrilla(o: {
   }
   x0 = Math.floor((x0 - RAMPA - RADIO) / PASO) * PASO; z0 = Math.floor((z0 - RAMPA - RADIO) / PASO) * PASO;
   const nx = Math.ceil((x1 + RAMPA + RADIO - x0) / PASO) + 1, nz = Math.ceil((z1 + RAMPA + RADIO - z0) / PASO) + 1;
-  const datos = new Float32Array(nx * nz);
+  const datos = new Float32Array(nx * nz), tmp = new Float32Array(nx * nz);
   const textura = new THREE.DataTexture(datos, nx, nz, THREE.RedFormat, THREE.FloatType);
   textura.magFilter = textura.minFilter = THREE.LinearFilter;
   textura.wrapS = textura.wrapT = THREE.ClampToEdgeWrapping;
@@ -205,13 +205,24 @@ export function crearAjusteOrilla(o: {
         if (cuenta > mayor && hi[i] > lo[i]) { mayor = cuenta; manda = i; sManda = s; }
       }
       let v = suma / (peso + 0.01);
+      // Junto al final de la medida (±10 m), lado seco y lado mojado, con la misma inclinación
+      // hacia el mar; más lejos no se fuerza nada (si no, quedaban placas de arena planas, a ras
+      // del agua, con bordes rectos entre rayos).
       if (manda >= 0) {
-        const g = gNodo[q];
-        if (sManda >= lo[manda] && sManda < fin[manda] - 2) v = Math.max(v, agua + 0.04 - g);       // arena
-        else if (sManda > fin[manda] + 2 && sManda <= hi[manda]) v = Math.min(v, agua - 0.04 - g);  // agua
+        const g = gNodo[q], ds = sManda - fin[manda];
+        const cerca = 1 - THREE.MathUtils.smoothstep(Math.abs(ds), 6, 10);
+        if (ds < -1.5 && sManda >= lo[manda]) v = Math.max(v, v + cerca * (agua + 0.04 - INCLINA * ds - g - v));
+        else if (ds > 1.5 && sManda <= hi[manda]) v = Math.min(v, v + cerca * (agua - 0.04 - INCLINA * ds - g - v));
         v = THREE.MathUtils.clamp(v, -MAXIMO, MAXIMO);
       }
       datos[iNodo[q]] = v * tNodo[q];
+    }
+    // Suavizado (filtro binomial 1-4-6-4-1, ~10 m): sin escalones entre rayos.
+    for (const [dx, dy] of [[1, 0], [0, nx]] as const) {
+      tmp.set(datos);
+      for (let k = 2 * dx + 2 * dy; k < datos.length - 2 * dx - 2 * dy; k++) {
+        datos[k] = (tmp[k - 2 * dx - 2 * dy] + 4 * tmp[k - dx - dy] + 6 * tmp[k] + 4 * tmp[k + dx + dy] + tmp[k + 2 * dx + 2 * dy]) / 16;
+      }
     }
     textura.needsUpdate = true;
     coste = performance.now() - t0;

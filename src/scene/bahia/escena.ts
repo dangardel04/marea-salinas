@@ -46,11 +46,10 @@ export interface Vista { id: string; nombre: string; objetivo: [number, number];
 /** Vistas predefinidas (coordenadas locales; rumbo = hacia dónde mira la cámara). Los puntos de
  *  arena salen del polígono de la playa en OpenStreetMap (way 516073411). */
 export const VISTAS: Vista[] = [
-  { id: 'playa', nombre: 'Playa', objetivo: [-50, 850], rumbo: 165, distancia: 2000, elevacion: 32 },
+  { id: 'playa', nombre: 'Playa', objetivo: [-330, 1150], rumbo: 170, distancia: 1250, elevacion: 30 },
   { id: 'salinas', nombre: 'Salinas', objetivo: [-645, 1265], rumbo: 160, distancia: 520, elevacion: 20 },
-  { id: 'espartal', nombre: 'El Espartal', objetivo: [-60, 1060], rumbo: 150, distancia: 520, elevacion: 18 },
-  { id: 'sanjuan', nombre: 'San Juan', objetivo: [1030, 165], rumbo: 120, distancia: 520, elevacion: 20 },
-  // A pie de playa: de pie en la arena alta de El Espartal (cota ≈ 3,6 m), mirando al mar.
+  { id: 'paseo', nombre: 'Paseo', objetivo: [-300, 1250], rumbo: 200, distancia: 300, elevacion: 14 },
+  // A pie de playa: de pie en la arena alta frente a las Torres Gauzón (cota ≈ 3,6 m), mirando al mar.
   { id: 'pie', nombre: 'A pie de playa', objetivo: [-133, 1058], rumbo: 330, distancia: 70, elevacion: 2 },
 ];
 
@@ -265,7 +264,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   controles.screenSpacePanning = false;
   controles.zoomToCursor = true;
   controles.minDistance = 6;
-  controles.maxDistance = 2800;
+  controles.maxDistance = 2000;
   controles.maxPolarAngle = THREE.MathUtils.degToRad(86);
   // La cámara mira a la playa y al paseo: su objetivo no sale de la zona.
   const LIM = zona.limites;
@@ -406,7 +405,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     if (Math.abs(estado.t - ultimoCielo) > 60_000) { vLuna = actualizarLuz(estado.t); ultimoCielo = estado.t; }
     cielo.seguir(camara.position, vLuna);
     ajuste.actualizar(estado.nivel, estado.setup, ahora);
-    arena.actualizar(estado.nivel);
+    arena.actualizar(estado.nivel, ahora);
     colocarEtiquetas();
     teselas.actualizar(camara);
     agua.actualizar(teselas.visibles(), estado.nivel + estado.r2 + 1, camara.position);
@@ -431,6 +430,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     /** Arena entre el muro y el agua en el punto elegido (ver arena.ts). */
     arena: {
       medir: arena.medir, margen: arena.margen, puntos: arena.puntos,
+      mostrar: arena.mostrar, visible: arena.visible,
       elegido: arena.elegido, elegir: arena.elegir, alCambiar: arena.alCambiar,
     },
     destruir() {
