@@ -19,6 +19,7 @@ import metaPerfiles from '../bahia-perfiles-playa.json';
 import metaCorreccion from '../bahia-correccion-arena.json';
 import type { PuntoMuro } from './paseo';
 import type { Relieve } from './relieve';
+import { accesos } from './accesos';
 
 /** Artículo de cada lugar, para escribir «frente al Balneario», «frente a las Torres Gauzón»… */
 const ARTICULO: Record<string, string> = {
@@ -177,6 +178,23 @@ export function crearMedidaArena(o: {
     if (c.d > 60) continue;
     puntos.push({ id: l.nombre, nombre: l.nombre === 'Paseo del Cantábrico' ? 'en el centro del paseo' : frenteA(l.nombre), k: c.k });
   }
+  // Escaleras y rampa (accesos.ts): para orientarse en la playa real
+  // (referencia: el lugar con nombre más cercano junto al muro, y a qué lado queda: los puntos
+  // del muro van de oeste a este)
+  const deL = (n: string) => (ARTICULO[n] === 'el' ? `del ${n}` : ARTICULO[n] ? `de ${ARTICULO[n]} ${n}` : `de ${n}`);
+  const referencias = lugares.filter((l) => l.nombre !== 'Paseo del Cantábrico').map((l) => ({ l, c: cercano(l.x, l.z) })).filter((r) => r.c.d <= 60);
+  for (const a of accesos) {
+    const c = cercano(a.centro[0], a.centro[1]);
+    let ref = '';
+    if (referencias.length) {
+      const r = referencias.reduce((m, x) => (Math.abs(x.c.k - c.k) < Math.abs(m.c.k - c.k) ? x : m));
+      const pr = pies[r.c.k].pie, metros = Math.round(Math.hypot(a.centro[0] - pr[0], a.centro[1] - pr[2]) / 10) * 10;
+      ref = metros < 40 ? `junto ${ARTICULO[r.l.nombre] === 'el' ? `al ${r.l.nombre}` : `a ${deL(r.l.nombre).slice(3)}`}`
+        : `a ${metros} m ${c.k < r.c.k ? 'al oeste' : 'al este'} ${deL(r.l.nombre)}`;
+    }
+    const nombre = a.nombre ? `en la ${a.nombre.toLowerCase()} (socorristas)` : `en la ${a.tipo === 'rampa' ? 'rampa' : 'escalera'}${ref ? ` ${ref}` : ''}`;
+    puntos.push({ id: `acceso-${a.id}`, nombre, k: c.k });
+  }
   puntos.push({ id: 'oeste', nombre: 'en el extremo oeste del paseo', k: 0 });
   puntos.push({ id: 'este', nombre: 'en el extremo este del paseo', k: pies.length - 1 });
   puntos.sort((a, b) => a.k - b.k);
@@ -216,7 +234,7 @@ export function crearMedidaArena(o: {
       varying float vW;         // medio ancho de la línea, en metros
       void main() {
         vec4 m = modelMatrix * vec4(position, 1.0);
-        float w = max(0.5, distance(cameraPosition, m.xyz) * 0.014);
+        float w = clamp(distance(cameraPosition, m.xyz) * 0.014, 0.5, 3.0);
         vec2 perp = vec2(-uDir.y, uDir.x);
         float r = 2.6 * w;      // el anillo del agua cabe dentro
         m.xz += perp * lado * r + uDir * extremo * r;

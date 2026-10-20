@@ -14,6 +14,7 @@ import metaFino from '../bahia-fino.json';
 import metaArena from '../bahia-arena.json';
 import metaPaseo from '../bahia-paseo.json';
 import { crearPaseo, type PuntoMuro } from './paseo';
+import { accesos, crearAccesos, huecosAccesos, rotuloAcceso } from './accesos';
 import { crearMedidaArena } from './arena';
 import { crearSombras } from './sombras';
 import { crearPostproceso } from './postproceso';
@@ -179,7 +180,9 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   agua.uniformes.uConReflejo.value = 0;
   const cielo = crearCielo(escena, movil);
   // Muro, barandilla y suelo del paseo (tools/paseo-muro.py)
-  escena.add(crearPaseo(metaPaseo.tramos as PuntoMuro[][], comunes));
+  escena.add(crearPaseo(metaPaseo.tramos as PuntoMuro[][], comunes, huecosAccesos()));
+  // Escaleras y rampa que bajan a la arena (identificadas y medidas en el LiDAR y la ortofoto)
+  escena.add(crearAccesos(comunes));
 
   // ---------- Etiquetas de lugares (OpenStreetMap) ----------
   // Rótulos HTML sobre el lienzo, colocados cada cuadro en su punto 3D; se ocultan detrás de la
@@ -193,11 +196,19 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     e.textContent = l.nombre;
     capa.appendChild(e);
     const y = (l.y ?? relieve.altura(l.x, l.z)) + 14;
-    return { e, p: new THREE.Vector3(l.x, y, l.z) };
+    return { e, p: new THREE.Vector3(l.x, y, l.z), lejos: 4500 };
   });
+  // Rótulos de las escaleras y la rampa: solo de cerca (a menos de ~900 m), para orientarse
+  for (const a of accesos) {
+    const e = document.createElement('span');
+    e.className = a.nombre ? 'etiqueta etiqueta-acceso etiqueta-acceso-principal' : 'etiqueta etiqueta-acceso';
+    e.textContent = rotuloAcceso(a);
+    capa.appendChild(e);
+    etiquetas.push({ e, p: new THREE.Vector3(a.centro[0], a.paseo + 3.2, a.centro[1]), lejos: 900 });
+  }
   // Cuánta arena hay entre el muro y el agua en el punto elegido (tocando la playa o de la lista).
   const arena = crearMedidaArena({ escena, camara, lienzo, capa, relieve, cotaMar: fondoAgua.cota, ajuste: ajuste.en });
-  etiquetas.push(arena.etiqueta);
+  etiquetas.push({ ...arena.etiqueta, lejos: 4500 });
   // La orilla dibujada se ajusta en las mismas rectas que mide la cinta (uno de cada 2 puntos).
   const rayosMuro = (): Rayo[] => {
     const r: Rayo[] = [];
@@ -216,14 +227,14 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     const lr = lienzo.getBoundingClientRect();
     const tapan = paneles.flatMap((s) => [...document.querySelectorAll<HTMLElement>(s)])
       .filter((el) => el.getClientRects().length > 0).map((el) => el.getBoundingClientRect()); // (fixed: sin offsetParent)
-    for (const { e, p } of etiquetas) {
+    for (const { e, p, lejos } of etiquetas) {
       const dist = camara.position.distanceTo(p);
       proy.copy(p).project(camara);
       const sx = lr.left + ((proy.x + 1) / 2) * w, sy = lr.top + ((1 - proy.y) / 2) * h;
       const tapada = tapan.some((r) => sx > r.left - 40 && sx < r.right + 40 && sy > r.top && sy < r.bottom + 30);
-      const visible = proy.z < 1 && Math.abs(proy.x) < 1.1 && Math.abs(proy.y) < 1.1 && dist < 4500 && !tapada;
+      const visible = proy.z < 1 && Math.abs(proy.x) < 1.1 && Math.abs(proy.y) < 1.1 && dist < lejos && !tapada;
       if (!visible) { e.style.opacity = '0'; continue; }
-      e.style.opacity = String(1 - THREE.MathUtils.smoothstep(dist, 2200, 4500));
+      e.style.opacity = String(1 - THREE.MathUtils.smoothstep(dist, lejos * 0.5, lejos));
       e.style.transform = `translate(${((proy.x + 1) / 2) * w}px, ${((1 - proy.y) / 2) * h}px) translate(-50%, -100%)`;
     }
   }

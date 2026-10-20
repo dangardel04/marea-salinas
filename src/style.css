@@ -367,6 +367,10 @@ input[type='range']::-moz-range-thumb {
 /* rótulo de la medida en la escena: color de acento, como la cinta */
 .etiqueta.etiqueta-medida { background: var(--acento); color: var(--acento-texto); font-size: 13px; padding: 4px 11px 5px; }
 .etiqueta.etiqueta-medida::after { background: var(--acento); }
+/* escaleras y rampa: rótulo pequeño y oscuro (otro tipo de cosa que los lugares), la «1» más marcada */
+.etiqueta.etiqueta-acceso { font-size: 11px; padding: 2px 8px 3px; color: #f3f6f7; background: rgb(22 32 40 / 0.84); }
+.etiqueta.etiqueta-acceso::after { background: rgb(22 32 40 / 0.84); height: 7px; }
+.etiqueta.etiqueta-acceso-principal { font-size: 12px; padding: 3px 9px 4px; box-shadow: 0 0 0 1.5px var(--acento), 0 2px 8px rgb(16 32 40 / 0.18); }
 .etiquetas { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
 .etiqueta {
   position: absolute; left: 0; top: 0; padding: 3px 9px 4px; white-space: nowrap;

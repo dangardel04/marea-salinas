@@ -14,6 +14,7 @@ Web estática (Vite + TypeScript + Three.js) con la playa de Salinas (Castrilló
   - Sol, luna y fase lunar reales.
   - Vistas rápidas: Playa, Salinas, Paseo y A pie de playa.
   - Regla en la playa (se puede quitar con «Ver en la playa»): del pie del muro al agua, con marcas cada 10 m.
+  - Las escaleras y la rampa que bajan a la arena, en su sitio y con su rótulo de cerca (la «escalera 1», la de los socorristas, marcada); también en la lista de puntos para medir la arena.
 - **Sin conexión**: el motor de marea, la escena y las fuentes van empaquetados. Sin red solo se pierden la corrección en vivo, las olas y la comparación con el IHM.
 - **Hora**: interna en UTC; todo lo que se muestra va en Europe/Madrid, incluido el cambio de hora del 25/10/2026 (ese domingo dura 25 horas).
 
@@ -127,6 +128,12 @@ Después de los dos anteriores, recortar los edificios a la zona de la playa y e
 
 ```bash
 python tools/recortar-zona.py
+```
+
+Escaleras y rampa que bajan a la arena (identificadas en el LiDAR y la ortofoto, medidas en el LiDAR; ver la cabecera del programa):
+
+```bash
+python tools/accesos-playa.py
 ```
 
 ```bash

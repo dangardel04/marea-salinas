@@ -14,7 +14,7 @@ export interface PuntoMuro { arriba: [number, number, number]; pie: [number, num
 
 
 const VERT = /* glsl */ `
-attribute float tipo;   // 0 cara del muro, 1 albardilla, 2 suelo del paseo, 3 barandilla
+attribute float tipo;   // 0 cara del muro, 1 albardilla, 2 suelo del paseo, 3 barandilla, 4 peldaño
 varying vec2 vUv;
 varying vec3 vPos;
 varying vec3 vNor;
@@ -126,10 +126,23 @@ void main() {
     c = mix(c, c * 0.68, jun);
     ao = 1.0 - jun * 0.3;
     rug = 0.75 - 0.15 * fbmP(vUv * 0.4);   // zonas pulidas por el paso
-  } else {
+  } else if (vTipo < 3.5) {
     // ---- Barandilla: pintura blanca satinada, con algo de suciedad abajo ----
     c = vec3(0.9, 0.92, 0.92) * (0.94 + 0.06 * fbmP(vPos.xz * 2.0 + vPos.y));
     rug = 0.38;
+  } else {
+    // ---- Peldaños: piedra clara, cada peldaño de un tono, la arista gastada y más clara, la
+    // contrahuella algo más oscura; arena en los de abajo (DECORATIVO) ----
+    float peldano = floor(vUv.y);
+    float fondo = fract(vUv.y);                 // 0 en la arista, 1 al fondo de la huella
+    c = mix(vec3(0.66, 0.62, 0.55), vec3(0.76, 0.72, 0.65), hashP(vec2(peldano, 3.0)));
+    c *= 0.9 + 0.12 * fbmP(vec2(vUv.x * 3.0, vUv.y * 5.0)) * detalle;
+    float contrahuella = 1.0 - smoothstep(0.3, 0.6, abs(n.y));
+    c *= mix(1.0, 0.82, contrahuella);
+    c = mix(c, c * 1.12, (1.0 - smoothstep(0.0, 0.12, fondo)) * (1.0 - contrahuella));
+    float arenaP = (1.0 - smoothstep(0.6, 1.6, vPos.y - uNivelMax)) * smoothstep(0.35, 0.65, fbmP(vec2(vUv.x * 2.0, vUv.y)));
+    c = mix(c, vec3(0.78, 0.66, 0.45), arenaP * 0.6);
+    rug = 0.82;
   }
   c = iluminar(c, n, v, rug, 0.04, sombra(vPos, n), ao);
   gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
@@ -137,7 +150,13 @@ void main() {
 }
 `;
 
-export function crearPaseo(tramos: PuntoMuro[][], comunes: Record<string, THREE.IUniform>) {
+/** Tramos de s (m a lo largo del borde del paseo) donde no se dibuja la cara del muro o la
+ *  barandilla: los accesos a la playa metidos en el muro y las entradas a ellos. */
+export interface Huecos { muro: [number, number][]; baranda: [number, number][] }
+const enHueco = (s: number, h: [number, number][]) => h.some(([a, b]) => s > a && s < b);
+
+/** Piezas con el material del paseo: cuadriláteros, barras (cajas alargadas) y postes. */
+export function piezas() {
   const pos: number[] = [], uv: number[] = [], tipo: number[] = [], idx: number[] = [];
   const quad = (a: number[], b: number[], c: number[], d: number[], ua: number[], ub: number[], uc: number[], ud: number[], t: number) => {
     const k = pos.length / 3;
@@ -154,11 +173,36 @@ export function crearPaseo(tramos: PuntoMuro[][], comunes: Record<string, THREE.
       quad(v(a, s0, y0 * alto), v(b, s0, y0 * alto), v(b, s1, y1 * alto), v(a, s1, y1 * alto), [0, 0], [L, 0], [L, 1], [0, 1], 3);
     }
   };
+  /** Poste vertical de barandilla: dos planos cruzados de 6 cm. */
+  const poste = (p: number[], alto: number) => {
+    quad([p[0] - 0.03, p[1], p[2]], [p[0] + 0.03, p[1], p[2]], [p[0] + 0.03, p[1] + alto, p[2]], [p[0] - 0.03, p[1] + alto, p[2]], [0, 0], [1, 0], [1, 1], [0, 1], 3);
+    quad([p[0], p[1], p[2] - 0.03], [p[0], p[1], p[2] + 0.03], [p[0], p[1] + alto, p[2] + 0.03], [p[0], p[1] + alto, p[2] - 0.03], [0, 0], [1, 0], [1, 1], [0, 1], 3);
+  };
+  const malla = (nombre: string, comunes: Record<string, THREE.IUniform>) => {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    geo.setAttribute('tipo', new THREE.Float32BufferAttribute(tipo, 1));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    const mat = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, uniforms: comunes, side: THREE.DoubleSide });
+    const m = new THREE.Mesh(geo, mat);
+    m.name = nombre;
+    m.layers.enable(CAPA_SOMBRA);
+    return m;
+  };
+  return { quad, barra, poste, malla };
+}
+
+export function crearPaseo(tramos: PuntoMuro[][], comunes: Record<string, THREE.IUniform>, huecos: Huecos = { muro: [], baranda: [] }) {
+  const { quad, barra, poste: posteV, malla } = piezas();
   for (const tramo of tramos) {
     let largo = 0;
     for (let i = 0; i + 1 < tramo.length; i++) {
       const p = tramo[i], q = tramo[i + 1];
       const seg = Math.hypot(q.arriba[0] - p.arriba[0], q.arriba[2] - p.arriba[2]);
+      const sMedio = largo + seg / 2;
+      const sinMuro = enHueco(sMedio, huecos.muro), sinBaranda = enHueco(sMedio, huecos.baranda);
       // hacia tierra (del pie al borde), en horizontal y unitario
       const tierra = (r: PuntoMuro) => { const x = r.arriba[0] - r.pie[0], z = r.arriba[2] - r.pie[2], l = Math.hypot(x, z) || 1; return [x / l, z / l]; };
       const tp = tierra(p), tq = tierra(q);
@@ -168,14 +212,16 @@ export function crearPaseo(tramos: PuntoMuro[][], comunes: Record<string, THREE.
       const sobre = 0.4;
       const fp = [p.arriba[0], p.arriba[2]], fq = [q.arriba[0], q.arriba[2]];
       const piePr = [p.pie[0] - tp[0] * 1.0, p.pie[1] - 0.5, p.pie[2] - tp[1] * 1.0], pieQr = [q.pie[0] - tq[0] * 1.0, q.pie[1] - 0.5, q.pie[2] - tq[1] * 1.0];
-      quad([piePr[0], piePr[1] + sobre, piePr[2]], [pieQr[0], pieQr[1] + sobre, pieQr[2]], [fq[0], q.arriba[1] + sobre * 0.5, fq[1]], [fp[0], p.arriba[1] + sobre * 0.5, fp[1]],
+      if (!sinMuro) quad([piePr[0], piePr[1] + sobre, piePr[2]], [pieQr[0], pieQr[1] + sobre, pieQr[2]], [fq[0], q.arriba[1] + sobre * 0.5, fq[1]], [fp[0], p.arriba[1] + sobre * 0.5, fp[1]],
         [largo, -0.5], [largo + seg, -0.5], [largo + seg, q.arriba[1] - q.pie[1]], [largo, p.arriba[1] - p.pie[1]], 0);
       // albardilla: 0,6 m hacia tierra, 0,15 m por encima
       const alb = 0.15, ancho = 0.6;
       const pa = [fp[0], p.arriba[1] + sobre * 0.5 + alb, fp[1]], qa = [fq[0], q.arriba[1] + sobre * 0.5 + alb, fq[1]];
       const pi = [pa[0] + tp[0] * ancho, pa[1], pa[2] + tp[1] * ancho], qi = [qa[0] + tq[0] * ancho, qa[1], qa[2] + tq[1] * ancho];
-      quad(pa, qa, qi, pi, [largo, 0], [largo + seg, 0], [largo + seg, 1], [largo, 1], 1);
-      quad([pa[0], p.arriba[1] + sobre * 0.5, pa[2]], [qa[0], q.arriba[1] + sobre * 0.5, qa[2]], qa, pa, [largo, 0], [largo + seg, 0], [largo + seg, 1], [largo, 1], 1);
+      if (!sinMuro) {
+        quad(pa, qa, qi, pi, [largo, 0], [largo + seg, 0], [largo + seg, 1], [largo, 1], 1);
+        quad([pa[0], p.arriba[1] + sobre * 0.5, pa[2]], [qa[0], q.arriba[1] + sobre * 0.5, qa[2]], qa, pa, [largo, 0], [largo + seg, 0], [largo + seg, 1], [largo, 1], 1);
+      }
       // suelo del paseo: del remate hasta el eje y otro tanto más allá (ancho del paseo)
       const fin = (r: PuntoMuro, t: number[]) => {
         const dEje = Math.max(3, Math.hypot(r.eje[0] - r.arriba[0], r.eje[2] - r.arriba[2]) * 2);
@@ -187,24 +233,13 @@ export function crearPaseo(tramos: PuntoMuro[][], comunes: Record<string, THREE.
       // barandilla: postes cada 2 m y dos barras (a 0,5 y 1,0 m)
       const base = (r: number[], t: number[]) => [r[0] + t[0] * 0.25, r[1] + sobre * 0.5 + alb, r[2] + t[1] * 0.25];
       const bp = base(p.arriba, tp), bq = base(q.arriba, tq);
-      // poste: dos planos cruzados de 6 cm × 1 m
-      const poste = [bp[0], bp[1], bp[2]];
-      quad([poste[0] - 0.03, poste[1], poste[2]], [poste[0] + 0.03, poste[1], poste[2]], [poste[0] + 0.03, poste[1] + 1.0, poste[2]], [poste[0] - 0.03, poste[1] + 1.0, poste[2]], [0, 0], [1, 0], [1, 1], [0, 1], 3);
-      quad([poste[0], poste[1], poste[2] - 0.03], [poste[0], poste[1], poste[2] + 0.03], [poste[0], poste[1] + 1.0, poste[2] + 0.03], [poste[0], poste[1] + 1.0, poste[2] - 0.03], [0, 0], [1, 0], [1, 1], [0, 1], 3);
-      barra([bp[0], bp[1] + 0.95, bp[2]], [bq[0], bq[1] + 0.95, bq[2]], 0.07, 0.07);
-      barra([bp[0], bp[1] + 0.48, bp[2]], [bq[0], bq[1] + 0.48, bq[2]], 0.04, 0.04);
+      if (!sinBaranda) {
+        posteV(bp, 1.0);
+        barra([bp[0], bp[1] + 0.95, bp[2]], [bq[0], bq[1] + 0.95, bq[2]], 0.07, 0.07);
+        barra([bp[0], bp[1] + 0.48, bp[2]], [bq[0], bq[1] + 0.48, bq[2]], 0.04, 0.04);
+      }
       largo += seg;
     }
   }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
-  geo.setAttribute('tipo', new THREE.Float32BufferAttribute(tipo, 1));
-  geo.setIndex(idx);
-  geo.computeVertexNormals();
-  const mat = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, uniforms: comunes, side: THREE.DoubleSide });
-  const malla = new THREE.Mesh(geo, mat);
-  malla.name = 'paseo';
-  malla.layers.enable(CAPA_SOMBRA);
-  return malla;
+  return malla('paseo', comunes);
 }

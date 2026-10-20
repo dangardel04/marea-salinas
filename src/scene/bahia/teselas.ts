@@ -16,6 +16,7 @@ import { CAPA_SOMBRA } from './sombras';
 import { LADO, NIVEL_MAX_ORTO, recuadroTesela } from '../../bahia';
 import type { Relieve } from './relieve';
 import type { Zona } from './zona';
+import { rebajeAccesos } from './accesos';
 import { TERRENO_FRAG, TERRENO_VERT } from './sombreado';
 
 export interface UniformesComunes { [k: string]: THREE.IUniform }
@@ -54,8 +55,12 @@ export function crearTeselas(opciones: {
   const { relieve, zona, escena, comunes, movil } = opciones;
   /** Altura de la malla: la del relieve, aplanada fuera de la zona (sin montes en el horizonte). */
   const alturaMalla = (x: number, z: number) => {
-    const h = relieve.altura(x, z), a = zona.aplanado(x, z);
-    return a > 0 ? h + (Math.min(h, 20) - h) * a : h;
+    let h = relieve.altura(x, z);
+    const a = zona.aplanado(x, z);
+    if (a > 0) h += (Math.min(h, 20) - h) * a;
+    // donde hay una escalera o la rampa dibujadas, el terreno baja a la arena (accesos.ts)
+    const r = rebajeAccesos(x, z);
+    return r == null ? h : Math.min(h, r);
   };
   const SEG = movil ? 32 : 48;
   /** Una tesela se divide si la cámara está a menos de lado × FACTOR. */
