@@ -6,7 +6,7 @@
 #
 # Mismo método que src/scene/bahia/arena.ts: dirección hacia el mar de los dos perfiles de playa
 # más cercanos; pie del muro buscado en el relieve desde el borde; agua hasta nivel + subida medida
-# (bahia-orilla.json). Observado: la orilla de cada imagen en el perfil más cercano, proyectada en
+# (bahia-orilla.json); mediana de los puntos vecinos del muro (±4). Observado: la orilla de cada imagen en el perfil más cercano, proyectada en
 # esa misma dirección y medida desde ese mismo pie.
 
 import json, math, os
@@ -48,6 +48,8 @@ def pie(k):
         if h(d) < y0 - 1 and abs(h(d + 2) - h(d)) < 0.5: return x0 + dx * d, z0 + dz * d, dx, dz
     return pies[k]['pie'][0], pies[k]['pie'][2], dx, dz
 
+VECINOS = 4  # como arena.ts: la medida es la mediana de los puntos del muro a ±4
+
 def ancho_modelo(px, pz, dx, dz, nivel):
     linea = nivel + subida(nivel)
     perfil = np.array([altura(px + dx * d, pz + dz * d) for d in np.arange(0, 701, 1.0)])
@@ -65,6 +67,7 @@ puntos += [('extremo oeste', 0), ('extremo este', len(pies) - 1)]
 salida = {'nota': 'metros de arena del pie del muro al agua: web (con la subida medida y la corrección local; en muestra) frente a lo visto en Sentinel-2 a la misma marea; mediana por tramos de nivel', 'puntos': {}}
 for nombre, k in sorted(puntos, key=lambda q: q[1]):
     px, pz, dx, dz = pie(k)
+    vecinos = [pie(j) for j in range(max(0, k - VECINOS), min(len(pies), k + VECINOS + 1))]
     i = int(np.argmin([math.hypot(p['bx'] - px, p['bz'] - pz) for p in P]))
     pr = P[i]
     filas = []
@@ -73,9 +76,14 @@ for nombre, k in sorted(puntos, key=lambda q: q[1]):
         if do is None: continue
         ox, oz = pr['bx'] + do * pr['nx'], pr['bz'] + do * pr['nz']
         obs = (ox - px) * dx + (oz - pz) * dz
-        mod = ancho_modelo(px, pz, dx, dz, e['nivel'])
-        ib = int(np.argmin([math.hypot(p['bx'] - px, p['bz'] - pz) for p in P]))
-        if mod is not None: mod = max(0.0, mod + correccion(ib, e['nivel']))
+        # Como la web: mediana de los puntos vecinos del muro (±VECINOS).
+        vals = []
+        for j in vecinos:
+            qx, qz, qdx, qdz = j
+            m = ancho_modelo(qx, qz, qdx, qdz, e['nivel'])
+            ib = int(np.argmin([math.hypot(p['bx'] - qx, p['bz'] - qz) for p in P]))
+            if m is not None: vals.append(max(0.0, m + correccion(ib, e['nivel'])))
+        mod = float(np.median(vals)) if vals else None
         if mod is not None: filas.append((e['nivel'], obs, mod))
     tramos = {}
     for a, b in [(0, 1.5), (1.5, 2.5), (2.5, 3.0), (3.0, 3.6)]:

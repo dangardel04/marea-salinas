@@ -29,6 +29,8 @@ import * as THREE from 'three';
 import { LADO, PASO_RELIEVE } from '../../bahia';
 import { PASO_CAMPO } from './campoOlas';
 import { SOMBRA_GLSL } from './sombras';
+import { AJUSTE_GLSL } from './orilla';
+import { ZONA_GLSL } from './zona';
 
 /**
  * Forma de la ola cerca de la costa (Abreu et al., 2010, ec. de la velocidad orbital; en aguas
@@ -89,9 +91,10 @@ const float PI2 = 6.28318531;
 const float MEDIO = ${(LADO / 2).toFixed(1)};
 
 vec2 uvNodo(vec2 xz, vec2 rej) { return ((xz + MEDIO) / rej.y + 0.5) / rej.x; }
+${AJUSTE_GLSL}
 float fondo(vec2 xz) {
   if (abs(xz.x) > MEDIO || abs(xz.y) > MEDIO) return -40.0;
-  return texture(uRelieve, uvNodo(xz, uRel)).r;
+  return texture(uRelieve, uvNodo(xz, uRel)).r + ajusteOrilla(xz);
 }
 float longitud(float T, float h) {
   float L0 = G * T * T / PI2;
@@ -297,6 +300,7 @@ uniform vec3 uCieloHorizonte;
 uniform vec3 uCieloCenit;
 uniform float uLuzDia;
 uniform vec3 uColorNiebla;
+${ZONA_GLSL}
 uniform float uDensidadNiebla;
 varying vec3 vPos;
 varying vec3 vNormal;
@@ -327,9 +331,10 @@ float vistaZ(float prof) {
 const float MEDIO = ${(LADO / 2).toFixed(1)};
 vec2 uvNodo(vec2 xz, vec2 rej) { return ((xz + MEDIO) / rej.y + 0.5) / rej.x; }
 /** Altura del fondo y cota de rebose (nivel al que llega el mar, ver campoOlas.ts); fuera, mar hondo. */
+${AJUSTE_GLSL}
 vec2 fondoMar(vec2 xz) {
   if (abs(xz.x) > MEDIO || abs(xz.y) > MEDIO) return vec2(-40.0);
-  return texture(uRelieve, uvNodo(xz, uRel)).rg;
+  return texture(uRelieve, uvNodo(xz, uRel)).rg + ajusteOrilla(xz);
 }
 varying vec4 vOla;
 varying vec2 vPendOla;
@@ -427,7 +432,8 @@ void main() {
   // Destello del sol (o de la luna): especular GGX de una superficie lisa (rugosidad 0,06–0,12;
   // los rizos de la normal lo rompen en chispas, doradas con el sol bajo) y un halo ancho. Se
   // apaga a la sombra (de los acantilados al atardecer, de los edificios).
-  float sombraAgua = sombra(vPos, vec3(0.0, 1.0, 0.0));
+  // (el mapa de sombras tiene la arena sin el ajuste de la orilla)
+  float sombraAgua = sombra(vPos - vec3(0.0, ajusteOrilla(vPos.xz), 0.0), vec3(0.0, 1.0, 0.0));
   vec3 hv = normalize(uDirBrillo + v);
   float ndh = max(dot(n, hv), 0.0), ndl = max(dot(n, uDirBrillo), 0.0);
   float rugA = mix(0.06, 0.12, smoothstep(40.0, 600.0, d));
@@ -547,6 +553,10 @@ void main() {
   a = max(a, espuma);
   a *= mar;
   c = mix(c, uColorNiebla, 1.0 - exp(-uDensidadNiebla * uDensidadNiebla * d * d));
+  // La ría y el puerto, lejos de la playa, se funden en la bruma como la tierra (zona.ts).
+  float brumaA = brumaZonaAgua(vPos.xz);
+  c = mix(c, uColorNiebla, brumaA);
+  a = mix(a, 1.0, brumaA);
   gl_FragColor = vec4(c, a);
   #include <colorspace_fragment>
 }

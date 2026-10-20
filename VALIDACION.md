@@ -301,7 +301,23 @@ En pleamar el ancho depende sobre todo de la arena alta, que es la del LiDAR de 
 | centro (−700 a −200) (651 casos) | +10,5 m / 24,7 m | **+3,5 m** / 17,9 m |
 | este (x > −200) (539 casos) | -2,1 m / 33,7 m | **-1,9 m** / 35,3 m |
 
-(Se probó también pasar la corrección al relieve, subiendo o bajando la arena: con las barras y canales de bajamar la orilla salta y no fue robusto. La cinta de la medida, por eso, puede pasar por encima del agua dibujada, que sigue siendo la del relieve de 2024.)
+(Se probó también pasar la corrección al relieve para validarla, subiendo o bajando la arena: con las barras y canales de bajamar la orilla salta y no fue robusto como modelo. La medida se queda como está; lo que se ajusta es el dibujo, abajo.)
+
+**La medida de cada punto es la mediana de la de los puntos del muro a ±4 (~10 m)**: donde hay un canal entre la arena y una barra justo a la altura del agua, la de un solo punto podía saltar decenas de metros de un punto al siguiente. En los puntos de la lista cambia 2 m como mucho (tabla de 11.3, ya con la mediana).
+
+**Orilla dibujada = orilla medida** (`src/scene/bahia/orilla.ts`). El mar se dibujaba sobre el relieve de 2024, así que la cinta de la medida podía acabar dentro del agua o antes de llegar a ella. Ahora, para el nivel del mar y la sobreelevación de las olas de cada momento, la arena de la franja de la orilla se sube o se baja (rejilla de 5 m, como mucho ±2,5 m) para que el borde medio del agua dibujada caiga donde acaba la medida, en las mismas rectas que sigue la cinta (una de cada 2, ~4,5 m) y, fuera del paseo, en los perfiles de la playa. Comprobado en los 589 puntos del muro, distancia entre el final de la cinta y el borde del agua dibujada:
+
+| Nivel del mar | Mediana | 99 % de los puntos | Puntos con la cinta > 5 m dentro del agua |
+|---|---|---|---|
+| 0,8 m | 0,7 m | 8,3 m | 14 (2 %) |
+| 1,0 m | 0,5 m | 7,6 m | 12 (2 %) |
+| 1,4 m | 0,5 m | 4,0 m | 1 |
+| 1,8 m | 0,5 m | 2,2 m | 0 |
+| 2,6 m | 0,4 m | 2,1 m | 0 |
+| 3,3 m | 0,4 m | 2,0 m | 0 |
+| 3,9 m | 0,3 m | 1,6 m | 0 |
+
+Lo que queda en las bajamares más vivas está en canales y barras al final del paseo, más estrechos que la rejilla. El vaivén de cada ola sigue subiendo y bajando por encima de ese borde medio.
 
 ### 11.3 En los puntos de la lista
 
@@ -310,12 +326,12 @@ Medianas por tramo de nivel, web (con todo lo anterior) frente a lo observado (d
 | Punto | Marea 1,5–2,5 m: web / satélite | Marea 3,0–3,6 m: web / satélite |
 |---|---|---|
 | extremo oeste | 59 / 62 m | 38 / 44 m |
-| Balneario | 59 / 62 m | 38 / 44 m |
+| Balneario | 58 / 62 m | 37 / 44 m |
 | Club Náutico | 53 / 66 m | 34 / 35 m |
 | Paseo del Cantábrico | 75 / 66 m | 46 / 40 m |
-| Edificio Miramar | 68 / 65 m | 44 / 43 m |
-| Torres Gauzón | 84 / 74 m | 51 / 43 m |
-| extremo este | 82 / 82 m | 51 / 46 m |
+| Edificio Miramar | 70 / 65 m | 45 / 43 m |
+| Torres Gauzón | 83 / 74 m | 51 / 43 m |
+| extremo este | 81 / 82 m | 51 / 46 m |
 
 ### 11.4 Conclusiones
 

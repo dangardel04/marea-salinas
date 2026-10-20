@@ -1,5 +1,6 @@
-// Escena 3D de toda la bahía de Salinas: terreno con ortofoto por niveles de detalle,
-// edificios del Catastro, agua con oleaje propagado sobre el fondo, cielo con sol y luna reales.
+// Escena 3D de la playa de Salinas y lo cercano al paseo: terreno con ortofoto por niveles de
+// detalle, edificios del Catastro, agua con oleaje propagado sobre el fondo de toda la bahía, cielo
+// con sol y luna reales. Lo que queda lejos de la playa se funde en la bruma (zona.ts).
 // Coordenadas: ver src/bahia.ts (x este, y arriba sobre el CH, z sur).
 
 import * as THREE from 'three';
@@ -17,6 +18,8 @@ import { crearMedidaArena } from './arena';
 import { crearSombras } from './sombras';
 import { crearPostproceso } from './postproceso';
 import { crearRefraccion } from './refraccion';
+import { crearAjusteOrilla, RADIO_MURO, type Rayo } from './orilla';
+import { crearZona } from './zona';
 import { cargarFino, cargarRelieve } from './relieve';
 import { crearTeselas } from './teselas';
 import { cargarEdificios, cargarEdificiosLidar } from './edificios';
@@ -43,7 +46,7 @@ export interface Vista { id: string; nombre: string; objetivo: [number, number];
 /** Vistas predefinidas (coordenadas locales; rumbo = hacia dónde mira la cámara). Los puntos de
  *  arena salen del polígono de la playa en OpenStreetMap (way 516073411). */
 export const VISTAS: Vista[] = [
-  { id: 'bahia', nombre: 'Bahía', objetivo: [100, 700], rumbo: 165, distancia: 3300, elevacion: 30 },
+  { id: 'playa', nombre: 'Playa', objetivo: [-50, 850], rumbo: 165, distancia: 2000, elevacion: 32 },
   { id: 'salinas', nombre: 'Salinas', objetivo: [-645, 1265], rumbo: 160, distancia: 520, elevacion: 20 },
   { id: 'espartal', nombre: 'El Espartal', objetivo: [-60, 1060], rumbo: 150, distancia: 520, elevacion: 18 },
   { id: 'sanjuan', nombre: 'San Juan', objetivo: [1030, 165], rumbo: 120, distancia: 520, elevacion: 20 },
@@ -69,6 +72,9 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   const relieve = await cargarRelieve(`${base}bahia/relieve.bin`);
   // Fondo del agua (rejilla de 5 m, con el relieve fino) y cota de rebose (hasta dónde llega el mar).
   const fondoAgua = crearFondoAgua(relieve);
+  // Solo la playa y lo cercano al paseo (zona.ts) y la orilla dibujada donde la medida (orilla.ts).
+  const zona = crearZona();
+  const ajuste = crearAjusteOrilla({ cotaMar: fondoAgua.cota, altura: (x, z) => relieve.altura(x, z) });
 
   // ---------- Uniformes comunes ----------
   const comunes = {
@@ -136,7 +142,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   const refraccion = crearRefraccion(render, escena, camara);
   // Máscara de playa (OpenStreetMap, tools/playa-mascara.py): sin repetir, sin mipmaps.
   const uPlaya = { value: neutra(0, 0, 0) as THREE.Texture };
-  Object.assign(comunes, { uPlaya, uFondoAgua: { value: fondoAgua.textura } });
+  Object.assign(comunes, { uPlaya, uFondoAgua: { value: fondoAgua.textura } }, zona.uniformes, ajuste.uniformes);
   cargadorTex.load(`${base}bahia/playa.png`, (t) => {
     t.colorSpace = THREE.NoColorSpace; t.generateMipmaps = false;
     t.flipY = false; // filas de norte a sur, como la rejilla del relieve
@@ -151,7 +157,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   textura('damp_beach_sand_02_nor_gl_1k.jpg', false, texturas.uTexMojadaN);
 
   const teselas = crearTeselas({
-    relieve, indiceOrto: metaOrto.indice as Record<string, string[]>, urlBase: base, escena, comunes, movil,
+    relieve, zona, indiceOrto: metaOrto.indice as Record<string, string[]>, urlBase: base, escena, comunes, movil,
     anisotropia: Math.min(8, render.capabilities.getMaxAnisotropy()),
   });
   // Relieve fino de la playa (LiDAR 2024, 1 m): llega después, sin bloquear el arranque.
@@ -161,8 +167,9 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     teselas.rehacerFino();
     fondoAgua.actualizar();
     arena.rehacer();
+    ajuste.ponerRayos(rayosMuro());
   });
-  const agua = crearAgua({ escena, texRelieve: fondoAgua.textura, nRelieve: fondoAgua.n, pasoRelieve: PASO_RELIEVE, nCampo: Math.floor((relieve.n - 1) / PASO_CAMPO) + 1, comunes: { ...comunesAgua, ...sombras.uniformes, ...refraccion.uniformes }, movil, normales: neutra(128, 128, 255) });
+  const agua = crearAgua({ escena, texRelieve: fondoAgua.textura, nRelieve: fondoAgua.n, pasoRelieve: PASO_RELIEVE, nCampo: Math.floor((relieve.n - 1) / PASO_CAMPO) + 1, comunes: { ...comunesAgua, ...sombras.uniformes, ...refraccion.uniformes, ...ajuste.uniformes, ...zona.uniformes }, movil, normales: neutra(128, 128, 255) });
   textura('waternormals.jpg', false, agua.uniformes.uNormAgua);
   // La arena mojada llega hasta donde sube el agua con las olas: el terreno usa los mismos R2 y setup.
   Object.assign(comunes, { uR2: agua.uniformes.uR2, uSetup: agua.uniformes.uSetup });
@@ -190,8 +197,18 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     return { e, p: new THREE.Vector3(l.x, y, l.z) };
   });
   // Cuánta arena hay entre el muro y el agua en el punto elegido (tocando la playa o de la lista).
-  const arena = crearMedidaArena({ escena, camara, lienzo, capa, relieve, cotaMar: fondoAgua.cota });
+  const arena = crearMedidaArena({ escena, camara, lienzo, capa, relieve, cotaMar: fondoAgua.cota, ajuste: ajuste.en });
   etiquetas.push(arena.etiqueta);
+  // La orilla dibujada se ajusta en las mismas rectas que mide la cinta (uno de cada 2 puntos).
+  const rayosMuro = (): Rayo[] => {
+    const r: Rayo[] = [];
+    for (let k = 0; k < arena.nPuntos; k += 2) {
+      const { pie, haciaMar } = arena.enPunto(k, comunes.uNivel.value);
+      r.push({ x: pie[0], z: pie[1], dx: haciaMar[0], dz: haciaMar[1], desde: 0, radio: RADIO_MURO, medida: (n) => arena.enPunto(k, n).metros });
+    }
+    return r;
+  };
+  ajuste.ponerRayos(rayosMuro());
   const proy = new THREE.Vector3();
   // Los paneles son translúcidos: un rótulo debajo de uno se leería a través y ensuciaría el texto.
   const paneles = ['.panel', '.vistas', '.ayuda-controles', '.barra'];
@@ -212,23 +229,22 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     }
   }
 
-  // Tierra lejana al sur, fuera del área modelada: un anillo plano que la niebla funde con el cielo.
+  // Fuera del área modelada, al sur: un anillo plano del color de la bruma, como la tierra que
+  // queda fuera de la zona de la playa.
   const tierraLejana = new THREE.Mesh(
     new THREE.RingGeometry(LADO * 0.5, 40000, 64, 1, THREE.MathUtils.degToRad(192), THREE.MathUtils.degToRad(156)),
     new THREE.ShaderMaterial({
       uniforms: comunes,
       vertexShader: 'varying vec3 vPos; void main(){ vec4 m = modelMatrix * vec4(position,1.0); vPos = m.xyz; gl_Position = projectionMatrix * viewMatrix * m; }',
-      fragmentShader: `uniform vec3 uAmbiente; uniform vec3 uColorSol; uniform float uLuzSol; uniform vec3 uColorNiebla; uniform float uDensidadNiebla; varying vec3 vPos;
+      fragmentShader: `uniform vec3 uColorNiebla; varying vec3 vPos;
         void main(){ if (abs(vPos.x) < ${(LADO / 2).toFixed(1)} && abs(vPos.z) < ${(LADO / 2).toFixed(1)}) discard;
-          vec3 c = vec3(0.16, 0.2, 0.13) * (uAmbiente + uColorSol * uLuzSol);
-          float d = length(vPos - cameraPosition);
-          gl_FragColor = vec4(mix(c, uColorNiebla, 1.0 - exp(-uDensidadNiebla * uDensidadNiebla * d * d * 2.0)), 1.0);
+          gl_FragColor = vec4(uColorNiebla, 1.0);
           #include <colorspace_fragment>
         }`,
     }),
   );
   tierraLejana.geometry.rotateX(-Math.PI / 2);
-  tierraLejana.position.y = 25;
+  tierraLejana.position.y = 20;
   escena.add(tierraLejana);
 
   alProgreso?.('Levantando los edificios…');
@@ -249,9 +265,10 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   controles.screenSpacePanning = false;
   controles.zoomToCursor = true;
   controles.minDistance = 6;
-  controles.maxDistance = 9000;
+  controles.maxDistance = 2800;
   controles.maxPolarAngle = THREE.MathUtils.degToRad(86);
-  const LIMITE = LADO / 2 - 150;
+  // La cámara mira a la playa y al paseo: su objetivo no sale de la zona.
+  const LIM = zona.limites;
 
   function posicionVista(v: Vista) {
     const r = THREE.MathUtils.degToRad(v.rumbo), e = THREE.MathUtils.degToRad(v.elevacion);
@@ -375,8 +392,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     controles.update();
     // Límites: objetivo dentro del recuadro y cámara siempre por encima del suelo y del agua.
     const tg = controles.target;
-    tg.x = THREE.MathUtils.clamp(tg.x, -LIMITE, LIMITE);
-    tg.z = THREE.MathUtils.clamp(tg.z, -LIMITE, LIMITE);
+    tg.x = THREE.MathUtils.clamp(tg.x, LIM.x0, LIM.x1);
+    tg.z = THREE.MathUtils.clamp(tg.z, LIM.z0, LIM.z1);
     const suelo = Math.max(relieve.altura(camara.position.x, camara.position.z), estado.nivel + (estado.mar?.hs ?? 0) * 0.6);
     if (camara.position.y < suelo + 1.6) camara.position.y = suelo + 1.6;
     // Plano cercano según la altura sobre el suelo: precisión de profundidad en todo el rango.
@@ -388,6 +405,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     comunes.uNivelMax.value = estado.nivelMax6h;
     if (Math.abs(estado.t - ultimoCielo) > 60_000) { vLuna = actualizarLuz(estado.t); ultimoCielo = estado.t; }
     cielo.seguir(camara.position, vLuna);
+    ajuste.actualizar(estado.nivel, estado.setup, ahora);
     arena.actualizar(estado.nivel);
     colocarEtiquetas();
     teselas.actualizar(camara);
@@ -402,7 +420,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   }
   siguienteCuadro(cuadro);
 
-  if (import.meta.env.DEV) Object.assign(globalThis, { __bahia: { escena, camara, controles, relieve, teselas, agua, comunes, volarA, render, arena, fondoAgua, post, sombras } });
+  if (import.meta.env.DEV) Object.assign(globalThis, { __bahia: { escena, camara, controles, relieve, teselas, agua, comunes, volarA, render, arena, fondoAgua, post, sombras, zona, ajuste } });
 
   return {
     actualizar(e: EstadoEscena) { estado = e; revisarCampos(); },

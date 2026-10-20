@@ -1,6 +1,6 @@
 # Marea en Salinas
 
-Web estática (Vite + TypeScript + Three.js) con la bahía de Salinas (Castrillón, Asturias) en 3D: de Arnao a la ría de Avilés, con su relieve, el pueblo, la playa y el mar. El nivel del mar sigue la marea calculada para el puerto de Avilés y las olas, la previsión de oleaje propagada sobre el fondo de la bahía. Por defecto muestra la hora actual y permite moverse por el resto del día y los 7 días siguientes.
+Web estática (Vite + TypeScript + Three.js) con la playa de Salinas (Castrillón, Asturias) en 3D: la playa, el paseo y las primeras calles del pueblo, con su relieve, y el mar hasta el horizonte. Lo que queda lejos de la playa (montes, casas de campo, la ría) se funde en la bruma y no se descarga. El nivel del mar sigue la marea calculada para el puerto de Avilés y las olas, la previsión de oleaje propagada sobre el fondo de la bahía. Por defecto muestra la hora actual y permite moverse por el resto del día y los 7 días siguientes.
 
 - **Marea**: altura sobre el cero hidrográfico, si sube o baja y a qué ritmo, próximas pleamar y bajamar (junto a las de la tabla oficial del IHM) y curva del día.
 - **Corrección en vivo** con el mareógrafo REDMAR de Avilés cuando hay red. El panel indica siempre si es **«Predicción»** o **«Predicción + corrección»**.
@@ -12,7 +12,7 @@ Web estática (Vite + TypeScript + Three.js) con la bahía de Salinas (Castrill�
   - Fondo marino de EMODnet.
   - Olas que se refractan hacia la orilla, rompen y suben por la arena.
   - Sol, luna y fase lunar reales.
-  - Vistas rápidas: Bahía, Salinas, El Espartal, San Juan y A pie de playa.
+  - Vistas rápidas: Playa, Salinas, El Espartal, San Juan y A pie de playa.
 - **Sin conexión**: el motor de marea, la escena y las fuentes van empaquetados. Sin red solo se pierden la corrección en vivo, las olas y la comparación con el IHM.
 - **Hora**: interna en UTC; todo lo que se muestra va en Europe/Madrid, incluido el cambio de hora del 25/10/2026 (ese domingo dura 25 horas).
 
@@ -36,7 +36,7 @@ npm test
 npm run build
 ```
 
-`npm run build` deja la web estática en `dist/` (unos 53 MB, casi todo la ortofoto, los edificios y el relieve fino), con rutas relativas. La interfaz pesa unos 70 KB y aparece al momento; la escena 3D se carga después en su propio paquete.
+`npm run build` deja la web estática en `dist/` (unos 52 MB, casi todo teselas de ortofoto, de las que solo se piden las de cerca de la playa), con rutas relativas. La interfaz pesa unos 70 KB y aparece al momento; la escena 3D se carga después en su propio paquete.
 
 ## De dónde salen los datos
 
@@ -120,6 +120,12 @@ python tools/edificios-lidar.py
 
 ```bash
 node tools/bahia-edificios.ts
+```
+
+Después de los dos anteriores, recortar los edificios a la zona de la playa y el paseo (`src/scene/bahia-zona.json`):
+
+```bash
+python tools/recortar-zona.py
 ```
 
 ```bash
@@ -216,7 +222,7 @@ El build usa `base: './'`, así que sirve igual en la raíz de un dominio y en u
 npx wrangler pages deploy dist --project-name marea-salinas
 ```
 
-Ningún fichero de `dist` pasa de 25 MB (el mayor, `edificios.bin`, ocupa 7,5 MB), que es el límite por fichero de Cloudflare Pages.
+Ningún fichero de `dist` pasa de 25 MB (el mayor, `relieve.bin`, ocupa 3,3 MB), que es el límite por fichero de Cloudflare Pages.
 
 ### GitHub Pages
 

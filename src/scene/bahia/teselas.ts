@@ -7,17 +7,23 @@
 //
 // Donde hay relieve fino (LiDAR 2024 de 1 m en la playa) la malla baja dos niveles más
 // (teselas de 100 y 50 m, ~1 m entre vértices); la ortofoto es la del nivel 5, recortada.
+//
+// Fuera de la zona de la playa y el paseo (zona.ts) el terreno no se subdivide más allá del
+// nivel 2 (teselas de 1,6 km), no lleva ortofoto (se funde en la bruma) y se aplana.
 
 import * as THREE from 'three';
 import { CAPA_SOMBRA } from './sombras';
 import { LADO, NIVEL_MAX_ORTO, recuadroTesela } from '../../bahia';
 import type { Relieve } from './relieve';
+import type { Zona } from './zona';
 import { TERRENO_FRAG, TERRENO_VERT } from './sombreado';
 
 export interface UniformesComunes { [k: string]: THREE.IUniform }
 
 interface Tesela {
   clave: string; nivel: number; i: number; j: number;
+  /** Toda fuera de la zona de la playa: sin ortofoto ni más detalle. */
+  fuera: boolean;
   caja: THREE.Box3;
   /** Cota mínima real del terreno en la tesela (m sobre el CH). */
   minAltura: number;
@@ -37,6 +43,7 @@ const CARGAS_SIMULTANEAS = 6;
 
 export function crearTeselas(opciones: {
   relieve: Relieve;
+  zona: Zona;
   indiceOrto: Record<string, string[]>;
   urlBase: string;
   escena: THREE.Scene;
@@ -44,7 +51,12 @@ export function crearTeselas(opciones: {
   movil: boolean;
   anisotropia: number;
 }) {
-  const { relieve, escena, comunes, movil } = opciones;
+  const { relieve, zona, escena, comunes, movil } = opciones;
+  /** Altura de la malla: la del relieve, aplanada fuera de la zona (sin montes en el horizonte). */
+  const alturaMalla = (x: number, z: number) => {
+    const h = relieve.altura(x, z), a = zona.aplanado(x, z);
+    return a > 0 ? h + (Math.min(h, 20) - h) * a : h;
+  };
   const SEG = movil ? 32 : 48;
   /** Una tesela se divide si la cámara está a menos de lado × FACTOR. */
   const FACTOR = movil ? 1.25 : 1.7;
@@ -143,7 +155,7 @@ export function crearTeselas(opciones: {
     };
     for (let b = 0; b < v; b++) for (let a = 0; a < v; a++) {
       const x = r.x0 + (a / SEG) * r.lado, z = r.z0 + (b / SEG) * r.lado;
-      poner(b * v + a, x, z, relieve.altura(x, z), a, b);
+      poner(b * v + a, x, z, alturaMalla(x, z), a, b);
     }
     // Faldón: copia de cada borde, bajada unos metros.
     const caida = 2 + r.lado * 0.01;
@@ -198,8 +210,9 @@ export function crearTeselas(opciones: {
     if (!t) {
       const caja = cajaDe(nivel, i, j);
       const r = recuadroTesela(nivel, i, j);
-      const nivelMax = relieve.hayFino(r.x0, r.z0, r.x1, r.z1) ? NIVEL_MAX_FINO : NIVEL_MAX_MALLA;
-      t = { clave, nivel, i, j, caja, minAltura: caja.minReal, usada: 0, texturaNivel: -1, nivelMax };
+      const fuera = zona.fuera(r.x0, r.z0, r.x1, r.z1);
+      const nivelMax = fuera ? Math.min(nivel, 2) : relieve.hayFino(r.x0, r.z0, r.x1, r.z1) ? NIVEL_MAX_FINO : NIVEL_MAX_MALLA;
+      t = { clave, nivel, i, j, fuera, caja, minAltura: caja.minReal, usada: 0, texturaNivel: -1, nivelMax };
       teselas.set(clave, t);
     }
     return t;
@@ -236,7 +249,7 @@ export function crearTeselas(opciones: {
         grupo.add(t.malla);
       }
       t.malla.visible = true;
-      const m = mejorTextura(t);
+      const m = t.fuera ? null : mejorTextura(t);
       if (m && m.nivel !== t.texturaNivel) {
         const u = t.malla.material.uniforms;
         const d = t.nivel - m.nivel, s = 1 / 2 ** d;

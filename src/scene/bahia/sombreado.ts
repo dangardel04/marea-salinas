@@ -11,6 +11,8 @@
 // sombras de ahora (a medias). Lo dibujado (arena, muro, edificios) sí: luz física sencilla.
 
 import { SOMBRA_GLSL } from './sombras';
+import { AJUSTE_GLSL } from './orilla';
+import { ZONA_GLSL } from './zona';
 
 const COMUNES = /* glsl */ `
 uniform vec3 uCieloHorizonte;
@@ -64,6 +66,7 @@ vec3 iluminar(vec3 albedo, vec3 n, vec3 v, float rugosidad, float f0, float s, f
 export const LUZ_GLSL = COMUNES;
 
 export const TERRENO_VERT = /* glsl */ `
+${AJUSTE_GLSL}
 attribute float medido;
 attribute float oclusion;
 varying vec2 vUv;
@@ -71,12 +74,16 @@ varying vec3 vPos;
 varying vec3 vNor;
 varying float vMed;
 varying float vOcl;
+varying float vAjuste;
 void main() {
   vUv = uv;
   vMed = medido;
   vOcl = oclusion;
   vNor = normal;
   vec4 m = modelMatrix * vec4(position, 1.0);
+  // La arena de la orilla, subida o bajada para que el agua corte donde la medida (orilla.ts).
+  vAjuste = ajusteOrilla(m.xz);
+  m.y += vAjuste;
   vPos = m.xyz;
   gl_Position = projectionMatrix * viewMatrix * m;
 }
@@ -84,6 +91,7 @@ void main() {
 
 export const TERRENO_FRAG = /* glsl */ `
 ${COMUNES}
+${ZONA_GLSL}
 uniform sampler2D uOrto;
 uniform vec4 uUv;
 uniform float uTieneOrto;
@@ -104,6 +112,7 @@ varying vec3 vPos;
 varying vec3 vNor;
 varying float vMed;
 varying float vOcl;
+varying float vAjuste;
 
 const float MEDIO = 3200.0;
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -182,7 +191,7 @@ void main() {
   // Empapada: la franja que lava el vaivén de las olas ahora (hasta el nivel + setup + R2) y un
   // poco más; transición suave. Con la cota de rebose (no la altura), así las hondonadas detrás de
   // un caballón no salen como manchas oscuras.
-  float cotaMar = max(h, texture2D(uFondoAgua, uvP).g);
+  float cotaMar = max(h, texture2D(uFondoAgua, uvP).g + vAjuste);
   float lavado = uSetup + uR2 + 0.08;
   float empapada = 1.0 - smoothstep(lavado - 0.06, lavado + 0.14, cotaMar - uNivel);
   vec3 arena = mix(arenaSeca, arenaHumeda, mojada);
@@ -206,7 +215,8 @@ void main() {
   vec3 n = normalize(vNor);
   vec3 v = normalize(cameraPosition - vPos);
   float estilo = max(playa, muro);
-  float sSol = sombra(vPos, n);
+  // (el mapa de sombras tiene la arena sin el ajuste de la orilla)
+  float sSol = sombra(vPos - vec3(0.0, vAjuste, 0.0), n);
   // Oclusión de contacto (al pie del muro, en los pliegues), suave.
   float ao = 1.0 - smoothstep(0.12, 0.75, vOcl) * 0.5;
   // Arena: seca, mate (rugosidad 0,9); húmeda de la marea, 0,6; empapada por el vaivén, la
@@ -219,6 +229,8 @@ void main() {
   // tiene las suyas del día del vuelo, más cortas o largas según la hora).
   vec3 foto = c * luz(n, mix(0.55, 0.45, usarFoto), mix(1.0, sSol, 0.85)) * mix(1.0, ao, 0.5);
   c = mix(foto, dibujado, estilo);
+  // Fuera de la playa y lo cercano al paseo, la tierra se funde en la bruma (zona.ts).
+  c = mix(c, uColorNiebla, brumaZona(vPos.xz) * smoothstep(0.5, 2.5, h - vAjuste));
 
   gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
   #include <colorspace_fragment>
@@ -241,6 +253,7 @@ void main() {
 
 export const EDIFICIOS_FRAG = /* glsl */ `
 ${COMUNES}
+${ZONA_GLSL}
 varying vec3 vColor;
 varying vec3 vPos;
 varying vec3 vNor;
@@ -263,6 +276,7 @@ void main() {
   vec2 celda = floor(vec2((vPos.x + vPos.z) / 2.6, vPos.y / 3.0));
   float encendida = step(0.72, fract(sin(dot(celda, vec2(12.9898, 78.233))) * 43758.5453));
   c += vec3(1.0, 0.72, 0.38) * 2.6 * hueco * encendida * smoothstep(0.5, 0.9, uNoche);
+  c = mix(c, uColorNiebla, brumaZona(vPos.xz));
   gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
   #include <colorspace_fragment>
 }

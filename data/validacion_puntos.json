@@ -32,20 +32,20 @@
     "0-1.5": {
      "casos": 9,
      "observado_m": 188,
-     "web_m": 188,
+     "web_m": 189,
      "diferencia_m": -56
     },
     "1.5-2.5": {
      "casos": 4,
      "observado_m": 62,
-     "web_m": 59,
+     "web_m": 58,
      "diferencia_m": -5
     },
     "3.0-3.6": {
      "casos": 5,
      "observado_m": 44,
-     "web_m": 38,
-     "diferencia_m": -6
+     "web_m": 37,
+     "diferencia_m": -7
     }
    }
   },
@@ -57,7 +57,7 @@
      "casos": 9,
      "observado_m": 169,
      "web_m": 165,
-     "diferencia_m": -39
+     "diferencia_m": -40
     },
     "1.5-2.5": {
      "casos": 4,
@@ -87,7 +87,7 @@
      "casos": 4,
      "observado_m": 66,
      "web_m": 75,
-     "diferencia_m": 8
+     "diferencia_m": 7
     },
     "3.0-3.6": {
      "casos": 4,
@@ -104,19 +104,19 @@
     "0-1.5": {
      "casos": 9,
      "observado_m": 172,
-     "web_m": 171,
-     "diferencia_m": -11
+     "web_m": 169,
+     "diferencia_m": -12
     },
     "1.5-2.5": {
      "casos": 4,
      "observado_m": 65,
-     "web_m": 68,
-     "diferencia_m": 1
+     "web_m": 70,
+     "diferencia_m": 3
     },
     "3.0-3.6": {
      "casos": 5,
      "observado_m": 43,
-     "web_m": 44,
+     "web_m": 45,
      "diferencia_m": -4
     }
    }
@@ -134,14 +134,14 @@
     "1.5-2.5": {
      "casos": 4,
      "observado_m": 74,
-     "web_m": 84,
-     "diferencia_m": 6
+     "web_m": 83,
+     "diferencia_m": 5
     },
     "3.0-3.6": {
      "casos": 5,
      "observado_m": 43,
      "web_m": 51,
-     "diferencia_m": 9
+     "diferencia_m": 8
     }
    }
   },
@@ -152,13 +152,13 @@
     "0-1.5": {
      "casos": 9,
      "observado_m": 123,
-     "web_m": 105,
-     "diferencia_m": 1
+     "web_m": 103,
+     "diferencia_m": 0
     },
     "1.5-2.5": {
      "casos": 4,
      "observado_m": 82,
-     "web_m": 82,
+     "web_m": 81,
      "diferencia_m": -2
     },
     "3.0-3.6": {

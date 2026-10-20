@@ -40,6 +40,33 @@ export function subidaOrilla(nivel: number): number {
 
 export interface PuntoArena { id: string; nombre: string }
 
+/** Perfiles de la playa: [x, z, dirección hacia el mar x, z], cada 25 m sobre la curva de
+ *  +3,1 m de la arena medida (tools/validar-ancho.py). */
+export const perfiles = metaPerfiles.perfiles as [number, number, number, number][];
+
+/** Índice del perfil cuyo arranque está más cerca de (x, z). */
+export function perfilCercano(x: number, z: number): number {
+  let i = 0, mejor = Infinity;
+  perfiles.forEach((p, j) => { const d = Math.hypot(p[0] - x, p[1] - z); if (d < mejor) { mejor = d; i = j; } });
+  return i;
+}
+
+/** Corrección local (m) del perfil i: lo que el satélite ve de más o de menos en 2025‑2026
+ *  respecto al relieve (la playa ha cambiado desde el LiDAR de 2024). Ver
+ *  tools/ancho-correccion.py; 0 donde no hay datos suficientes. Por encima de lo observado
+ *  (mareas vivas altas) se desvanece en 0,8 m. */
+const correcciones = metaCorreccion.perfiles as Record<string, (number | null)[]>;
+export function correccionPerfil(i: number, nivel: number): number {
+  const fila = correcciones[String(i)];
+  if (!fila) return 0;
+  const xs: number[] = [], ys: number[] = [];
+  fila.forEach((v, j) => { if (v != null) { xs.push(metaCorreccion.niveles[j]); ys.push(v); } });
+  if (!xs.length) return 0;
+  if (nivel <= xs[0]) return ys[0];
+  for (let j = 1; j < xs.length; j++) if (nivel <= xs[j]) return ys[j - 1] + ((ys[j] - ys[j - 1]) * (nivel - xs[j - 1])) / (xs[j] - xs[j - 1]);
+  return ys[ys.length - 1] * (1 - THREE.MathUtils.smoothstep(nivel, xs[xs.length - 1], xs[xs.length - 1] + 0.8));
+}
+
 export function crearMedidaArena(o: {
   escena: THREE.Scene;
   camara: THREE.PerspectiveCamera;
@@ -48,14 +75,16 @@ export function crearMedidaArena(o: {
   relieve: Relieve;
   /** Cota de rebose: el mar llega a (x, z) si su nivel la supera. */
   cotaMar: (x: number, z: number) => number;
+  /** Cuánto sube o baja la arena dibujada para que la orilla caiga donde la medida (orilla.ts). */
+  ajuste?: (x: number, z: number) => number;
 }) {
+  const alturaVista = (x: number, z: number) => o.relieve.altura(x, z) + (o.ajuste?.(x, z) ?? 0);
   const pies = (metaPaseo.tramos as PuntoMuro[][]).flat();
   const lugares = metaPaseo.lugares;
 
   /** Dirección hacia el mar en el punto k: la de los perfiles de la playa (normales a la curva
    *  de +3,1 m de la arena medida, cada 25 m), media de los dos más cercanos pesada por la
    *  distancia. La línea del muro no sirve: en los extremos del paseo hace eses. */
-  const perfiles = metaPerfiles.perfiles as [number, number, number, number][];
   function haciaMar(k: number): [number, number] {
     const [x0, , z0] = pies[k].arriba;
     const orden = perfiles.map((p) => ({ p, d: Math.hypot(p[0] - x0, p[1] - z0) })).sort((a, b) => a.d - b.d);
@@ -84,36 +113,37 @@ export function crearMedidaArena(o: {
     return pie;
   }
 
-  /** Corrección local (m) del perfil de playa más cercano al pie: lo que el satélite ve de más o
-   *  de menos en 2025‑2026 respecto al relieve (la playa ha cambiado desde el LiDAR de 2024).
-   *  Ver tools/ancho-correccion.py; 0 donde no hay datos suficientes. Por encima de lo observado
-   *  (mareas vivas altas) se desvanece en 0,8 m. */
-  const correcciones = metaCorreccion.perfiles as Record<string, (number | null)[]>;
-  function correccion(px: number, pz: number, nivel: number): number {
-    let i = 0, mejor = Infinity;
-    perfiles.forEach((p, j) => { const d = Math.hypot(p[0] - px, p[1] - pz); if (d < mejor) { mejor = d; i = j; } });
-    const fila = correcciones[String(i)];
-    if (!fila) return 0;
-    const xs: number[] = [], ys: number[] = [];
-    fila.forEach((v, j) => { if (v != null) { xs.push(metaCorreccion.niveles[j]); ys.push(v); } });
-    if (!xs.length) return 0;
-    if (nivel <= xs[0]) return ys[0];
-    for (let j = 1; j < xs.length; j++) if (nivel <= xs[j]) return ys[j - 1] + ((ys[j] - ys[j - 1]) * (nivel - xs[j - 1])) / (xs[j] - xs[j - 1]);
-    return ys[ys.length - 1] * (1 - THREE.MathUtils.smoothstep(nivel, xs[xs.length - 1], xs[xs.length - 1] + 0.8));
-  }
-
   /** Metros de arena desde el pie del muro k hasta donde llega el agua con el mar a `nivel`. Al
    *  subir la marea la arena no puede crecer: se toma el mínimo con los niveles algo más bajos
    *  (la corrección local va por tramos de nivel y, sin esto, podía dar un pequeño repunte). */
-  const cacheMedida = new Map<string, number | null>();
-  function medir(k: number, nivel: number): number | null {
+  const cachePunto = new Map<string, number | null>();
+  function medirPunto(k: number, nivel: number): number | null {
     const clave = `${k}|${nivel.toFixed(2)}`;
-    if (cacheMedida.has(clave)) return cacheMedida.get(clave)!;
+    if (cachePunto.has(clave)) return cachePunto.get(clave)!;
     let m = medirBruto(k, nivel);
     for (let dn = 0.25; m != null && dn <= 1.5; dn += 0.25) {
       const v = medirBruto(k, nivel - dn);
       if (v != null) m = Math.min(m, v);
     }
+    if (cachePunto.size > 8000) cachePunto.clear();
+    cachePunto.set(clave, m);
+    return m;
+  }
+  /** La medida en k: mediana de la de los puntos vecinos (±VECINOS, ~10 m de muro). Donde hay un
+   *  canal entre la arena y una barra, justo a la altura del agua, la de un solo punto podía saltar
+   *  decenas de metros de un punto al siguiente. */
+  const VECINOS = 4;
+  const cacheMedida = new Map<string, number | null>();
+  function medir(k: number, nivel: number): number | null {
+    const clave = `${k}|${nivel.toFixed(2)}`;
+    if (cacheMedida.has(clave)) return cacheMedida.get(clave)!;
+    const v: number[] = [];
+    for (let j = Math.max(0, k - VECINOS); j <= Math.min(pies.length - 1, k + VECINOS); j++) {
+      const m = medirPunto(j, nivel);
+      if (m != null) v.push(m);
+    }
+    v.sort((a, b) => a - b);
+    const m = v.length ? (v.length % 2 ? v[v.length >> 1] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2) : null;
     if (cacheMedida.size > 2000) cacheMedida.clear();
     cacheMedida.set(clave, m);
     return m;
@@ -124,7 +154,7 @@ export function crearMedidaArena(o: {
     const [dx, dz] = haciaMar(k);
     const linea = nivel + subidaOrilla(nivel);
     for (let d = 0; d <= 700; d += 1) {
-      if (o.cotaMar(px + dx * d, pz + dz * d) < linea) return Math.max(0, d + correccion(px, pz, nivel));
+      if (o.cotaMar(px + dx * d, pz + dz * d) < linea) return Math.max(0, d + correccionPerfil(perfilCercano(px, pz), nivel));
     }
     return null;
   }
@@ -172,8 +202,8 @@ export function crearMedidaArena(o: {
   const ACENTO = new THREE.Color('#ff7a45'), BLANCO = new THREE.Color('#fbf7f0');
   let hecho = '';
 
-  function dibujar(metros: number | null) {
-    const clave = `${sel.k}|${metros == null ? 'x' : Math.round(metros)}`;
+  function dibujar(metros: number | null, nivel: number) {
+    const clave = `${sel.k}|${metros == null ? 'x' : Math.round(metros)}|${Math.round(nivel * 20)}`;
     if (clave === hecho) return;
     hecho = clave;
     const [px, pz] = pieEn(sel.k);
@@ -184,7 +214,7 @@ export function crearMedidaArena(o: {
     const n = Math.max(1, Math.ceil(largo / 2));
     for (let i = 0; i <= n; i++) {
       const d = (largo * i) / n;
-      const x = px + dx * d, z = pz + dz * d, y = o.relieve.altura(x, z) + 0.25;
+      const x = px + dx * d, z = pz + dz * d, y = alturaVista(x, z) + 0.25;
       const c = Math.floor(d / 10) % 2 === 0 ? ACENTO : BLANCO;   // franjas de 10 m
       pos.push(x + nx, y, z + nz, x - nx, y, z - nz);
       col.push(c.r, c.g, c.b, c.r, c.g, c.b);
@@ -198,7 +228,7 @@ export function crearMedidaArena(o: {
     cinta.geometry = g;
     cinta.visible = largo >= 2;
     const m = largo / 2;
-    posRotulo.set(px + dx * m, o.relieve.altura(px + dx * m, pz + dz * m) + 9, pz + dz * m);
+    posRotulo.set(px + dx * m, alturaVista(px + dx * m, pz + dz * m) + 9, pz + dz * m);
     rotulo.textContent = metros == null ? '' : largo < 2 ? 'El agua llega al muro' : `${Math.round(largo)} m de arena`;
   }
 
@@ -237,7 +267,7 @@ export function crearMedidaArena(o: {
     /** Rótulo para colocarlo con los demás (posición 3D que cambia). */
     etiqueta: { e: rotulo, p: posRotulo },
     /** Actualiza la cinta para el nivel del mar del momento. */
-    actualizar(nivel: number) { dibujar(medir(sel.k, nivel)); },
+    actualizar(nivel: number) { dibujar(medir(sel.k, nivel), nivel); },
     /** Metros de arena en el punto elegido con el mar a `nivel` (null si no se puede medir). */
     medir: (nivel: number) => medir(sel.k, nivel),
     margen: metaCorreccion.margen,
@@ -249,8 +279,11 @@ export function crearMedidaArena(o: {
     },
     alCambiar(f: () => void) { oyentes.push(f); },
     /** Cuando llega el relieve fino: el pie del muro se vuelve a buscar en él. */
-    rehacer() { pieCache.clear(); cacheMedida.clear(); hecho = ''; oyentes.forEach((f) => f()); },
+    rehacer() { pieCache.clear(); cachePunto.clear(); cacheMedida.clear(); hecho = ''; oyentes.forEach((f) => f()); },
     /** Para depurar: punto del muro elegido y su dirección hacia el mar. */
     depurar: () => ({ sel, pie: pieEn(sel.k), haciaMar: haciaMar(sel.k) }),
+    /** Para comprobar la orilla: medida y recta de cualquier punto k del muro. */
+    enPunto: (k: number, nivel: number) => ({ metros: medir(k, nivel), pie: pieEn(k), haciaMar: haciaMar(k) }),
+    nPuntos: pies.length,
   };
 }

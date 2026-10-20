@@ -8,8 +8,9 @@
  ],
  "partes": 2396,
  "sinNubeSuficiente": 245,
- "vertices": 335929,
- "indices": 254577,
+ "vertices": 176272,
+ "indices": 139910,
  "formato": "Int16 x,y,z (dm, local) por vértice; Uint8 r,g,b por vértice; relleno a múltiplo de 4 bytes; Uint32 índices de triángulos",
- "fachadas": "Color DECORATIVO (paleta clara); la nube no da el de las fachadas"
+ "fachadas": "Color DECORATIVO (paleta clara); la nube no da el de las fachadas",
+ "recorte": "Solo a menos de 470 m de la playa y el paseo (tools/recortar-zona.py)"
 }
