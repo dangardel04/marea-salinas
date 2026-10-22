@@ -137,6 +137,19 @@ export function crearAccesos(comunes: Record<string, THREE.IUniform>) {
   return m;
 }
 
+/**
+ * Cómo está el pie de un acceso a una hora: con la arena que queda delante del muro ahí (la misma
+ * medida que la del panel, «Arena hasta el agua», con su margen típico). Menos de 3 m: el agua (con
+ * las olas) llega al pie; menos que el margen: puede llegar; si no, los metros de arena, de 5 en 5
+ * (el margen no da para más).
+ */
+export function estadoPie(metros: number | null, margen: number): { texto: string; estado: 'agua' | 'cerca' | 'seco' } | null {
+  if (metros == null) return null;
+  if (metros < 3) return { texto: 'agua al pie', estado: 'agua' };
+  if (metros < margen) return { texto: 'agua cerca', estado: 'cerca' };
+  return { texto: `${Math.round(metros / 5) * 5} m de arena`, estado: 'seco' };
+}
+
 /** Texto del rótulo de cada acceso. */
 export const rotuloAcceso = (a: Acceso) => a.nombre ?? (a.tipo === 'rampa' ? 'Rampa' : 'Escalera');
 

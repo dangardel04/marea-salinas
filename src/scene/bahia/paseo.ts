@@ -36,6 +36,8 @@ void main() {
 
 const FRAG = /* glsl */ `
 ${LUZ_GLSL}
+uniform float uSetup;   // subida media del agua por las olas (m)
+uniform float uR2;      // y hasta dónde llegan las más altas (m)
 varying vec2 vUv;    // cara: u = metros a lo largo, v = metros desde el pie; suelo: metros (x, z)
 varying vec3 vPos;
 varying vec3 vNor;
@@ -161,6 +163,15 @@ void main() {
     float arenaP = (1.0 - smoothstep(0.6, 1.6, vPos.y - uNivelMax)) * smoothstep(0.35, 0.65, fbmP(vec2(vUv.x * 2.0, vUv.y)));
     c = mix(c, vec3(0.78, 0.66, 0.45), arenaP * 0.6);
     rug = 0.82;
+  }
+  // Mojado: hasta donde llega ahora el agua con las olas (el nivel del mar, su subida media y la de
+  // las más altas, R2, como en la arena), la piedra y los peldaños oscuros y con brillo; con borde
+  // irregular (DECORATIVO). Así se ve qué peldaños moja el mar a esa hora.
+  if (vTipo < 0.5 || vTipo > 3.5) {
+    float alcance = uNivel + uSetup + uR2 + (fbmP(vPos.xz * 0.7) - 0.5) * 0.25;
+    float mojado = 1.0 - smoothstep(alcance - 0.08, alcance + 0.12, vPos.y);
+    c *= mix(1.0, 0.58, mojado);
+    rug = mix(rug, 0.28, mojado);
   }
   c = iluminar(c, n, v, rug, 0.04, sombra(vPos, n), ao);
   gl_FragColor = vec4(conNiebla(c, vPos), 1.0);

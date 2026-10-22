@@ -395,6 +395,8 @@ export function crearMedidaArena(o: {
     visible: () => mostrar,
     /** Metros de arena en el punto elegido con el mar a `nivel` (null si no se puede medir). */
     medir: (nivel: number) => medir(sel.k, nivel),
+    /** Lo mismo junto al punto del muro más cercano a (x, z) (para los accesos). */
+    medirEn: (x: number, z: number, nivel: number) => medir(cercano(x, z).k, nivel),
     margen: metaCorreccion.margen,
     puntos: puntos.map(({ id, nombre }) => ({ id, nombre })) as PuntoArena[],
     elegido: () => ({ id: sel.id, nombre: sel.nombre }),

@@ -16,7 +16,7 @@ import metaPaseo from '../bahia-paseo.json';
 import { crearPaseo } from './paseo';
 import { EDIFICIOS_MEJORADOS, prepararMuro, tramosMuro } from './zonaMejorada';
 import { crearPiscinas } from './piscinas';
-import { accesos, crearAccesos, huecosAccesos, rotuloAcceso } from './accesos';
+import { accesos, crearAccesos, estadoPie, huecosAccesos, rotuloAcceso } from './accesos';
 import { crearMedidaArena } from './arena';
 import { crearSombras } from './sombras';
 import { crearPostproceso } from './postproceso';
@@ -214,12 +214,25 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     return { e, p: new THREE.Vector3(l.x, y, l.z), lejos: 4500 };
   });
   // Rótulos de las escaleras y la rampa: solo de cerca (a menos de ~900 m), para orientarse
+  // (con cómo está su pie a la hora elegida: ver estadoPie)
+  const rotulosAcceso: { a: (typeof accesos)[number]; e: HTMLSpanElement }[] = [];
   for (const a of accesos) {
     const e = document.createElement('span');
     e.className = a.nombre ? 'etiqueta etiqueta-acceso etiqueta-acceso-principal' : 'etiqueta etiqueta-acceso';
     e.textContent = rotuloAcceso(a);
     capa.appendChild(e);
     etiquetas.push({ e, p: new THREE.Vector3(a.centro[0], a.paseo + 3.2, a.centro[1]), lejos: 900 });
+    rotulosAcceso.push({ a, e });
+  }
+  let nivelRotulos = NaN;
+  function actualizarRotulosAcceso(nivel: number) {
+    if (Math.abs(nivel - nivelRotulos) < 0.02) return;
+    nivelRotulos = nivel;
+    for (const { a, e } of rotulosAcceso) {
+      const est = estadoPie(arena.medirEn(a.centro[0], a.centro[1], nivel), arena.margen);
+      e.textContent = est ? `${rotuloAcceso(a)} · ${est.texto}` : rotuloAcceso(a);
+      e.dataset.pie = est?.estado ?? '';
+    }
   }
   // Cuánta arena hay entre el muro y el agua en el punto elegido (tocando la playa o de la lista).
   const arena = crearMedidaArena({ escena, camara, lienzo, capa, relieve, cotaMar: fondoAgua.cota, ajuste: ajuste.en });
@@ -433,6 +446,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     cielo.seguir(camara.position, vLuna);
     ajuste.actualizar(estado.nivel, estado.setup, ahora);
     arena.actualizar(estado.nivel, ahora);
+    actualizarRotulosAcceso(estado.nivel);
     colocarEtiquetas();
     teselas.actualizar(camara);
     agua.actualizar(teselas.visibles(), estado.nivel + estado.r2 + 1, camara.position);

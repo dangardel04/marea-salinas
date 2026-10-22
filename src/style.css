@@ -370,6 +370,8 @@ input[type='range']::-moz-range-thumb {
 /* escaleras y rampa: rótulo pequeño y oscuro (otro tipo de cosa que los lugares), la «1» más marcada */
 .etiqueta.etiqueta-acceso { font-size: 11px; padding: 2px 8px 3px; color: #f3f6f7; background: rgb(22 32 40 / 0.84); }
 .etiqueta.etiqueta-acceso::after { background: rgb(22 32 40 / 0.84); height: 7px; }
+.etiqueta.etiqueta-acceso[data-pie='agua'], .etiqueta.etiqueta-acceso[data-pie='agua']::after { background: rgb(12 92 128 / 0.92); }
+.etiqueta.etiqueta-acceso[data-pie='cerca'], .etiqueta.etiqueta-acceso[data-pie='cerca']::after { background: rgb(30 66 88 / 0.9); }
 .etiqueta.etiqueta-acceso-principal { font-size: 12px; padding: 3px 9px 4px; box-shadow: 0 0 0 1.5px var(--acento), 0 2px 8px rgb(16 32 40 / 0.18); }
 .etiquetas { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
 .etiqueta {
