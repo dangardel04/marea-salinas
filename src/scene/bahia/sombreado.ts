@@ -163,6 +163,17 @@ void main() {
   float d = length(vPos - cameraPosition);
   vec3 orto = uTieneOrto > 0.5 ? texture2D(uOrto, uUv.xy + vUv * uUv.zw).rgb : uArenaSeca * 0.7;
   float pendiente = 1.0 - vNor.y; // 0 llano, 1 vertical
+  // Zona del Club Náutico: de cerca la foto (0,2 m/píxel) se ve borrosa; el césped (lo verde de la
+  // foto) lleva hojas y manchas propias, y el suelo duro un grano fino. El color sigue siendo el de la
+  // foto; el dibujo fino es DECORATIVO.
+  float cercaClub = (1.0 - smoothstep(uZonaEdif.z - uZonaEdif.w, uZonaEdif.z, length(vPos.xz - uZonaEdif.xy))) * (1.0 - smoothstep(35.0, 150.0, d)) * uTieneOrto;
+  if (cercaClub > 0.01) {
+    float verde = smoothstep(0.015, 0.06, orto.g - max(orto.r, orto.b));
+    float hojas = ruido(vPos.xz * 24.0) * 0.55 + ruido(vPos.xz * 61.0) * 0.45;
+    vec3 cesped = orto * (0.74 + 0.5 * hojas) * (0.9 + 0.2 * fbm(vPos.xz * 0.7));
+    vec3 duro = orto * (0.93 + 0.14 * ruido(vPos.xz * 33.0)) * (0.97 + 0.06 * fbm(vPos.xz * 2.0));
+    orto = mix(orto, mix(duro, cesped, verde), cercaClub);
+  }
 
   // ---------- Qué es playa ----------
   // Arena de playa: dentro de los polígonos de playa de OpenStreetMap (bahia/playa.png), o
@@ -318,22 +329,9 @@ void main() {
 export const EDIFICIOS_FRAG = /* glsl */ `
 ${COMUNES}
 ${ZONA_GLSL}
-uniform vec4 uZonaEdif;   // x, z, radio y transición (m) de la zona de edificios mejorados (zonaMejorada.ts)
 varying vec3 vColor;
 varying vec3 vPos;
 varying vec3 vNor;
-float h21(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-float vnoise(vec2 p) {
-  vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
-  return mix(mix(h21(i), h21(i + vec2(1.0, 0.0)), u.x), mix(h21(i + vec2(0.0, 1.0)), h21(i + vec2(1.0, 1.0)), u.x), u.y);
-}
-/** Relieve (m) de la ventana en su celda q = (a lo largo 0-1 de 2,6 m, de planta 0-1 de 3 m): el
- *  marco sobresale y el cristal queda metido. DECORATIVO. */
-float relVentana(vec2 q) {
-  vec2 a = smoothstep(vec2(0.22, 0.26), vec2(0.235, 0.275), q) * (1.0 - smoothstep(vec2(0.765, 0.825), vec2(0.78, 0.84), q));
-  vec2 b = smoothstep(vec2(0.27, 0.30), vec2(0.285, 0.315), q) * (1.0 - smoothstep(vec2(0.715, 0.785), vec2(0.73, 0.80), q));
-  return a.x * a.y * 0.025 - b.x * b.y * 0.1;
-}
 void main() {
   vec3 n = normalize(vNor) * (gl_FrontFacing ? 1.0 : -1.0);
   vec3 v = normalize(cameraPosition - vPos);
@@ -347,82 +345,138 @@ void main() {
   vec3 albedo = mix(vColor, vColor * vec3(0.22, 0.26, 0.3), hueco);
   float rug = mix(mix(0.72, 0.9, fachada), 0.1, hueco);
   float f0 = mix(0.04, 0.05, hueco);
-  float ao = mix(0.8, 1.0, fachada);
+  // Los tejados del LiDAR traen ya la luz de la foto aérea: menos contraste de sol en ellos.
+  vec3 c = iluminar(albedo, n, v, rug, f0, sombra(vPos, n), mix(0.8, 1.0, fachada));
+  // De noche, algunas ventanas encendidas al azar (DECORATIVO).
   vec2 celda = floor(vec2((vPos.x + vPos.z) / 2.6, vPos.y / 3.0));
   float encendida = step(0.72, fract(sin(dot(celda, vec2(12.9898, 78.233))) * 43758.5453));
+  c += vec3(1.0, 0.72, 0.38) * 2.6 * hueco * encendida * smoothstep(0.5, 0.9, uNoche);
+  c = mix(c, uColorNiebla, brumaZona(vPos.xz));
+  gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
+  #include <colorspace_fragment>
+}
+`;
 
-  // ---- Edificios mejorados (zona del Club Náutico; fuera, y de lejos, lo de antes) ----
-  // Fachada: ventanas con marco, alféizar, cristal con montante, persianas y cortinas, imposta a cada
-  // planta, enfoscado con grano y chorreones. Tejado: hiladas de teja curva y color sin las sombras
-  // de la foto aérea. Todo DECORATIVO: el Catastro y el LiDAR no dan fachadas ni tejas.
+/** Edificios limpios (tools/edificios-limpios.ts): huella del Catastro, alturas del LiDAR, tejado recto. */
+export const EDIFICIOS_LIMPIOS_VERT = /* glsl */ `
+attribute vec3 color;
+attribute vec3 fachadaUv;   // u (m a lo largo del tramo), v (m sobre el suelo), largo del tramo (m)
+attribute vec3 datos;       // tipo (0 fachada, 1 tejado, 2 pretil), altura de planta (m), plantas
+varying vec3 vColor;
+varying vec3 vPos;
+varying vec3 vNor;
+varying vec3 vUvF;
+varying vec3 vDatos;
+void main() {
+  vColor = color; vUvF = fachadaUv; vDatos = datos; vNor = normal;
+  vec4 m = modelMatrix * vec4(position, 1.0);
+  vPos = m.xyz;
+  gl_Position = projectionMatrix * viewMatrix * m;
+}
+`;
+
+export const EDIFICIOS_LIMPIOS_FRAG = /* glsl */ `
+${COMUNES}
+${ZONA_GLSL}
+varying vec3 vColor;
+varying vec3 vPos;
+varying vec3 vNor;
+varying vec3 vUvF;
+varying vec3 vDatos;
+float h21(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float vnoise(vec2 p) {
+  vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(h21(i), h21(i + vec2(1.0, 0.0)), u.x), mix(h21(i + vec2(0.0, 1.0)), h21(i + vec2(1.0, 1.0)), u.x), u.y);
+}
+/** Caja con bordes suaves: 1 dentro de [a, b] (en cada eje), con transición de ancho w. */
+float caja(vec2 p, vec2 a, vec2 b, vec2 w) {
+  vec2 s = smoothstep(a - w, a + w, p) * (1.0 - smoothstep(b - w, b + w, p));
+  return s.x * s.y;
+}
+void main() {
+  vec3 n = normalize(vNor) * (gl_FrontFacing ? 1.0 : -1.0);
+  vec3 v = normalize(cameraPosition - vPos);
   float dcam = length(vPos - cameraPosition);
-  float w = (1.0 - smoothstep(uZonaEdif.z - uZonaEdif.w, uZonaEdif.z, length(vPos.xz - uZonaEdif.xy))) * (1.0 - smoothstep(70.0, 260.0, dcam));
-  if (w > 0.01) {
-    if (fachada > 0.5) {
-      vec2 tg = normalize(vec2(-n.z, n.x) + vec2(1e-5));
-      float u = dot(vPos.xz, tg), y = vPos.y;
-      vec2 cel = vec2(floor(u / 2.6), floor(y / 3.0));
-      vec2 q = vec2(fract(u / 2.6), fract(y / 3.0));
-      float hv = h21(cel + 7.3);
-      // relieve de la ventana → normal
-      float e = 0.01, h0 = relVentana(q);
-      float gx = (relVentana(q + vec2(e / 2.6, 0.0)) - h0) / e, gy = (relVentana(q + vec2(0.0, e / 3.0)) - h0) / e;
-      vec3 nn = normalize(n - vec3(tg.x, 0.0, tg.y) * gx - vec3(0.0, 1.0, 0.0) * gy);
-      vec2 b = smoothstep(vec2(0.27, 0.30), vec2(0.285, 0.315), q) * (1.0 - smoothstep(vec2(0.715, 0.785), vec2(0.73, 0.80), q));
-      vec2 a = smoothstep(vec2(0.22, 0.26), vec2(0.235, 0.275), q) * (1.0 - smoothstep(vec2(0.765, 0.825), vec2(0.78, 0.84), q));
-      float cristal = b.x * b.y, marco = max(a.x * a.y - cristal, 0.0);
-      float alfeizar = step(0.255, q.y) * step(q.y, 0.30) * step(0.2, q.x) * step(q.x, 0.8) * (1.0 - a.x * a.y);
-      // enfoscado: tono por manchas, grano fino, chorreones de lluvia y banda (imposta) en cada planta
-      vec3 pared = vColor * (0.88 + 0.22 * vnoise(vec2(u * 1.3, y * 1.1))) * (0.95 + 0.1 * vnoise(vec2(u * 9.0, y * 9.0)));
-      pared *= 1.0 - 0.16 * smoothstep(0.5, 0.9, vnoise(vec2(u * 3.2, y * 0.3)));
-      float imposta = 1.0 - smoothstep(0.02, 0.05, min(q.y, 1.0 - q.y));
-      pared = mix(pared, pared * 1.1, imposta);
-      // cristal: oscuro, con montante y travesaño; algunas ventanas con persiana y otras con cortina
-      float persiana = step(hv, 0.2), cortina = step(0.55, hv) * (1.0 - persiana);
-      float marcos = max(1.0 - smoothstep(0.008, 0.016, abs(q.x - 0.5)), 1.0 - smoothstep(0.006, 0.012, abs(q.y - 0.62)));
-      vec3 vidrio = mix(vec3(0.025, 0.04, 0.055), vec3(0.14, 0.12, 0.09), cortina * (0.35 + 0.65 * smoothstep(0.8, 0.3, q.y)));
-      vec3 lamas = vec3(0.16, 0.22, 0.17) * (0.8 + 0.2 * step(0.5, fract(q.y * 16.0)));
-      vec3 hueco2 = mix(mix(vidrio, lamas, persiana), vec3(0.74, 0.74, 0.7), marcos * (1.0 - persiana));
-      vec3 aN = mix(pared, vec3(0.74, 0.74, 0.7), marco);
-      aN = mix(aN, vec3(0.7, 0.68, 0.62), alfeizar);
-      aN = mix(aN, hueco2, cristal);
-      float rN = mix(mix(0.9, 0.5, marco), mix(0.08, 0.7, persiana), cristal);
-      albedo = mix(albedo, aN, w);
-      rug = mix(rug, rN, w);
-      f0 = mix(f0, mix(0.04, 0.06, cristal), w);
-      n = normalize(mix(n, nn, w));
-      ao = mix(ao, mix(1.0, 0.8, cristal) * (1.0 - 0.25 * (1.0 - smoothstep(0.0, 0.03, q.y))), w);
-      hueco = mix(hueco, cristal * (1.0 - persiana), w);
-      encendida = mix(encendida, step(0.72, h21(cel + 3.3)), w);
-    } else {
-      // tejado: sin las sombras de la foto aérea (se sube lo muy oscuro) y hiladas de teja curva
-      // El color de cada vértice viene de la foto aérea, con sus sombras y a poca resolución (manchas
-      // moradas): se reduce a rojiza o pizarra según el tono de la foto, conservando algo de su variación.
-      float l = dot(vColor, vec3(0.2126, 0.7152, 0.0722));
-      float rojiza = smoothstep(0.05, 0.35, (vColor.r - 0.5 * (vColor.g + vColor.b)) / max(l, 0.02));
-      // (en sombra la foto pierde el tono: se queda en una teja pardo-gris, no en gris azulado)
-      vec3 base = mix(vec3(0.26, 0.17, 0.15), vec3(0.4, 0.17, 0.12), rojiza);
-      vec3 tono = base * clamp(l / mix(0.12, 0.17, rojiza), 0.8, 1.2);
-      vec2 dir = n.xz; float ld = length(dir);
-      dir = ld > 0.05 ? dir / ld : vec2(1.0, 0.0);
-      float inclinado = 1.0 - smoothstep(0.88, 0.97, n.y);
-      float s = dot(vPos.xz, dir) / max(n.y, 0.4) / 0.34;
-      vec2 rc = vec2(dot(vPos.xz, vec2(-dir.y, dir.x)) / 0.26 + 0.5 * mod(floor(s), 2.0), s);
-      vec2 ct = floor(rc), ft = fract(rc);
-      float teja = 0.82 + 0.22 * h21(ct);
-      teja *= 1.0 - 0.32 * (1.0 - smoothstep(0.0, 0.14, ft.y)) - 0.18 * smoothstep(0.88, 1.0, ft.x) * (1.0 - smoothstep(0.0, 0.1, ft.x));
-      vec3 aT = mix(tono * (0.92 + 0.16 * vnoise(vPos.xz * 6.0)), tono * teja, inclinado);
-      vec3 nt = normalize(n + vec3(-dir.y, 0.0, dir.x) * 0.2 * sin(6.2831853 * ft.x) * inclinado);
-      albedo = mix(albedo, aT, w);
-      rug = mix(rug, 0.8, w);
-      n = normalize(mix(n, nt, w));
-    }
+  // (los enteros llegan interpolados, con algo de error: se redondean)
+  float tipo = floor(vDatos.x + 0.5);
+  float alturaPlanta = clamp(vDatos.y, 2.6, 4.5), plantas = max(floor(vDatos.z + 0.5), 1.0);
+  vec3 albedo = vColor;
+  float rug = 0.85, f0 = 0.04, ao = 1.0, cristalLuz = 0.0;
+  vec2 celdaLuz = vec2(0.0);
+
+  if (tipo < 0.5) {
+    // ---- Fachada: ventanas por planta y repartidas a lo ancho de cada tramo (DECORATIVO: el
+    // Catastro da las plantas, no los huecos). Enfoscado con grano, chorreones, zócalo e imposta.
+    float u = vUvF.x, y = vUvF.y, largo = vUvF.z;
+    float nCol = floor(largo / 2.8);
+    float paso = largo / max(nCol, 1.0);
+    float col = floor(u / paso), fx = fract(u / paso) * paso;            // m dentro de la columna
+    float piso = floor(y / alturaPlanta), fy = y - piso * alturaPlanta;  // m dentro de la planta
+    float hay = step(0.5, nCol) * step(0.0, y) * step(piso, plantas - 0.5);
+    float ancho = min(1.25, paso * 0.5), x0 = (paso - ancho) * 0.5, x1 = x0 + ancho;
+    float baja = 1.0 - step(0.5, piso);                                 // planta baja: huecos más altos
+    float y0 = mix(0.9, 0.35, baja), y1 = min(alturaPlanta - 0.45, y0 + mix(1.45, 2.05, baja));
+    float w = max(fwidth(u), 0.004) * 1.2;
+    float cristal = caja(vec2(fx, fy), vec2(x0 + 0.07, y0 + 0.07), vec2(x1 - 0.07, y1 - 0.07), vec2(w)) * hay;
+    float hueco = caja(vec2(fx, fy), vec2(x0, y0), vec2(x1, y1), vec2(w)) * hay;
+    float marco = max(hueco - cristal, 0.0);
+    float alfeizar = caja(vec2(fx, fy), vec2(x0 - 0.06, y0 - 0.07), vec2(x1 + 0.06, y0), vec2(w)) * hay * (1.0 - hueco) * (1.0 - baja);
+    float hv = h21(vec2(col, piso) + floor(vPos.xz * 0.1));
+    float persiana = step(hv, 0.22) * (1.0 - baja), cortina = step(0.58, hv) * (1.0 - persiana);
+    // el hueco está metido: sombra en la parte de arriba del cristal (DECORATIVO)
+    float sombraHueco = cristal * smoothstep(y1 - 0.3, y1 - 0.08, fy);
+    // enfoscado
+    vec3 pared = vColor * (0.9 + 0.18 * vnoise(vec2(u * 1.1, y * 0.9) + vColor.r * 40.0)) * (0.95 + 0.1 * vnoise(vec2(u, y) * 8.0));
+    pared *= 1.0 - 0.14 * smoothstep(0.5, 0.9, vnoise(vec2(u * 3.0, y * 0.25))) * (1.0 - baja * 0.5);
+    float imposta = (1.0 - smoothstep(0.0, 0.06, abs(fy - alturaPlanta + 0.03))) * step(1.5, plantas - piso);
+    float zocalo = 1.0 - smoothstep(0.55, 0.6, y);
+    pared = mix(pared, pared * 1.08, imposta);
+    pared = mix(pared, pared * vec3(0.72, 0.7, 0.68), zocalo);
+    // hueco: vidrio oscuro con montante, persiana de lamas o cortina clara al fondo
+    // detalles finos (montante, lamas) solo si caben en la pantalla; si no, parpadean
+    float nitido = 1.0 - smoothstep(0.015, 0.05, fwidth(fy));
+    float montante = nitido * max(1.0 - smoothstep(0.02, 0.035, abs(fx - (x0 + x1) * 0.5)), 1.0 - smoothstep(0.02, 0.035, abs(fy - (y0 + (y1 - y0) * 0.62))));
+    vec3 vidrio = mix(vec3(0.03, 0.045, 0.06), vec3(0.16, 0.14, 0.11), cortina * smoothstep(y1, y0, fy) * 0.8);
+    vec3 lamas = vec3(0.2, 0.25, 0.22) * (0.9 + 0.1 * nitido * (2.0 * step(0.5, fract(fy * 14.0)) - 1.0));
+    vec3 hv3 = mix(mix(vidrio, lamas, persiana), vec3(0.78, 0.78, 0.75), montante * (1.0 - persiana));
+    vec3 aN = mix(pared, vec3(0.8, 0.8, 0.77), marco);
+    aN = mix(aN, vec3(0.74, 0.72, 0.66), alfeizar);
+    aN = mix(aN, hv3, cristal);
+    // de lejos (huecos más finos que un píxel), el tono medio de la fachada
+    float lejos = smoothstep(0.25, 0.6, fwidth(u) / max(paso, 0.5) * 4.0);
+    vec3 medio = mix(pared, vec3(0.06, 0.07, 0.08), 0.18 * hay);
+    albedo = mix(aN, medio, lejos);
+    rug = mix(mix(0.9, 0.5, marco), mix(0.14, 0.65, persiana), cristal);   // (más liso daba destellos inestables del sol en el cristal)
+    f0 = mix(0.04, 0.06, cristal);
+    ao = mix(1.0, 0.8, hueco) * (1.0 - 0.5 * sombraHueco);
+    cristalLuz = cristal * (1.0 - persiana) * (1.0 - lejos);
+    celdaLuz = vec2(col, piso) + floor(vPos.xz * 0.1);
+  } else if (tipo < 1.5) {
+    // ---- Tejado: color medio de la nube en él (MEDIDO); tejas curvas en los de aguas, lámina y
+    // grava en los planos (DECORATIVO)
+    float inclinado = 1.0 - smoothstep(0.93, 0.98, n.y);
+    vec2 dir = n.xz; float ld = length(dir);
+    dir = ld > 0.05 ? dir / ld : vec2(1.0, 0.0);
+    float s = dot(vPos.xz, dir) / max(n.y, 0.4) / 0.34;
+    vec2 rc = vec2(dot(vPos.xz, vec2(-dir.y, dir.x)) / 0.26 + 0.5 * mod(floor(s), 2.0), s);
+    vec2 ct = floor(rc), ft = fract(rc);
+    float fin = 1.0 - smoothstep(30.0, 140.0, dcam);
+    float teja = (0.84 + 0.2 * h21(ct)) * (1.0 - 0.3 * (1.0 - smoothstep(0.0, 0.14, ft.y)));
+    vec3 aT = vColor * mix(1.0, teja, fin);
+    vec3 aP = vColor * (0.9 + 0.2 * vnoise(vPos.xz * 3.0)) * (1.0 - 0.12 * (1.0 - smoothstep(0.0, 0.04, abs(fract(vPos.x / 1.0) - 0.5) - 0.46)) * fin);
+    albedo = mix(aP, aT, inclinado);
+    n = normalize(n + vec3(-dir.y, 0.0, dir.x) * 0.18 * sin(6.2831853 * ft.x) * inclinado * fin);
+    rug = mix(0.92, 0.75, inclinado);
+  } else {
+    // ---- Pretil y su remate: enfoscado algo más claro
+    albedo = vColor * 1.05;
+    rug = 0.9;
   }
 
-  // Los tejados del LiDAR traen ya la luz de la foto aérea: menos contraste de sol en ellos.
   vec3 c = iluminar(albedo, n, v, rug, f0, sombra(vPos, n), ao);
   // De noche, algunas ventanas encendidas al azar (DECORATIVO).
-  c += vec3(1.0, 0.72, 0.38) * 2.6 * hueco * encendida * smoothstep(0.5, 0.9, uNoche);
+  float encendida = step(0.72, h21(celdaLuz + 3.3));
+  c += vec3(1.0, 0.72, 0.38) * 2.6 * cristalLuz * encendida * smoothstep(0.5, 0.9, uNoche);
   c = mix(c, uColorNiebla, brumaZona(vPos.xz));
   gl_FragColor = vec4(conNiebla(c, vPos), 1.0);
   #include <colorspace_fragment>

@@ -9,12 +9,13 @@ import { LADO, PASO_RELIEVE } from '../../bahia';
 import metaRelieve from '../bahia-meta.json';
 import metaOrto from '../bahia-orto.json';
 import metaEdificios from '../bahia-edificios.json';
-import metaEdificiosLidar from '../bahia-edificios-lidar.json';
+import metaEdificiosLimpios from '../bahia-edificios-limpios.json';
 import metaFino from '../bahia-fino.json';
 import metaArena from '../bahia-arena.json';
 import metaPaseo from '../bahia-paseo.json';
 import { crearPaseo } from './paseo';
 import { EDIFICIOS_MEJORADOS, prepararMuro, tramosMuro } from './zonaMejorada';
+import { crearPiscinas } from './piscinas';
 import { accesos, crearAccesos, huecosAccesos, rotuloAcceso } from './accesos';
 import { crearMedidaArena } from './arena';
 import { crearSombras } from './sombras';
@@ -24,7 +25,7 @@ import { crearAjusteOrilla, RADIO_MURO, type Rayo } from './orilla';
 import { crearZona } from './zona';
 import { cargarFino, cargarRelieve } from './relieve';
 import { crearTeselas } from './teselas';
-import { cargarEdificios, cargarEdificiosLidar } from './edificios';
+import { cargarEdificios, cargarEdificiosLimpios } from './edificios';
 import { crearAgua } from './agua';
 import { crearReflejo } from './reflejo';
 import { calcularCampo, crearFondoAgua, PASO_CAMPO } from './campoOlas';
@@ -195,6 +196,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   escena.add(paseoMalla);
   // Escaleras y rampa que bajan a la arena (identificadas y medidas en el LiDAR y la ortofoto)
   escena.add(crearAccesos(comunes));
+  // Piscinas (forma medida en la ortofoto; tools/piscinas.py), modeladas en vez de la foto
+  escena.add(crearPiscinas((x, z) => relieve.altura(x, z), { ...comunes, uTiempo: comunesAgua.uTiempo }));
 
   // ---------- Etiquetas de lugares (OpenStreetMap) ----------
   // Rótulos HTML sobre el lienzo, colocados cada cuadro en su punto 3D; se ocultan detrás de la
@@ -273,7 +276,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   try {
     const [cajas, lidar] = await Promise.all([
       cargarEdificios(`${base}bahia/edificios.bin`, metaEdificios.vertices, comunes),
-      cargarEdificiosLidar(`${base}bahia/edificios-lidar.bin`, metaEdificiosLidar.vertices, metaEdificiosLidar.indices, comunes),
+      // los edificios del LiDAR, rehechos como volúmenes limpios (tools/edificios-limpios.ts)
+      cargarEdificiosLimpios(`${base}bahia/edificios-limpios.bin`, metaEdificiosLimpios.vertices, comunes),
     ]);
     escena.add(cajas, lidar);
   } catch (e) {

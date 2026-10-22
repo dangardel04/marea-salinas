@@ -1,0 +1,12 @@
+{
+ "fuente": "Huellas y plantas: Catastro (INSPIRE BuildingPart, https://ovc.catastro.meh.es/INSPIRE/wfsBU.aspx?service=WFS&version=2.0.0&request=GetFeature&typenames=BU:BuildingPart&srsname=EPSG::25830). Suelo, alero, cumbre y color del tejado: medidos en la malla de tools/edificios-lidar.py (LiDAR PNOA 2024, CNIG, CC BY 4.0). Ver tools/edificios-limpios.ts",
+ "consultado": "2026-10-22",
+ "partes": 991,
+ "aCuatroAguas": 213,
+ "planos": 778,
+ "sinNube": 1,
+ "esqueletoFallido": 8,
+ "vertices": 132615,
+ "formato": "Int16 x,y,z,u,v,largo (dm) por vértice; después Uint8 r,g,b,tipo,alturaPlanta(dm),plantas; triángulos sueltos",
+ "decorativo": "Forma a cuatro aguas (simplificación elegida), pretil de 0,4 m de los tejados planos y color de fachada"
+}

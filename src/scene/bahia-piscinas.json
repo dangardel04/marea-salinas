@@ -1,0 +1,54 @@
+{
+ "fuente": "Medidas en la ortofoto PNOA (IGN, CC BY 4.0) a 0,195 m/píxel: manchas de agua turquesa de más de 15 m², con su rectángulo mínimo. Ver tools/piscinas.py",
+ "decorativo": "Profundidad del vaso (1,6 m), borde (0,4 m) y su material; color del agua",
+ "piscinas": [
+  {
+   "esquinas": [
+    [
+     -724.21,
+     1349.39
+    ],
+    [
+     -754.48,
+     1344.29
+    ],
+    [
+     -752.57,
+     1332.9
+    ],
+    [
+     -722.29,
+     1338.0
+    ]
+   ],
+   "area": 335.4,
+   "largo": 30.7,
+   "ancho": 11.55,
+   "llenado": 0.95
+  },
+  {
+   "esquinas": [
+    [
+     -794.21,
+     1351.72
+    ],
+    [
+     -779.24,
+     1353.99
+    ],
+    [
+     -779.7,
+     1356.97
+    ],
+    [
+     -794.66,
+     1354.7
+    ]
+   ],
+   "area": 37.8,
+   "largo": 15.13,
+   "ancho": 3.02,
+   "llenado": 0.83
+  }
+ ]
+}
