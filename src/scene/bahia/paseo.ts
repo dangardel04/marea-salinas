@@ -10,7 +10,11 @@ import { LUZ_GLSL } from './sombreado';
 import { CAPA_SOMBRA } from './sombras';
 import { pesoZona } from './zonaMejorada';
 
-export interface PuntoMuro { arriba: [number, number, number]; pie: [number, number, number]; eje: [number, number, number] }
+export interface PuntoMuro {
+  arriba: [number, number, number]; pie: [number, number, number]; eje: [number, number, number];
+  /** m a lo largo de la línea ORIGINAL del muro (la de los accesos), si la línea se ha recolocado */
+  s?: number;
+}
 
 
 
@@ -64,10 +68,10 @@ float relieveSillar(vec2 uv, float zona) {
   // zona mejorada: grano fino y picaduras de la arenisca, solo con el relieve aún visible
   return h + zona * (fbmP(uv * 40.0) * 0.0018 - smoothstep(0.72, 0.9, fbmP(uv * 23.0 + 5.0)) * 0.003);
 }
-float linea(float x, float ancho) {     // líneas finas cada 1 (antialias)
+float linea(float x, float ancho) {     // líneas finas cada 1 (antialias): 1 en la línea, 0 fuera
   float f = abs(fract(x) - 0.5);
   float w = fwidth(x) * 1.2 + ancho;
-  return 1.0 - smoothstep(0.5 - w, 0.5, f);
+  return smoothstep(0.5 - w, 0.5, f);
 }
 void main() {
   vec3 n = normalize(vNor) * (gl_FrontFacing ? 1.0 : -1.0);
@@ -79,26 +83,29 @@ void main() {
   float rug = 0.88, ao = 1.0;
   if (vTipo < 0.5) {
     // ---- Cara del muro: sillería (DECORATIVA; la línea y la altura del muro, medidas) ----
-    vec4 s = sillar(vUv);
+    // las hiladas van por la cota (no por la altura sobre el pie): así casan entre el muro, los
+    // rellanos y los costados de las escaleras
+    vec2 suv = vec2(vUv.x, vPos.y);
+    vec4 s = sillar(suv);
     vec2 bloque = s.zw;
     float hb = hashP(bloque), hb2 = hashP(bloque + 3.7);
     // piedra arenisca clara, cada sillar de un tono (algo más ocre, más gris, más claro)
     c = mix(vec3(0.46, 0.4, 0.31), vec3(0.62, 0.56, 0.45), hb) * mix(0.84, 1.1, hb2);
-    c *= 0.86 + 0.24 * fbmP(vUv * vec2(3.0, 4.0) + bloque * 1.7) * detalle + 0.12 * (1.0 - detalle);
-    c *= 0.94 + 0.12 * fbmP(vUv * vec2(14.0, 18.0)) * detalle;      // grano
+    c *= 0.86 + 0.24 * fbmP(suv * vec2(3.0, 4.0) + bloque * 1.7) * detalle + 0.12 * (1.0 - detalle);
+    c *= 0.94 + 0.12 * fbmP(suv * vec2(14.0, 18.0)) * detalle;      // grano
     // relieve: normal con las pendientes del relieve del sillar (marco tangente de la cara)
     vec3 dp1 = dFdx(vPos), dp2 = dFdy(vPos);
-    vec2 duv1 = dFdx(vUv), duv2 = dFdy(vUv);
+    vec2 duv1 = dFdx(suv), duv2 = dFdy(suv);
     vec3 dp2p = cross(dp2, n), dp1p = cross(n, dp1);
     vec3 T = dp2p * duv1.x + dp1p * duv2.x, B = dp2p * duv1.y + dp1p * duv2.y;
     float inv = inversesqrt(max(max(dot(T, T), dot(B, B)), 1e-8));
     float e = 0.01;
     float zn = vZona * detalle;
-    float h0 = relieveSillar(vUv, zn);
-    vec2 g = vec2(relieveSillar(vUv + vec2(e, 0.0), zn) - h0, relieveSillar(vUv + vec2(0.0, e), zn) - h0) / e;
+    float h0 = relieveSillar(suv, zn);
+    vec2 g = vec2(relieveSillar(suv + vec2(e, 0.0), zn) - h0, relieveSillar(suv + vec2(0.0, e), zn) - h0) / e;
     n = normalize(n - (T * inv) * g.x * 1.6 * detalle - (B * inv) * g.y * 1.6 * detalle);
     // junta hundida: mortero gris en sombra
-    float junta = 1.0 - smoothstep(0.003, 0.014 + fwidth(vUv.y) * 1.2, min(s.x, s.y));
+    float junta = 1.0 - smoothstep(0.003, 0.014 + fwidth(suv.y) * 1.2, min(s.x, s.y));
     c = mix(c, vec3(0.3, 0.27, 0.23), junta * 0.6);
     ao = 1.0 - junta * 0.4;
     float hMar = uNivelMax + 0.35;
@@ -146,8 +153,11 @@ void main() {
     c = mix(vec3(0.66, 0.62, 0.55), vec3(0.76, 0.72, 0.65), hashP(vec2(peldano, 3.0)));
     c *= 0.9 + 0.12 * fbmP(vec2(vUv.x * 3.0, vUv.y * 5.0)) * detalle;
     float contrahuella = 1.0 - smoothstep(0.3, 0.6, abs(n.y));
-    c *= mix(1.0, 0.82, contrahuella);
-    c = mix(c, c * 1.12, (1.0 - smoothstep(0.0, 0.12, fondo)) * (1.0 - contrahuella));
+    c *= mix(1.0, 0.72, contrahuella);
+    // arista gastada y clara; al fondo de la huella, contra la contrahuella, la sombra del rincón
+    c = mix(c, c * 1.14, (1.0 - smoothstep(0.0, 0.1, fondo)) * (1.0 - contrahuella));
+    c *= 1.0 - 0.32 * smoothstep(0.8, 1.0, fondo) * (1.0 - contrahuella);
+    ao = 1.0 - 0.35 * smoothstep(0.75, 1.0, fondo) * (1.0 - contrahuella);
     float arenaP = (1.0 - smoothstep(0.6, 1.6, vPos.y - uNivelMax)) * smoothstep(0.35, 0.65, fbmP(vec2(vUv.x * 2.0, vUv.y)));
     c = mix(c, vec3(0.78, 0.66, 0.45), arenaP * 0.6);
     rug = 0.82;
@@ -242,7 +252,10 @@ export function crearPaseo(tramos: PuntoMuro[][], comunes: Record<string, THREE.
     let largo = 0;
     for (let i = 0; i + 1 < tramo.length; i++) {
       const p = tramo[i], q = tramo[i + 1];
-      const seg = Math.hypot(q.arriba[0] - p.arriba[0], q.arriba[2] - p.arriba[2]);
+      // s a lo largo de la línea original (los huecos de los accesos se midieron en ella)
+      const s0p = p.s ?? largo;
+      const seg = q.s != null && p.s != null ? q.s - p.s : Math.hypot(q.arriba[0] - p.arriba[0], q.arriba[2] - p.arriba[2]);
+      largo = s0p;
       // saltos largos de la línea (empalmes entre trozos sueltos del eje, no muro): no se dibujan
       if (seg > 12) { largo += seg; continue; }
       const tp = tierra(p), tq = tierra(q);

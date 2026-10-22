@@ -63,9 +63,12 @@ function corregir(tr: PuntoMuro[], altura: Altura): PuntoMuro[] {
     const w = [-2, -1, 0, 1, 2].map((d) => t[i + d]).filter((x): x is number => x != null).sort((p, q) => p - q);
     return w[Math.floor(w.length / 2)];
   });
+  // distancia a lo largo de la línea original, para los accesos
+  const sOrig: number[] = [0];
+  for (let i = 1; i < n; i++) sOrig.push(sOrig[i - 1] + Math.hypot(tr[i].arriba[0] - tr[i - 1].arriba[0], tr[i].arriba[2] - tr[i - 1].arriba[2]));
   return tr.map((p, i) => {
     const [nx, nz] = normal(i);
-    if (!ext[i]) return p;
+    if (!ext[i]) return { ...p, s: sOrig[i] };
     const d = fino[i] ?? 0;
     const ax = p.arriba[0] + nx * d, az = p.arriba[2] + nz * d;
     return {
@@ -73,6 +76,7 @@ function corregir(tr: PuntoMuro[], altura: Altura): PuntoMuro[] {
       // el pie, 3 m hacia el mar: con el muro vertical solo importa su altura y de qué lado cae el mar
       pie: [ax - nx * 3, p.pie[1], az - nz * 3] as [number, number, number],
       eje: p.eje,
+      s: sOrig[i],
     };
   });
 }
@@ -121,6 +125,11 @@ function cercano(x: number, z: number): { m: PuntoZona; d: number } | null {
     }
   }
   return mejor < 0 ? null : { m: muro[mejor], d: dm };
+}
+
+/** Distancia (m) al punto del muro más cercano (∞ si está a más de ~120 m). */
+export function distanciaMuro(x: number, z: number): number {
+  return cercano(x, z)?.d ?? Infinity;
 }
 
 /** 1 dentro de la zona, 0 fuera, con transición suave en la franja de fuera. */

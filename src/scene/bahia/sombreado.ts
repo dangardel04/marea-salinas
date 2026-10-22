@@ -69,6 +69,8 @@ export const TERRENO_VERT = /* glsl */ `
 ${AJUSTE_GLSL}
 attribute float medido;
 attribute float oclusion;
+attribute float cercaMuro;
+varying float vCercaMuro;
 varying vec2 vUv;
 varying vec3 vPos;
 varying vec3 vNor;
@@ -79,6 +81,7 @@ void main() {
   vUv = uv;
   vMed = medido;
   vOcl = oclusion;
+  vCercaMuro = cercaMuro;
   vNor = normal;
   vec4 m = modelMatrix * vec4(position, 1.0);
   // La arena de la orilla, subida o bajada para que el agua corte donde la medida (orilla.ts).
@@ -114,6 +117,7 @@ varying vec3 vNor;
 varying float vMed;
 varying float vOcl;
 varying float vAjuste;
+varying float vCercaMuro;
 
 const float MEDIO = 3200.0;
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -252,8 +256,11 @@ void main() {
 
   vec3 c = mix(orto, arena, playa);
   c = mix(c, piedra, muro);
-  // Zona mejorada: las laderas muy inclinadas, de piedra (no foto estirada)
-  float zEd = (1.0 - smoothstep(uZonaEdif.z - uZonaEdif.w, uZonaEdif.z, length(vPos.xz - uZonaEdif.xy))) * (1.0 - smoothstep(60.0, 220.0, d));
+  // Junto al Club Náutico y a menos de ~50 m del muro del paseo, las laderas muy inclinadas (escalones
+  // de terrazas y jardines que el relieve de 5 m convierte en rampas) son de piedra, no foto estirada;
+  // por encima de 14 m es ya monte (La Peñona), no se toca.
+  float zEd = (1.0 - smoothstep(uZonaEdif.z - uZonaEdif.w, uZonaEdif.z, length(vPos.xz - uZonaEdif.xy)));
+  zEd = max(zEd, vCercaMuro * (1.0 - smoothstep(13.0, 15.0, h))) * (1.0 - smoothstep(60.0, 220.0, d));
   float muroZ = zEd * smoothstep(0.3, 0.45, pendiente) * (1.0 - playa);
   if (muroZ > 0.01) c = mix(c, piedraMuro(vec2(dot(vPos.xz, normalize(vec2(-vNor.z, vNor.x) + vec2(1e-5))), vPos.y), d), muroZ);
   // Fuera de la playa, donde no hay foto válida (fondo lejos de la costa), arena oscura del fondo.

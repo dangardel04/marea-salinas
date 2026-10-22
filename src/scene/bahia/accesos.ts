@@ -35,7 +35,8 @@ const T_PASEO = -0.6;
 const adosada = (p: Pieza) => p.clase !== 'rellano' && p.t0 > 0;
 /** Dónde empieza la pieza hacia tierra (t): el rellano, llano y a la altura del paseo, llega hasta
  *  el suelo del paseo. */
-const inicio = (p: Pieza) => (p.clase === 'rellano' ? Math.min(p.t0, T_PASEO) : adosada(p) ? 0 : p.t0);
+// (el rellano entra 15 cm bajo el suelo del paseo para que no quede raya entre los dos)
+const inicio = (p: Pieza) => (p.clase === 'rellano' ? Math.min(p.t0, T_PASEO - 0.15) : adosada(p) ? 0 : p.t0);
 
 /** Huecos en el muro y en la barandilla del paseo: donde un acceso está metido en el muro y en
  *  la entrada desde el paseo (los rellanos). */
@@ -46,7 +47,9 @@ export function huecosAccesos(): Huecos {
     // peldaños bajos y los enterraba) y la barandilla del paseo, que sustituye la suya. Solo las
     // escaleras apoyadas en un muro recto lo dejan entero.
     if (!adosada(p)) muro.push([p.s[0] - 0.3, p.s[1] + 0.3]);
-    baranda.push([p.s[0] - 0.3, p.s[1] + 0.3]);
+    // la barandilla del paseo sigue sobre las escaleras apoyadas en el muro (protege el hueco); se
+    // quita en la entrada (el rellano) y donde la escalera está metida en el muro (lleva la suya)
+    if (p.clase === 'rellano' || !adosada(p)) baranda.push([p.s[0] - 0.3, p.s[1] + 0.3]);
   }
   return { muro, baranda };
 }
@@ -62,11 +65,12 @@ export function crearAccesos(comunes: Record<string, THREE.IUniform>) {
         return [p.a[0] + (p.b[0] - p.a[0]) * u + (nx / l) * t, y, p.a[2] + (p.b[2] - p.a[2]) * u + (nz / l) * t];
       };
       const largo = Math.hypot(p.b[0] - p.a[0], p.b[2] - p.a[2]);
-      const { t1 } = p;
+      // el rellano llega tan lejos hacia el mar como su escalera (si no, quedaba un escalón hueco)
+      const t1 = p.clase === 'rellano' ? Math.max(p.t1, ...acc.piezas.map((q) => q.t1)) : p.t1;
       // El rellano es llano y a la altura del paseo: se prolonga hasta el suelo del paseo.
       const t0 = inicio(p);
       if (p.clase === 'rellano') {
-        const y = p.a[1];
+        const y = p.a[1] + 0.01;   // 1 cm bajo el suelo del paseo (~2 cm sobre la cota medida): lo tapa donde se solapan
         quad(en(0, t0, y), en(0, t1, y), en(1, t1, y), en(1, t0, y), [en(0, t0, y)[0], en(0, t0, y)[2]], [en(0, t1, y)[0], en(0, t1, y)[2]], [en(1, t1, y)[0], en(1, t1, y)[2]], [en(1, t0, y)[0], en(1, t0, y)[2]], 2);
         // frente y costados de piedra, hasta la arena
         quad(en(0, t1, base), en(1, t1, base), en(1, t1, y), en(0, t1, y), [0, 0], [largo, 0], [largo, y - base], [0, y - base], 0);
@@ -86,6 +90,12 @@ export function crearAccesos(comunes: Record<string, THREE.IUniform>) {
       const en2 = (u: number, t: number, y: number) => en(uAB(u), t, y);
       const des = yAlto - yBajo;
       const yPaseo = yAlto + 0.02;   // el suelo del paseo va ~2 cm por encima de la cota medida
+      // Metida en el muro: jamba del corte en el extremo de abajo (donde acaba la cara del muro, 0,3 m
+      // antes del primer peldaño), de la cara del muro (t = 0) al fondo (t0), de la arena al paseo
+      if (t0 < 0) {
+        const u = -0.3 / largo;
+        quad(en2(u, t0, base), en2(u, 0, base), en2(u, 0, yPaseo), en2(u, t0, yPaseo), [t0, base], [0, base], [0, yPaseo], [t0, yPaseo], 0);
+      }
       if (p.clase === 'escalera') {
         const n = Math.max(3, Math.round(des / CONTRAHUELLA)), r = des / n;
         for (let i = 0; i < n; i++) {
@@ -136,8 +146,8 @@ export const rotuloAcceso = (a: Acceso) => a.nombre ?? (a.tipo === 'rampa' ? 'Ra
 const huellas = accesos.flatMap((acc) => acc.piezas.map((p) => {
   const dx = p.b[0] - p.a[0], dz = p.b[2] - p.a[2], L = Math.hypot(dx, dz) || 1;
   const xs = [p.a[0], p.b[0]], zs = [p.a[2], p.b[2]];
-  const r = Math.max(Math.abs(p.t0), Math.abs(p.t1)) + 2;
-  return { p, t0: inicio(p), dx: dx / L, dz: dz / L, L, arena: acc.arena, caja: [Math.min(...xs) - r, Math.min(...zs) - r, Math.max(...xs) + r, Math.max(...zs) + r] };
+  const r = Math.max(Math.abs(p.t0), ...acc.piezas.map((q) => Math.abs(q.t1))) + 2;
+  return { p, t0: inicio(p), t1: p.clase === 'rellano' ? Math.max(p.t1, ...acc.piezas.map((q) => q.t1)) : p.t1, dx: dx / L, dz: dz / L, L, arena: acc.arena, caja: [Math.min(...xs) - r, Math.min(...zs) - r, Math.max(...xs) + r, Math.max(...zs) + r] };
 }));
 export function rebajeAccesos(x: number, z: number): number | null {
   for (const h of huellas) {
@@ -148,7 +158,7 @@ export function rebajeAccesos(x: number, z: number): number | null {
     const nx = h.p.na[0] * (1 - u) + h.p.nb[0] * u, nz = h.p.na[1] * (1 - u) + h.p.nb[1] * u, l = Math.hypot(nx, nz) || 1;
     const t = (x - h.p.a[0] - h.dx * s) * (nx / l) + (z - h.p.a[2] - h.dz * s) * (nz / l);
     // por dentro llega 0,3 m más allá del muro de piedra de detrás de los peldaños: el corte del terreno queda tapado
-    if (t >= h.t0 - 0.3 && t <= h.p.t1 + 0.8) return h.arena;
+    if (t >= h.t0 - 0.3 && t <= h.t1 + 0.8) return h.arena;
   }
   return null;
 }

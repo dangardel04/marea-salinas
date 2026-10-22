@@ -17,7 +17,7 @@ import { LADO, NIVEL_MAX_ORTO, NIVEL_ORTO_DETALLE, recuadroTesela } from '../../
 import type { Relieve } from './relieve';
 import type { Zona } from './zona';
 import { rebajeAccesos } from './accesos';
-import { terrenoConMuroRecto, tocaZona } from './zonaMejorada';
+import { distanciaMuro, terrenoConMuroRecto, tocaZona } from './zonaMejorada';
 import { TERRENO_FRAG, TERRENO_VERT } from './sombreado';
 
 export interface UniformesComunes { [k: string]: THREE.IUniform }
@@ -143,6 +143,8 @@ export function crearTeselas(opciones: {
     const uv = new Float32Array((nPrin + nFald) * 2);
     const med = new Float32Array(nPrin + nFald);
     const ocl = new Float32Array(nPrin + nFald);
+    // cerca del muro del paseo (1 a menos de 40 m, 0 a más de 60 m): ahí las laderas empinadas son de piedra
+    const cerca = new Float32Array(nPrin + nFald);
     const poner = (k: number, x: number, z: number, y: number, a: number, b: number) => {
       pos[k * 3] = x; pos[k * 3 + 1] = y; pos[k * 3 + 2] = z;
       const e = relieve.pasoEn(x, z);
@@ -154,6 +156,7 @@ export function crearTeselas(opciones: {
       nor[k * 3] = nx / l; nor[k * 3 + 1] = (2 * e) / l; nor[k * 3 + 2] = nz / l;
       uv[k * 2] = a / SEG; uv[k * 2 + 1] = 1 - b / SEG;
       med[k] = relieve.medidoEn(x, z);
+      cerca[k] = 1 - Math.min(1, Math.max(0, (distanciaMuro(x, z) - 40) / 20));
       // Oclusión de contacto: cuánto se alza el terreno alrededor (a 1,5 y 4 m). Oscurece la arena
       // al pie del muro del paseo y el fondo de los canales, y marca bien dónde acaba la playa.
       if (r.lado <= 400) {
@@ -197,6 +200,7 @@ export function crearTeselas(opciones: {
     g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     g.setAttribute('medido', new THREE.BufferAttribute(med, 1));
     g.setAttribute('oclusion', new THREE.BufferAttribute(ocl, 1));
+    g.setAttribute('cercaMuro', new THREE.BufferAttribute(cerca, 1));
     g.setIndex(idx);
     g.boundingBox = cajaDe(nivel, i, j);
     g.boundingSphere = g.boundingBox.getBoundingSphere(new THREE.Sphere());
