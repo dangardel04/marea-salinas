@@ -14,6 +14,8 @@ export const PASO_RELIEVE = 5;
 export const N_RELIEVE = LADO / PASO_RELIEVE + 1;
 /** Niveles del árbol de teselas de ortofoto: nivel n tiene 2^n × 2^n teselas. */
 export const NIVEL_MAX_ORTO = 5;
+/** Nivel de más detalle de la ortofoto, solo en la zona mejorada (tools/bahia-orto-detalle.ts): 0,195 m/píxel. */
+export const NIVEL_ORTO_DETALLE = 6;
 export const PIXELES_TESELA = 512;
 
 const rad = Math.PI / 180;

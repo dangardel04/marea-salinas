@@ -13,7 +13,8 @@ import metaEdificiosLidar from '../bahia-edificios-lidar.json';
 import metaFino from '../bahia-fino.json';
 import metaArena from '../bahia-arena.json';
 import metaPaseo from '../bahia-paseo.json';
-import { crearPaseo, type PuntoMuro } from './paseo';
+import { crearPaseo } from './paseo';
+import { EDIFICIOS_MEJORADOS, prepararMuro, tramosMuro } from './zonaMejorada';
 import { accesos, crearAccesos, huecosAccesos, rotuloAcceso } from './accesos';
 import { crearMedidaArena } from './arena';
 import { crearSombras } from './sombras';
@@ -88,6 +89,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
     uDensidadNiebla: { value: movil ? 0.00008 : 0.00006 },
     /** 0 de día, 1 de noche cerrada. */
     uNoche: { value: 0 },
+    /** Zona de edificios mejorados (x, z, radio, transición): el Club Náutico. */
+    uZonaEdif: { value: new THREE.Vector4(EDIFICIOS_MEJORADOS.x, EDIFICIOS_MEJORADOS.z, EDIFICIOS_MEJORADOS.radio, EDIFICIOS_MEJORADOS.suave) },
   };
   const comunesAgua = {
     uTiempo: { value: 0 },
@@ -156,6 +159,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   textura('damp_beach_sand_02_diff_1k.jpg', true, texturas.uTexMojada);
   textura('damp_beach_sand_02_nor_gl_1k.jpg', false, texturas.uTexMojadaN);
 
+  // El muro, con su línea recolocada donde se apartaba del muro real (zonaMejorada.ts)
+  prepararMuro((x, z) => relieve.altura(x, z));
   const teselas = crearTeselas({
     relieve, zona, indiceOrto: metaOrto.indice as Record<string, string[]>, urlBase: base, escena, comunes, movil,
     anisotropia: Math.min(8, render.capabilities.getMaxAnisotropy()),
@@ -165,6 +170,11 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   cargarFino(`${base}bahia/fino.bin`).then((datos) => {
     if (!datos) return;
     relieve.ponerFino(metaFino, datos);
+    prepararMuro((x, z) => relieve.altura(x, z));
+    escena.remove(paseoMalla);
+    paseoMalla.geometry.dispose();
+    paseoMalla = crearPaseo(tramosMuro(), comunes, huecosAccesos());
+    escena.add(paseoMalla);
     teselas.rehacerFino();
     fondoAgua.actualizar();
     arena.rehacer();
@@ -181,7 +191,8 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   agua.uniformes.uConReflejo.value = 0;
   const cielo = crearCielo(escena, movil);
   // Muro, barandilla y suelo del paseo (tools/paseo-muro.py)
-  escena.add(crearPaseo(metaPaseo.tramos as PuntoMuro[][], comunes, huecosAccesos()));
+  let paseoMalla = crearPaseo(tramosMuro(), comunes, huecosAccesos());
+  escena.add(paseoMalla);
   // Escaleras y rampa que bajan a la arena (identificadas y medidas en el LiDAR y la ortofoto)
   escena.add(crearAccesos(comunes));
 
