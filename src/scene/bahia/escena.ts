@@ -159,6 +159,7 @@ export async function crearEscenaBahia(lienzo: HTMLCanvasElement, alProgreso?: (
   const teselas = crearTeselas({
     relieve, zona, indiceOrto: metaOrto.indice as Record<string, string[]>, urlBase: base, escena, comunes, movil,
     anisotropia: Math.min(8, render.capabilities.getMaxAnisotropy()),
+    anisotropiaZona: render.capabilities.getMaxAnisotropy(),
   });
   // Relieve fino de la playa (LiDAR 2024, 1 m): llega después, sin bloquear el arranque.
   cargarFino(`${base}bahia/fino.bin`).then((datos) => {

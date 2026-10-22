@@ -8,6 +8,7 @@
 import * as THREE from 'three';
 import { LUZ_GLSL } from './sombreado';
 import { CAPA_SOMBRA } from './sombras';
+import { pesoZona } from './zonaPrueba';
 
 export interface PuntoMuro { arriba: [number, number, number]; pie: [number, number, number]; eje: [number, number, number] }
 
@@ -15,12 +16,14 @@ export interface PuntoMuro { arriba: [number, number, number]; pie: [number, num
 
 const VERT = /* glsl */ `
 attribute float tipo;   // 0 cara del muro, 1 albardilla, 2 suelo del paseo, 3 barandilla, 4 peldaño
+attribute float zona;   // 1 en la zona de prueba (zonaPrueba.ts), 0 fuera, con transición
+varying float vZona;
 varying vec2 vUv;
 varying vec3 vPos;
 varying vec3 vNor;
 varying float vTipo;
 void main() {
-  vUv = uv; vTipo = tipo; vNor = normal;
+  vUv = uv; vTipo = tipo; vZona = zona; vNor = normal;
   vec4 m = modelMatrix * vec4(position, 1.0);
   vPos = m.xyz;
   gl_Position = projectionMatrix * viewMatrix * m;
@@ -33,6 +36,7 @@ varying vec2 vUv;    // cara: u = metros a lo largo, v = metros desde el pie; su
 varying vec3 vPos;
 varying vec3 vNor;
 varying float vTipo;
+varying float vZona;
 float hashP(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float ruidoP(vec2 p) {
   vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
@@ -53,10 +57,12 @@ vec4 sillar(vec2 uv) {
   return vec4(du, dv, floor(u), fila);
 }
 /** Altura del relieve de la piedra: el sillar abombado, más bajo en la junta, con grano. */
-float relieveSillar(vec2 uv) {
+float relieveSillar(vec2 uv, float zona) {
   vec4 s = sillar(uv);
   float borde = min(s.x, s.y);
-  return smoothstep(0.0, 0.06, borde) * 0.02 + smoothstep(0.0, 0.012, borde) * 0.008 + fbmP(uv * 9.0) * 0.004;
+  float h = smoothstep(0.0, 0.06, borde) * 0.02 + smoothstep(0.0, 0.012, borde) * 0.008 + fbmP(uv * 9.0) * 0.004;
+  // zona de prueba: grano fino y picaduras de la arenisca, solo con el relieve aún visible
+  return h + zona * (fbmP(uv * 40.0) * 0.0018 - smoothstep(0.72, 0.9, fbmP(uv * 23.0 + 5.0)) * 0.003);
 }
 float linea(float x, float ancho) {     // líneas finas cada 1 (antialias)
   float f = abs(fract(x) - 0.5);
@@ -67,7 +73,8 @@ void main() {
   vec3 n = normalize(vNor) * (gl_FrontFacing ? 1.0 : -1.0);
   vec3 v = normalize(cameraPosition - vPos);
   float d = length(vPos - cameraPosition);
-  float detalle = 1.0 - smoothstep(40.0, 220.0, d);
+  // en la zona de prueba el detalle de la piedra llega mucho más lejos (a 600 m en vez de a 220)
+  float detalle = 1.0 - smoothstep(mix(40.0, 150.0, vZona), mix(220.0, 600.0, vZona), d);
   vec3 c;
   float rug = 0.88, ao = 1.0;
   if (vTipo < 0.5) {
@@ -86,8 +93,9 @@ void main() {
     vec3 T = dp2p * duv1.x + dp1p * duv2.x, B = dp2p * duv1.y + dp1p * duv2.y;
     float inv = inversesqrt(max(max(dot(T, T), dot(B, B)), 1e-8));
     float e = 0.01;
-    float h0 = relieveSillar(vUv);
-    vec2 g = vec2(relieveSillar(vUv + vec2(e, 0.0)) - h0, relieveSillar(vUv + vec2(0.0, e)) - h0) / e;
+    float zn = vZona * detalle;
+    float h0 = relieveSillar(vUv, zn);
+    vec2 g = vec2(relieveSillar(vUv + vec2(e, 0.0), zn) - h0, relieveSillar(vUv + vec2(0.0, e), zn) - h0) / e;
     n = normalize(n - (T * inv) * g.x * 1.6 * detalle - (B * inv) * g.y * 1.6 * detalle);
     // junta hundida: mortero gris en sombra
     float junta = 1.0 - smoothstep(0.003, 0.014 + fwidth(vUv.y) * 1.2, min(s.x, s.y));
@@ -157,11 +165,20 @@ const enHueco = (s: number, h: [number, number][]) => h.some(([a, b]) => s > a &
 
 /** Piezas con el material del paseo: cuadriláteros, barras (cajas alargadas) y postes. */
 export function piezas() {
-  const pos: number[] = [], uv: number[] = [], tipo: number[] = [], idx: number[] = [];
+  const pos: number[] = [], uv: number[] = [], tipo: number[] = [], zon: number[] = [], idx: number[] = [];
   const quad = (a: number[], b: number[], c: number[], d: number[], ua: number[], ub: number[], uc: number[], ud: number[], t: number) => {
     const k = pos.length / 3;
-    for (const [p, q] of [[a, ua], [b, ub], [c, uc], [d, ud]] as const) { pos.push(...p); uv.push(...q); tipo.push(t); }
+    for (const [p, q] of [[a, ua], [b, ub], [c, uc], [d, ud]] as const) { pos.push(...p); uv.push(...q); tipo.push(t); zon.push(pesoZona(p[0], p[2])); }
     idx.push(k, k + 1, k + 2, k, k + 2, k + 3);
+    // En la zona de prueba, además, la cara contraria: la pasada de normales y profundidad de la
+    // oclusión ambiental (postproceso.ts) solo dibuja caras de frente, y las piezas que miran al
+    // revés faltaban en ella (el muro dejaba ver lo de detrás y salían manchas oscuras difusas).
+    // Se dibujan en el mismo sitio y con el mismo color, así que no se nota.
+    if (pesoZona((a[0] + c[0]) / 2, (a[2] + c[2]) / 2) > 0) {
+      const k2 = pos.length / 3;
+      for (const [p, q] of [[a, ua], [b, ub], [c, uc], [d, ud]] as const) { pos.push(...p); uv.push(...q); tipo.push(t); zon.push(pesoZona(p[0], p[2])); }
+      idx.push(k2, k2 + 2, k2 + 1, k2, k2 + 3, k2 + 2);
+    }
   };
   // caja alargada de a a b (sección ancho × alto), para la barandilla
   const barra = (a: number[], b: number[], ancho: number, alto: number) => {
@@ -175,6 +192,14 @@ export function piezas() {
   };
   /** Poste vertical de barandilla: dos planos cruzados de 6 cm. */
   const poste = (p: number[], alto: number) => {
+    if (pesoZona(p[0], p[2]) > 0.5) {
+      // zona de prueba: poste de caja de 5 cm con tapa (en vez de dos planos cruzados)
+      const h = 0.025, a = [p[0] - h, p[2] - h], b = [p[0] + h, p[2] - h], c = [p[0] + h, p[2] + h], d = [p[0] - h, p[2] + h];
+      const lados = [[a, b], [b, c], [c, d], [d, a]];
+      for (const [u, v] of lados) quad([u[0], p[1], u[1]], [v[0], p[1], v[1]], [v[0], p[1] + alto, v[1]], [u[0], p[1] + alto, u[1]], [0, 0], [1, 0], [1, 1], [0, 1], 3);
+      quad([a[0], p[1] + alto, a[1]], [b[0], p[1] + alto, b[1]], [c[0], p[1] + alto, c[1]], [d[0], p[1] + alto, d[1]], [0, 0], [1, 0], [1, 1], [0, 1], 3);
+      return;
+    }
     quad([p[0] - 0.03, p[1], p[2]], [p[0] + 0.03, p[1], p[2]], [p[0] + 0.03, p[1] + alto, p[2]], [p[0] - 0.03, p[1] + alto, p[2]], [0, 0], [1, 0], [1, 1], [0, 1], 3);
     quad([p[0], p[1], p[2] - 0.03], [p[0], p[1], p[2] + 0.03], [p[0], p[1] + alto, p[2] + 0.03], [p[0], p[1] + alto, p[2] - 0.03], [0, 0], [1, 0], [1, 1], [0, 1], 3);
   };
@@ -183,6 +208,7 @@ export function piezas() {
     geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
     geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
     geo.setAttribute('tipo', new THREE.Float32BufferAttribute(tipo, 1));
+    geo.setAttribute('zona', new THREE.Float32BufferAttribute(zon, 1));
     geo.setIndex(idx);
     geo.computeVertexNormals();
     const mat = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, uniforms: comunes, side: THREE.DoubleSide });
@@ -197,7 +223,7 @@ export function piezas() {
 export function crearPaseo(tramos: PuntoMuro[][], comunes: Record<string, THREE.IUniform>, huecos: Huecos = { muro: [], baranda: [] }) {
   const { quad, barra, poste: posteV, malla } = piezas();
   for (const tramo of tramos) {
-    let largo = 0;
+    let largo = 0, sinMuroAntes = false;
     for (let i = 0; i + 1 < tramo.length; i++) {
       const p = tramo[i], q = tramo[i + 1];
       const seg = Math.hypot(q.arriba[0] - p.arriba[0], q.arriba[2] - p.arriba[2]);
@@ -211,7 +237,22 @@ export function crearPaseo(tramos: PuntoMuro[][], comunes: Record<string, THREE.
       // prolonga 1 m bajo la arena (v = metros desde el pie, medidos en vertical)
       const sobre = 0.4;
       const fp = [p.arriba[0], p.arriba[2]], fq = [q.arriba[0], q.arriba[2]];
-      const piePr = [p.pie[0] - tp[0] * 1.0, p.pie[1] - 0.5, p.pie[2] - tp[1] * 1.0], pieQr = [q.pie[0] - tq[0] * 1.0, q.pie[1] - 0.5, q.pie[2] - tq[1] * 1.0];
+      // En la zona de prueba (zonaPrueba.ts) la cara es vertical: baja recta desde el borde del paseo
+      // en vez de seguir el talud del LiDAR (w = 1 recta, 0 talud; transición suave).
+      const wp = pesoZona(p.arriba[0], p.arriba[2]), wq = pesoZona(q.arriba[0], q.arriba[2]);
+      const pieDe = (r: PuntoMuro, t: number[], w: number) => [(r.pie[0] - t[0]) * (1 - w) + r.arriba[0] * w, r.pie[1] - 0.5, (r.pie[2] - t[1]) * (1 - w) + r.arriba[2] * w];
+      const piePr = pieDe(p, tp, wp), pieQr = pieDe(q, tq, wq);
+      // Extremos de un hueco (acceso a la playa): el corte del muro se cierra con piedra. Sin esto
+      // el muro, que es solo una cara, dejaba ver por dentro el terreno estirado (DECORATIVO).
+      if (sinMuro !== sinMuroAntes && wp < 0.99) {
+        const [tx, tz] = tp, base = p.pie[1];
+        const P2 = [piePr[0], piePr[1] + 0.4, piePr[2]];                      // pie de la cara
+        const P1 = [p.arriba[0], p.arriba[1] + 0.2, p.arriba[2]];             // borde de arriba
+        const P3 = [p.arriba[0] + tx * 0.6, p.eje[1] + 0.06, p.arriba[2] + tz * 0.6];   // suelo del paseo
+        const P4 = [P3[0], P2[1] - 0.5, P3[2]];
+        const d = (a: number[], b: number[]) => Math.hypot(a[0] - b[0], a[2] - b[2]);
+        quad(P2, P1, P3, P4, [0, P2[1] - base], [d(P1, P2), P1[1] - base], [d(P1, P2) + 0.6, P3[1] - base], [d(P1, P2) + 0.6, P4[1] - base], 0);
+      }
       if (!sinMuro) quad([piePr[0], piePr[1] + sobre, piePr[2]], [pieQr[0], pieQr[1] + sobre, pieQr[2]], [fq[0], q.arriba[1] + sobre * 0.5, fq[1]], [fp[0], p.arriba[1] + sobre * 0.5, fp[1]],
         [largo, -0.5], [largo + seg, -0.5], [largo + seg, q.arriba[1] - q.pie[1]], [largo, p.arriba[1] - p.pie[1]], 0);
       // albardilla: 0,6 m hacia tierra, 0,15 m por encima
@@ -239,6 +280,7 @@ export function crearPaseo(tramos: PuntoMuro[][], comunes: Record<string, THREE.
         barra([bp[0], bp[1] + 0.48, bp[2]], [bq[0], bq[1] + 0.48, bq[2]], 0.04, 0.04);
       }
       largo += seg;
+      sinMuroAntes = sinMuro;
     }
   }
   return malla('paseo', comunes);

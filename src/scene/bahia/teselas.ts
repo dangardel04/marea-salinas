@@ -17,6 +17,7 @@ import { LADO, NIVEL_MAX_ORTO, recuadroTesela } from '../../bahia';
 import type { Relieve } from './relieve';
 import type { Zona } from './zona';
 import { rebajeAccesos } from './accesos';
+import { terrenoConMuroRecto, ZONA } from './zonaPrueba';
 import { TERRENO_FRAG, TERRENO_VERT } from './sombreado';
 
 export interface UniformesComunes { [k: string]: THREE.IUniform }
@@ -51,11 +52,13 @@ export function crearTeselas(opciones: {
   comunes: UniformesComunes;
   movil: boolean;
   anisotropia: number;
+  /** Anisotropía de las ortofotos de la zona de prueba (zonaPrueba.ts): la máxima de la tarjeta. */
+  anisotropiaZona: number;
 }) {
   const { relieve, zona, escena, comunes, movil } = opciones;
   /** Altura de la malla: la del relieve, aplanada fuera de la zona (sin montes en el horizonte). */
   const alturaMalla = (x: number, z: number) => {
-    let h = relieve.altura(x, z);
+    let h = terrenoConMuroRecto(x, z, relieve.altura(x, z));
     const a = zona.aplanado(x, z);
     if (a > 0) h += (Math.min(h, 20) - h) * a;
     // donde hay una escalera o la rampa dibujadas, el terreno baja a la arena (accesos.ts)
@@ -95,7 +98,10 @@ export function crearTeselas(opciones: {
       const [n, i, j] = clave.split('_');
       cargador.load(`${opciones.urlBase}bahia/orto/${n}/${i}_${j}.jpg`, (tex) => {
         tex.colorSpace = THREE.SRGBColorSpace;
-        tex.anisotropy = opciones.anisotropia;
+        // en la zona de prueba, filtrado anisótropo máximo (la arena y el muro se ven a ras, muy inclinados)
+        const r = recuadroTesela(Number(n), Number(i), Number(j));
+        const cx = Math.max(r.x0, Math.min(ZONA.x, r.x1)), cz = Math.max(r.z0, Math.min(ZONA.z, r.z1));
+        tex.anisotropy = Math.hypot(cx - ZONA.x, cz - ZONA.z) < ZONA.radio ? opciones.anisotropiaZona : opciones.anisotropia;
         tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
         ent.tex = tex; ent.cargando = false; cargando--;
         bombear();
@@ -141,8 +147,10 @@ export function crearTeselas(opciones: {
     const poner = (k: number, x: number, z: number, y: number, a: number, b: number) => {
       pos[k * 3] = x; pos[k * 3 + 1] = y; pos[k * 3 + 2] = z;
       const e = relieve.pasoEn(x, z);
-      const nx = relieve.altura(x - e, z) - relieve.altura(x + e, z);
-      const nz = relieve.altura(x, z - e) - relieve.altura(x, z + e);
+      // las normales siguen el terreno dibujado con el muro recto de la zona de prueba (fuera de ella, el relieve)
+      const alt = (px: number, pz: number) => terrenoConMuroRecto(px, pz, relieve.altura(px, pz));
+      const nx = alt(x - e, z) - alt(x + e, z);
+      const nz = alt(x, z - e) - alt(x, z + e);
       const l = Math.hypot(nx, 2 * e, nz);
       nor[k * 3] = nx / l; nor[k * 3 + 1] = (2 * e) / l; nor[k * 3 + 2] = nz / l;
       uv[k * 2] = a / SEG; uv[k * 2 + 1] = 1 - b / SEG;
